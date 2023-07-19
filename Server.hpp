@@ -23,19 +23,22 @@ class Server {
 
 		static std::string nickNames[MAX_EVENTS + 1];
 		static struct pollfd fds[MAX_EVENTS + 1];
+		static bool passFlag[MAX_EVENTS + 1];
 		static struct sockaddr_in srvAddr, clntAddr;
 		static socklen_t clntAddrLen;
 		static int listenSd, connectSd;
     	static char rBuff[BUFSIZ];
+		
 
     public:
 		~Server();
 
 		static void init(unsigned short portNum);
-		static void monitoring();
+		static void monitoring(std::string password);
 		static void destroy();
 };
 
 void errProc(const char*);
+int checkPassword(char rBuff[BUFSIZ], std::string password, int passflag);
 
 #endif
