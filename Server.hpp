@@ -25,9 +25,7 @@ class Server {
 		static struct pollfd fds[MAX_EVENTS + 1];
 		static struct sockaddr_in srvAddr, clntAddr;
 		static socklen_t clntAddrLen;
-		static int ready, readfd;
 		static int listenSd, connectSd;
-		static int readLen;
     	static char rBuff[BUFSIZ];
 
     public:

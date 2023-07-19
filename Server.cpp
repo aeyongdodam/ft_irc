@@ -2,9 +2,8 @@
 
 struct pollfd Server::fds[MAX_EVENTS + 1];
 struct sockaddr_in Server::srvAddr, Server::clntAddr;
-int Server::ready, Server::readfd;
+int Server::ready;
 int Server::listenSd, Server::connectSd;
-int Server::readLen;
 std::string Server::nickNames[MAX_EVENTS + 1];
 socklen_t Server::clntAddrLen;
 char Server::rBuff[BUFSIZ];
@@ -59,7 +58,7 @@ void Server::init(unsigned short portNum) {
 void Server::monitoring() {
 	while (true) {
 		std::cout << "Monitoring ..." << std::endl;
-        ready = poll(fds, MAX_EVENTS + 1, -1);
+        int ready = poll(fds, MAX_EVENTS + 1, -1);
         if (ready == -1)
         {
             if (errno == EINTR)
@@ -101,8 +100,8 @@ void Server::monitoring() {
                 }
                 else
                 { // IO
-                    readfd = fds[i].fd;
-                    readLen = read(readfd, rBuff, sizeof(rBuff) - 1);
+                    int readfd = fds[i].fd;
+                    int readLen = read(readfd, rBuff, sizeof(rBuff) - 1);
                     if (readLen == 0)
                     {
                         std::cerr << "A client is disconnected..." << std::endl;
