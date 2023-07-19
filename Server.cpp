@@ -108,20 +108,22 @@ void Server::monitoring(std::string password) {
                         std::cerr << "A client is disconnected..." << std::endl;
                         close(readfd);
                         fds[i].fd = -1;
+                        fds[i].events = 0;
+                        passFlag[i] = 0;
                     }
                     else if (readLen == -1 && errno != EWOULDBLOCK)
                     {
                         std::cerr << "Read error" << std::endl;
                         close(readfd);
                         fds[i].fd = -1;
+                        fds[i].events = 0;
+                        passFlag[i] = 0;
                     }
                     else if (readLen > 0)
                     {
                         rBuff[readLen] = '\0';
-                        std::cout << "passFlag : " << passFlag[i] << std::endl;
                         if (passFlag[i] == 0)
                         {
-                            std::cout << "내용 : " << rBuff << std::endl;
                             passFlag[i] = checkPassword(rBuff, password, passFlag[i]);
                         }
                         else
