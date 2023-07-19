@@ -1,5 +1,14 @@
 #include "Server.hpp"
 
+struct pollfd Server::fds[MAX_EVENTS + 1];
+struct sockaddr_in Server::srvAddr, Server::clntAddr;
+int Server::ready, Server::readfd;
+int Server::listenSd, Server::connectSd;
+int Server::readLen;
+std::string Server::nickNames[MAX_EVENTS + 1];
+socklen_t Server::clntAddrLen;
+char Server::rBuff[BUFSIZ];
+
 Server::Server() {
 }
 
