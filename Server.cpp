@@ -2,7 +2,6 @@
 
 struct pollfd Server::fds[MAX_EVENTS + 1];
 struct sockaddr_in Server::srvAddr, Server::clntAddr;
-int Server::ready;
 int Server::listenSd, Server::connectSd;
 std::string Server::nickNames[MAX_EVENTS + 1];
 socklen_t Server::clntAddrLen;
