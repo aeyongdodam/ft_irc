@@ -14,8 +14,10 @@
 #include <poll.h>
 #include <cerrno>
 #include <fcntl.h>
+#include "Client.hpp"
 
-class Server {
+class Server
+{
 	private:
 		Server();
 		Server(const Server& copy);
@@ -23,19 +25,24 @@ class Server {
 
 		static std::string nickNames[MAX_EVENTS + 1];
 		static struct pollfd fds[MAX_EVENTS + 1];
+		static bool passFlag[MAX_EVENTS + 1];
 		static struct sockaddr_in srvAddr, clntAddr;
 		static socklen_t clntAddrLen;
 		static int listenSd, connectSd;
     	static char rBuff[BUFSIZ];
 
+		static Client clients[MAX_EVENTS  + 1];
+		
+
     public:
 		~Server();
 
 		static void init(unsigned short portNum);
-		static void monitoring();
+		static void monitoring(std::string password);
 		static void destroy();
 };
 
 void errProc(const char*);
+int checkPassword(char rBuff[BUFSIZ], std::string password, int passflag);
 
 #endif
