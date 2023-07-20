@@ -17,6 +17,7 @@
 #include <list>
 
 #include "Client.hpp"
+#include <array>
 
 class Channel;
 
@@ -32,10 +33,11 @@ class Server
 		struct sockaddr_in srvAddr, clntAddr;
 		socklen_t clntAddrLen;
 		int listenSd, connectSd;
-    	char rBuff[BUFSIZ];
+		char rBuff[BUFSIZ];
 
 		Client clients[MAX_EVENTS  + 1];
 		std::list<Channel> channels;
+		std::array<std::string, 4> commandList;
 		
 
     public:
@@ -50,10 +52,12 @@ class Server
 		void destroy();
   
 		Channel* createChannel(std::string name);
+		int commandParsing(std::string input);
+		int checkCommand(std::string command);
 
 };
 
 void errProc(const char*);
-int checkPassword(char rBuff[BUFSIZ], std::string password, int passflag);
+int checkPassword(std::string pass, std::string password);
 
 #endif

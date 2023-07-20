@@ -3,6 +3,10 @@
 
 Server::Server()
 {
+    commandList[0] = "PASS";
+    commandList[1] = "NICK";
+    commandList[2] = "USER";
+    commandList[3] = "JOIN";
 }
 
 Server::Server(const Server& other)
@@ -16,13 +20,12 @@ Server& Server::operator=(const Server& source)
 	return (*this);
 }
 
-Server::~Server()
-{
-}
+Server::~Server(){}
 
 void Server::init(unsigned short portNum)
 {
-    for (int i = 0; i < MAX_EVENTS + 1; i++) {
+    for (int i = 0; i < MAX_EVENTS + 1; i++) 
+    {
         fds[i].fd = -1;
         fds[i].events = 0;
         passFlag[i] = 0;
@@ -31,7 +34,7 @@ void Server::init(unsigned short portNum)
 	std::cout << "Server start..." << std::endl;
     listenSd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (listenSd == -1)
-       	errProc("socket");
+        errProc("socket");
 
 	if (fcntl(listenSd, F_SETFL, O_NONBLOCK) == -1)
         errProc("fcntl");
@@ -86,6 +89,10 @@ void Server::readClient(int i, std::string password)
         rBuff[readLen] = '\0';
         std::cout << "rBuff Message : " << rBuff << std::endl;
         // rBuff 파싱
+        int commandNum = commandParsing(rBuff);
+        std::string optionString =  std::strchr(rBuff, ' ') + 1;
+        if (commandNum == 0)
+            checkPassword(optionString, password);
         (void)password;
     }
     
@@ -128,54 +135,55 @@ void errProc(const char* str)
     exit(1);
 }
 
-int checkPassword(char rBuff[BUFSIZ], std::string password, int passflag)
+int checkPassword(std::string pass, std::string password)
 {
-    if (std::strncmp("PASS ", rBuff, 5) == 0)
+    int passflag = 0;
+    //std::cout << "문자열 : "<< pass.length() << std::endl;
+    //std::cout << "pass=" << pass << "------------------\n";
+    if (pass.c_str() != NULL)
     {
-        std::string pass = std::strchr(rBuff, ' ') + 1;
-        std::cout << "문자열 : "<< pass.length() << std::endl;
-        std::cout << "pass=" << pass << "------------------\n";
-        if (pass.c_str() != NULL)
+        if (std::strncmp(password.c_str(), pass.c_str(), password.size()) == 0)
         {
-            if (std::strncmp(password.c_str(), pass.c_str(), password.size()) == 0)
-            {
-                std::cout << "The password is correct" << std::endl;
-                passflag = 1;
-                return passflag;
-            }
-            else
-            {
-                std::cout << "The password is not correct" << std::endl;
-                return passflag;
-            }
+            std::cout << "The password is correct" << std::endl;
+            passflag = 1;
+            return passflag;
         }
-        std::cout << "The password is not correct" << std::endl;
-        return passflag;
+        else
+        {
+            std::cout << "The password is not correct" << std::endl;
+            return passflag;
+        }
     }
     std::cout << "The password is not correct" << std::endl;
     return passflag;
 }
 
-// int checkPassword(char rBuff[BUFSIZ], std::string password, int passflag)
-// {
-//     int index = 0;
-//     if (strncmp("PASS", rBuff, 4) == 0)
-//     {
-//         index = 4;
-//         while (rBuff[index] == ' ' && rBuff[index] != 0)
-//             index++;
-//         if (strncmp(password.c_str(), &rBuff[index], password.size()) == 0)
-//         {
-//             std::cout << "The password is correct" << std::endl;
-//             passflag = 1;
-//             return passflag;
-//         }
-//         else
-//         {
-//             std::cout << "The password is not correct" << std::endl;
-//             return passflag;
-//         }
-//     }
-//     std::cout << "The password is not correct" << std::endl;
-//     return passflag;
-// }
+int Server::commandParsing(std::string input)
+{
+    int commandNum;
+    size_t end = input.find(' ');
+    if (end != std::string::npos)
+    {
+        std::string command = input.substr(0, end);
+        commandNum = checkCommand(command);
+        if (commandNum == -1)
+        {
+            std::cout << "명령어 없음 " << std::endl;
+            return -1;
+        }
+        return commandNum;
+    }
+    std::cout << "명령어 없음 " << std::endl;
+    return -1;
+}
+
+int Server::checkCommand(std::string command)
+{
+    for (int i = 0; i < (int)sizeof(commandList) ; i++)
+    {
+        if (commandList[i] == command)
+            return i;
+    }
+    std::cout << "그런 명령어는 없어용~" << std::endl;
+    return -1;
+}
