@@ -14,32 +14,39 @@
 #include <poll.h>
 #include <cerrno>
 #include <fcntl.h>
+#include <list>
+
 #include "Client.hpp"
+
+class Channel;
 
 class Server
 {
 	private:
-		Server();
 		Server(const Server& copy);
 		Server& operator=(const Server& copy);
 
-		static std::string nickNames[MAX_EVENTS + 1];
-		static struct pollfd fds[MAX_EVENTS + 1];
-		static bool passFlag[MAX_EVENTS + 1];
-		static struct sockaddr_in srvAddr, clntAddr;
-		static socklen_t clntAddrLen;
-		static int listenSd, connectSd;
-    	static char rBuff[BUFSIZ];
+		std::string nickNames[MAX_EVENTS + 1];
+		struct pollfd fds[MAX_EVENTS + 1];
+		bool passFlag[MAX_EVENTS + 1];
+		struct sockaddr_in srvAddr, clntAddr;
+		socklen_t clntAddrLen;
+		int listenSd, connectSd;
+    	char rBuff[BUFSIZ];
 
-		static Client clients[MAX_EVENTS  + 1];
+		Client clients[MAX_EVENTS  + 1];
+		std::list<Channel> channels;
 		
 
     public:
+		Server();
 		~Server();
 
-		static void init(unsigned short portNum);
-		static void monitoring(std::string password);
-		static void destroy();
+		void init(unsigned short portNum);
+		void monitoring(std::string password);
+		void destroy();
+
+		Channel* createChannel(std::string name);
 };
 
 void errProc(const char*);
