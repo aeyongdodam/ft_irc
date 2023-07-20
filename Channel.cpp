@@ -1,8 +1,6 @@
 #include "Channel.hpp"
 
-Channel::Channel()
-{
-}
+Channel::Channel() {}
 
 Channel::Channel(std::string name) : name(name), topic(NULL), key(NULL), inviteOnly(false), maxCapacity(-1)
 {
@@ -28,7 +26,5 @@ Channel& Channel::operator=(const Channel& source)
 	return (*this);
 }
 
-Channel::~Channel() 
-{
-}
+Channel::~Channel() {}
 
