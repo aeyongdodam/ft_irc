@@ -14,8 +14,10 @@
 #include <poll.h>
 #include <cerrno>
 #include <fcntl.h>
+#include "Client.hpp"
 
-class Server {
+class Server
+{
 	private:
 		Server();
 		Server(const Server& copy);
@@ -28,6 +30,8 @@ class Server {
 		static socklen_t clntAddrLen;
 		static int listenSd, connectSd;
     	static char rBuff[BUFSIZ];
+
+		static Client clients[MAX_EVENTS  + 1];
 		
 
     public:

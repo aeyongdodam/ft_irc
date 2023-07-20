@@ -7,6 +7,7 @@ std::string Server::nickNames[MAX_EVENTS + 1];
 socklen_t Server::clntAddrLen;
 char Server::rBuff[BUFSIZ];
 bool Server::passFlag[MAX_EVENTS + 1];
+Client Server::clients[MAX_EVENTS  + 1];
 
 Server::Server() {
 }
@@ -124,15 +125,18 @@ void Server::monitoring(std::string password) {
                         rBuff[readLen] = '\0';
                         if (passFlag[i] == 0)
                         {
+                            std::cout << "here : " << rBuff << std::endl;
                             passFlag[i] = checkPassword(rBuff, password, passFlag[i]);
+                            std::cout << "---------------------------" << std::endl;
                         }
                         else
                         {
-                            if (nickNames[i].empty()) 
+                            if (clients[i].getNickName().empty() || clients[i].getLoginName().empty() || clients[i].getRealName().empty())
                             {
-                                rBuff[readLen - 1] = '\0';
-                                nickNames[i] = std::string(rBuff);
-                                std::cout << nickNames[i] << "님이 입장하셨습니다." << std::endl;
+                                clients[i].clientInfoinit(rBuff);
+                                // rBuff[readLen - 1] = '\0';
+                                // nickNames[i] = std::string(rBuff);
+                                // std::cout << nickNames[i] << "님이 입장하셨습니다." << std::endl;
                             } 
                             else 
                             {
@@ -164,24 +168,52 @@ void errProc(const char* str)
 
 int checkPassword(char rBuff[BUFSIZ], std::string password, int passflag)
 {
-    int index = 0;
-    if (strncmp("PASS", rBuff, 4) == 0)
+    if (std::strncmp("PASS ", rBuff, 5) == 0)
     {
-        index = 4;
-        while (rBuff[index] == ' ' && rBuff[index] != 0)
-            index++;
-        if (strncmp(password.c_str(), &rBuff[index], password.size()) == 0)
+        std::string pass = std::strchr(rBuff, ' ') + 1;
+        std::cout << "문자열 : "<< pass.length() << std::endl;
+        std::cout << "pass=" << pass << "------------------\n";
+        if (pass.c_str() != NULL)
         {
-            std::cout << "The password is correct" << std::endl;
-            passflag = 1;
-            return passflag;
+            if (std::strncmp(password.c_str(), pass.c_str(), password.size()) == 0)
+            {
+                std::cout << "The password is correct" << std::endl;
+                passflag = 1;
+                return passflag;
+            }
+            else
+            {
+                std::cout << "The password is not correct" << std::endl;
+                return passflag;
+            }
         }
-        else
-        {
-            std::cout << "The password is not correct" << std::endl;
-            return passflag;
-        }
+        std::cout << "The password is not correct" << std::endl;
+        return passflag;
     }
     std::cout << "The password is not correct" << std::endl;
     return passflag;
 }
+
+// int checkPassword(char rBuff[BUFSIZ], std::string password, int passflag)
+// {
+//     int index = 0;
+//     if (strncmp("PASS", rBuff, 4) == 0)
+//     {
+//         index = 4;
+//         while (rBuff[index] == ' ' && rBuff[index] != 0)
+//             index++;
+//         if (strncmp(password.c_str(), &rBuff[index], password.size()) == 0)
+//         {
+//             std::cout << "The password is correct" << std::endl;
+//             passflag = 1;
+//             return passflag;
+//         }
+//         else
+//         {
+//             std::cout << "The password is not correct" << std::endl;
+//             return passflag;
+//         }
+//     }
+//     std::cout << "The password is not correct" << std::endl;
+//     return passflag;
+// }
