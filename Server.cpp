@@ -9,19 +9,23 @@ char Server::rBuff[BUFSIZ];
 bool Server::passFlag[MAX_EVENTS + 1];
 Client Server::clients[MAX_EVENTS  + 1];
 
-Server::Server() {
+Server::Server()
+{
 }
 
-Server::Server(const Server& other) {
+Server::Server(const Server& other)
+{
     (void)other;
 }
 
-Server& Server::operator=(const Server& source) {
+Server& Server::operator=(const Server& source)
+{
 	(void)source;
 	return (*this);
 }
 
-Server::~Server() {
+Server::~Server()
+{
 }
 
 void Server::init(unsigned short portNum)
@@ -117,7 +121,8 @@ void Server::monitoring(std::string password)
 	}
 }
 
-void Server::destroy() {
+void Server::destroy()
+{
 	close(Server::listenSd);
 }
 
