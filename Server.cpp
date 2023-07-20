@@ -9,19 +9,23 @@ char Server::rBuff[BUFSIZ];
 bool Server::passFlag[MAX_EVENTS + 1];
 Client Server::clients[MAX_EVENTS  + 1];
 
-Server::Server() {
+Server::Server()
+{
 }
 
-Server::Server(const Server& other) {
+Server::Server(const Server& other)
+{
     (void)other;
 }
 
-Server& Server::operator=(const Server& source) {
+Server& Server::operator=(const Server& source)
+{
 	(void)source;
 	return (*this);
 }
 
-Server::~Server() {
+Server::~Server()
+{
 }
 
 void Server::init(unsigned short portNum)
@@ -57,106 +61,68 @@ void Server::init(unsigned short portNum)
 	clntAddrLen = sizeof(clntAddr);
 }
 
-void Server::monitoring(std::string password) {
+void Server::connectClient(int i)
+{
+    connectSd = accept(listenSd, (struct sockaddr*)&clntAddr, &clntAddrLen);
+    if (connectSd == -1)
+    {
+        std::cerr << "Accept Error";
+        return;
+    }
+    if (fcntl(connectSd, F_SETFL, O_NONBLOCK) == -1) 
+        errProc("fcntl");
+    fds[i].fd = connectSd;
+    fds[i].events = POLLIN;
+}
+
+void Server::readClient(int i, std::string password)
+{
+    int readfd = fds[i].fd;
+    int readLen = read(readfd, rBuff, sizeof(rBuff) - 1);
+    if (readLen == 0)
+    {
+        std::cerr << "A client is disconnected" << std::endl;
+        disconnectClient(i, readfd);
+    }
+    else if (readLen == -1 && errno != EWOULDBLOCK)
+    {
+        std::cerr << "A client is disconnected (Bad Exit)" << std::endl;
+        disconnectClient(i, readfd);
+    }
+    else if (readLen > 0)
+    {
+        rBuff[readLen] = '\0';
+        std::cout << "rBuff Message : " << rBuff << std::endl;
+        // rBuff 파싱
+        (void)password;
+    }
+    
+}
+
+void Server::disconnectClient(int i, int readfd)
+{
+    close(readfd);
+    fds[i].fd = -1;
+    fds[i].events = 0;
+    passFlag[i] = 0;
+}
+
+void Server::monitoring(std::string password)
+{
 	while (true) {
-		// std::cout << "Monitoring ..." << std::endl;
         int ready = poll(fds, MAX_EVENTS + 1, -1);
-        if (ready == -1)
-        {
-            if (errno == EINTR)
-                continue;
-            else
-                errProc("poll");
-        }
-		int i = 0;
-		for (i = 0; i < MAX_EVENTS; i++)
-        {
-            if (fds[i].revents & POLLIN)
-            {
-                if (fds[i].fd == listenSd)
-                { // accept a client
-                    connectSd = accept(listenSd, (struct sockaddr*)&clntAddr, &clntAddrLen);
-                    if (connectSd == -1)
-                    {
-                        std::cerr << "Accept Error";
-                        continue;
-                    }
-                    std::cerr << "A client is connected..." << std::endl;
-                    
-                    // Set the new client socket to non-blocking mode
-                    if (fcntl(connectSd, F_SETFL, O_NONBLOCK) == -1)
-                        errProc("fcntl");
-                    
-                    // Find an empty slot in the fds array
-                    int k = 0;
-                    for (int j = 1; j < MAX_EVENTS + 1; j++) {
-                        if (fds[j].fd == -1) {
-                            fds[j].fd = connectSd;
-                            fds[j].events = POLLIN;
-                            k = j;
-                            break;
-                        }
-                    }
-                    
-                    // write(fds[k].fd, "닉네임을 입력해주세요:", strlen("닉네임을 입력해주세요:"));
-                }
-                else
-                { // IO
-                    int readfd = fds[i].fd;
-                    int readLen = read(readfd, rBuff, sizeof(rBuff) - 1);
-                    if (readLen == 0)
-                    {
-                        std::cerr << "A client is disconnected..." << std::endl;
-                        close(readfd);
-                        fds[i].fd = -1;
-                        fds[i].events = 0;
-                        passFlag[i] = 0;
-                    }
-                    else if (readLen == -1 && errno != EWOULDBLOCK)
-                    {
-                        std::cerr << "Read error" << std::endl;
-                        close(readfd);
-                        fds[i].fd = -1;
-                        fds[i].events = 0;
-                        passFlag[i] = 0;
-                    }
-                    else if (readLen > 0)
-                    {
-                        rBuff[readLen] = '\0';
-                        if (passFlag[i] == 0)
-                        {
-                            std::cout << "here : " << rBuff << std::endl;
-                            passFlag[i] = checkPassword(rBuff, password, passFlag[i]);
-                            std::cout << "---------------------------" << std::endl;
-                        }
-                        else
-                        {
-                            if (clients[i].getNickName().empty() || clients[i].getLoginName().empty() || clients[i].getRealName().empty())
-                            {
-                                clients[i].clientInfoinit(rBuff);
-                                // rBuff[readLen - 1] = '\0';
-                                // nickNames[i] = std::string(rBuff);
-                                // std::cout << nickNames[i] << "님이 입장하셨습니다." << std::endl;
-                            } 
-                            else 
-                            {
-                                std::cout << nickNames[i] << " : " << rBuff << std::endl;
-                            
-                                // send message to all clients
-                                for (int j = 1; j < MAX_EVENTS + 1; j++) {
-                                    std::string newString = nickNames[i] + " : " + rBuff;
-                                    write(fds[j].fd, newString.c_str(), newString.size());
-                                }
-                            }
-                        }
-                    }
-                }
+        if (ready == -1) errProc("poll");
+		for (int i = 0; i < MAX_EVENTS; i++) {
+            if (fds[i].revents & POLLIN) {
+                if (fds[i].fd == listenSd) connectClient(i);
+                else readClient(i, password);
             }
         }
 	}
 }
 
-void Server::destroy() {
+void Server::destroy()
+{
 	close(Server::listenSd);
 }
 
