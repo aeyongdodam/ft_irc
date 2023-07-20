@@ -57,47 +57,60 @@ void Server::init(unsigned short portNum)
 	clntAddrLen = sizeof(clntAddr);
 }
 
-void Server::cennectClient() {
+void Server::connectClient(int i)
+{
     connectSd = accept(listenSd, (struct sockaddr*)&clntAddr, &clntAddrLen);
-    if (connectSd == -1) {
+    if (connectSd == -1)
+    {
         std::cerr << "Accept Error";
         return;
     }
-    if (fcntl(connectSd, F_SETFL, O_NONBLOCK) == -1) errProc("fcntl");
-    for (int j = 1; j < MAX_EVENTS + 1; j++) {
-        if (fds[j].fd == -1) {
-            fds[j].fd = connectSd;
-            fds[j].events = POLLIN;
-            break;
-        }
-    }
+    if (fcntl(connectSd, F_SETFL, O_NONBLOCK) == -1) 
+        errProc("fcntl");
+    fds[i].fd = connectSd;
+    fds[i].events = POLLIN;
 }
 
-void Server::readClient(int i, std::string password) {
+void Server::readClient(int i, std::string password)
+{
     int readfd = fds[i].fd;
     int readLen = read(readfd, rBuff, sizeof(rBuff) - 1);
-    if (readLen > 0) {
+    if (readLen == 0)
+    {
+        std::cerr << "A client is disconnected" << std::endl;
+        disconnectClient(i, readfd);
+    }
+    else if (readLen == -1 && errno != EWOULDBLOCK)
+    {
+        std::cerr << "A client is disconnected (Bad Exit)" << std::endl;
+        disconnectClient(i, readfd);
+    }
+    else if (readLen > 0)
+    {
         rBuff[readLen] = '\0';
         std::cout << "rBuff Message : " << rBuff << std::endl;
         // rBuff 파싱
         (void)password;
     }
-    else {
-        std::cerr << "A client is disconnected" << std::endl;
-        close(readfd);
-        fds[i].fd = -1;
-        fds[i].events = 0;
-        passFlag[i] = 0;
-    }
+    
 }
 
-void Server::monitoring(std::string password) {
+void Server::disconnectClient(int i, int readfd)
+{
+    close(readfd);
+    fds[i].fd = -1;
+    fds[i].events = 0;
+    passFlag[i] = 0;
+}
+
+void Server::monitoring(std::string password)
+{
 	while (true) {
         int ready = poll(fds, MAX_EVENTS + 1, -1);
         if (ready == -1) errProc("poll");
 		for (int i = 0; i < MAX_EVENTS; i++) {
             if (fds[i].revents & POLLIN) {
-                if (fds[i].fd == listenSd) cennectClient();
+                if (fds[i].fd == listenSd) connectClient(i);
                 else readClient(i, password);
             }
         }
