@@ -44,9 +44,13 @@ class Server
 
 		void init(unsigned short portNum);
 		void monitoring(std::string password);
+		void connectClient(int i);
+		void readClient(int i, std::string password);
+		void disconnectClient(int i, int readfd);
 		void destroy();
-
+  
 		Channel* createChannel(std::string name);
+
 };
 
 void errProc(const char*);
