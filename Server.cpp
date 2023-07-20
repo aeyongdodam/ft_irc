@@ -1,13 +1,5 @@
 #include "Server.hpp"
-
-struct pollfd Server::fds[MAX_EVENTS + 1];
-struct sockaddr_in Server::srvAddr, Server::clntAddr;
-int Server::listenSd, Server::connectSd;
-std::string Server::nickNames[MAX_EVENTS + 1];
-socklen_t Server::clntAddrLen;
-char Server::rBuff[BUFSIZ];
-bool Server::passFlag[MAX_EVENTS + 1];
-Client Server::clients[MAX_EVENTS  + 1];
+#include "Channel.hpp"
 
 Server::Server()
 {
@@ -124,6 +116,10 @@ void Server::monitoring(std::string password)
 void Server::destroy()
 {
 	close(Server::listenSd);
+}
+
+Channel* Server::createChannel(std::string name) {
+    return new Channel(name);
 }
 
 void errProc(const char* str)
