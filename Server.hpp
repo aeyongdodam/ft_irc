@@ -38,6 +38,8 @@ class Server
 		~Server();
 
 		static void init(unsigned short portNum);
+		static void cennectClient();
+		static void readClient(int i, std::string password);
 		static void monitoring(std::string password);
 		static void destroy();
 };
