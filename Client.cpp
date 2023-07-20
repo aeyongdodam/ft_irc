@@ -74,7 +74,7 @@ void Client::setRealName(std::string setRealName_)
     realName = setRealName_;
 }
 
-bool Client::setPassFlag(bool passFlag_)
+void Client::setPassFlag(bool passFlag_)
 {
     passFlag = passFlag_;
 }

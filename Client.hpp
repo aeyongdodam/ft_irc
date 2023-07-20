@@ -13,7 +13,7 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <vector>
-#include "Channel.hpp"
+// #include "Channel.hpp"
 
 class Client
 {
@@ -36,7 +36,7 @@ class Client
         void setNickName(std::string nickName_);
         void setLoginName(std::string loginName_);
         void setRealName(std::string setRealName_);
-        bool setPassFlag(bool passFlag_);
+        void setPassFlag(bool passFlag_);
 };
 
 #endif
