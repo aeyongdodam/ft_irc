@@ -3,6 +3,10 @@
 
 Server::Server()
 {
+    commandList[0] = "PASS";
+    commandList[1] = "NICK";
+    commandList[2] = "USER";
+    commandList[3] = "JOIN";
 }
 
 Server::Server(const Server& other)
@@ -86,6 +90,7 @@ void Server::readClient(int i, std::string password)
         rBuff[readLen] = '\0';
         std::cout << "rBuff Message : " << rBuff << std::endl;
         // rBuff 파싱
+        commandParsing(rBuff);
         (void)password;
     }
     
@@ -156,26 +161,32 @@ int checkPassword(char rBuff[BUFSIZ], std::string password, int passflag)
     return passflag;
 }
 
-// int checkPassword(char rBuff[BUFSIZ], std::string password, int passflag)
-// {
-//     int index = 0;
-//     if (strncmp("PASS", rBuff, 4) == 0)
-//     {
-//         index = 4;
-//         while (rBuff[index] == ' ' && rBuff[index] != 0)
-//             index++;
-//         if (strncmp(password.c_str(), &rBuff[index], password.size()) == 0)
-//         {
-//             std::cout << "The password is correct" << std::endl;
-//             passflag = 1;
-//             return passflag;
-//         }
-//         else
-//         {
-//             std::cout << "The password is not correct" << std::endl;
-//             return passflag;
-//         }
-//     }
-//     std::cout << "The password is not correct" << std::endl;
-//     return passflag;
-// }
+void Server::commandParsing(std::string input)
+{
+    const char* str = input.c_str();
+    std::string tmp = std::strchr(str, ' ') + 1;
+    size_t end = input.find(' ');
+    if (end != std::string::npos)
+    {
+        std::string command = input.substr(0, end);
+        int commandNum = checkCommand(command);
+        std::cout << "commandNum : " << commandNum << std::endl;
+
+        if (commandNum == -1)
+        {
+            std::cout << "명령어 없음 " << std::endl;
+            return ;
+        }
+    }
+}
+
+int Server::checkCommand(std::string command)
+{
+    for (int i = 0; i < (int)sizeof(commandList) ; i++)
+    {
+        if (commandList[i] == command)
+            return i;
+    }
+    std::cout << "그런 명령어는 없어용~" << std::endl;
+    return -1;
+}

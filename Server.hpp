@@ -17,7 +17,7 @@
 #include <list>
 
 #include "Client.hpp"
-
+#include <array>
 class Channel;
 
 class Server
@@ -36,6 +36,7 @@ class Server
 
 		Client clients[MAX_EVENTS  + 1];
 		std::list<Channel> channels;
+		std::array<std::string, 4> commandList;
 		
 
     public:
@@ -50,6 +51,8 @@ class Server
 		void destroy();
   
 		Channel* createChannel(std::string name);
+		void commandParsing(std::string input);
+		int checkCommand(std::string command);
 
 };
 
