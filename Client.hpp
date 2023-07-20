@@ -13,6 +13,7 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <vector>
+// #include "Channel.hpp"
 
 class Client
 {
@@ -20,12 +21,22 @@ class Client
         std::string nickName;
         std::string loginName;
         std::string realName;
+        // Channel *channels;
+        bool passFlag;
+
     public:
-        void clientInfoinit(std::string input);
+        Client();
+        ~Client();
+
+        // void clientInfoinit(std::string input);
         std::string getNickName() const;
         std::string getLoginName() const;
         std::string getRealName() const;
-
+        bool getPassFlag() const;
+        void setNickName(std::string nickName_);
+        void setLoginName(std::string loginName_);
+        void setRealName(std::string setRealName_);
+        void setPassFlag(bool passFlag_);
 };
 
 #endif

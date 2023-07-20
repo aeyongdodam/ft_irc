@@ -1,16 +1,11 @@
 #include "Channel.hpp"
 
-Channel::Channel()
-{
-}
+Channel::Channel() {}
 
 Channel::Channel(std::string name) : name(name), topic(NULL), key(NULL), inviteOnly(false), maxCapacity(-1)
 {
 	for (int i = 0; i < MAX_EVENTS; i++)
-	{
-		invited[i] = false;
 		clientStatus[i] = 0;
-	}
 	(void)topic;
 	(void)key;;
 	(void)inviteOnly;;
@@ -28,7 +23,5 @@ Channel& Channel::operator=(const Channel& source)
 	return (*this);
 }
 
-Channel::~Channel() 
-{
-}
+Channel::~Channel() {}
 

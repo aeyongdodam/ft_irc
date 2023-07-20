@@ -17,9 +17,9 @@ class Channel
 		std::string	*topic;
 		std::string	*key;
 		bool		inviteOnly;
-		bool		invited[MAX_EVENTS + 1];
-		int 		clientStatus[MAX_EVENTS + 1];
+		int			clientStatus[MAX_EVENTS + 1];
 		int			maxCapacity;
+
 		Channel();
 
     public:
@@ -27,8 +27,6 @@ class Channel
 		Channel(const Channel& copy);
 		Channel& operator=(const Channel& copy);
 		~Channel();
-
-		
 };
 
 #endif
