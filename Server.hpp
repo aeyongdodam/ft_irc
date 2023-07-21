@@ -40,7 +40,7 @@ class Server
 		std::list<Channel> channels;
 		std::string commandList[CMD_COUNT];
 
-    public:
+	public:
 		Server();
 		~Server();
 
@@ -50,7 +50,7 @@ class Server
 		void readClient(int i, std::string password);
 		void disconnectClient(int i, int readfd);
 		void destroy();
-  
+
 		Channel* createChannel(std::string name);
 		int commandParsing(std::string input);
 		int checkCommand(std::string command);

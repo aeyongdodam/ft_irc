@@ -16,8 +16,8 @@ Server::Server(const Server& other)
 
 Server& Server::operator=(const Server& source)
 {
-	(void)source;
-	return (*this);
+    (void)source;
+    return (*this);
 }
 
 Server::~Server(){}
@@ -31,15 +31,15 @@ void Server::init(unsigned short portNum)
         passFlag[i] = 0;
     }
 
-	std::cout << "Server start..." << std::endl;
+    std::cout << "Server start..." << std::endl;
     listenSd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (listenSd == -1)
         errProc("socket");
 
-	if (fcntl(listenSd, F_SETFL, O_NONBLOCK) == -1)
+    if (fcntl(listenSd, F_SETFL, O_NONBLOCK) == -1)
         errProc("fcntl");
 
-	std::memset(&srvAddr, 0, sizeof(srvAddr));
+    std::memset(&srvAddr, 0, sizeof(srvAddr));
     srvAddr.sin_addr.s_addr = htonl(INADDR_ANY);
     srvAddr.sin_family = AF_INET;
     srvAddr.sin_port = htons(portNum);
@@ -50,10 +50,10 @@ void Server::init(unsigned short portNum)
     if (listen(listenSd, 5) < 0)
         errProc("listen");
 
-	fds[0].fd = listenSd;
-	fds[0].events = POLLIN;
+    fds[0].fd = listenSd;
+    fds[0].events = POLLIN;
 
-	clntAddrLen = sizeof(clntAddr);
+    clntAddrLen = sizeof(clntAddr);
 }
 
 void Server::connectClient(int i)
@@ -108,21 +108,21 @@ void Server::disconnectClient(int i, int readfd)
 
 void Server::monitoring(std::string password)
 {
-	while (true) {
+    while (true) {
         int ready = poll(fds, MAX_EVENTS + 1, -1);
         if (ready == -1) errProc("poll");
-		for (int i = 0; i < MAX_EVENTS; i++) {
+        for (int i = 0; i < MAX_EVENTS; i++) {
             if (fds[i].revents & POLLIN) {
                 if (fds[i].fd == listenSd) connectClient(i);
                 else readClient(i, password);
             }
         }
-	}
+    }
 }
 
 void Server::destroy()
 {
-	close(Server::listenSd);
+    close(Server::listenSd);
 }
 
 Channel* Server::createChannel(std::string name) {

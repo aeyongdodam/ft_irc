@@ -22,7 +22,7 @@ class Channel
 
 		Channel();
 
-    public:
+	public:
 		Channel(std::string name);
 		Channel(const Channel& copy);
 		Channel& operator=(const Channel& copy);
