@@ -96,16 +96,16 @@ void Server::readClient(int i, std::string password)
 			checkPassword(optionString, password);
 		// sendMeddage 함수 사용 예시
 		// if (commandNum == 2) //USER CMD_USER
-        // {
-        //     clients[i].setNickName("mkwon");
-        //     std::string str = std::to_string(1) + " " + clients[i].getNickName() + " :Welcome to the IRC network mkwon!";
-        //     sendMessage(i, str);
+		// {
+		//     clients[i].setNickName("mkwon");
+		//     std::string str = std::to_string(1) + " " + clients[i].getNickName() + " :Welcome to the IRC network mkwon!";
+		//     sendMessage(i, str);
 		// 	// sendMessage(i, join(parameter));
-        // }
+		// }
 		// if (commandNum == 3) // JOIN
 		// {
-        //     std::string str = std::to_string(331) + " channelName :No topic is set";
-        //     sendMessage(i, str);
+		//     std::string str = std::to_string(331) + " channelName :No topic is set";
+		//     sendMessage(i, str);
 		// }
 	}
 }
