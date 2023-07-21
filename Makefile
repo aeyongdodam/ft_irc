@@ -1,8 +1,8 @@
 NAME	=	ircserv
 
-SRCS	=	main.cpp Server.cpp Client.cpp Channel.cpp
+SRCS	=	main.cpp Server.cpp Client.cpp Channel.cpp command/pass.cpp
 OBJS	=	$(SRCS:%.cpp=%.o)
-HEADER	=	Server.hpp Client.hpp Channel.hpp
+HEADER	=	Server.hpp Client.hpp Channel.hpp 
 
 CXX		=	c++
 CXXFLAGS	=	-Wall -Werror -Wextra -std=c++98

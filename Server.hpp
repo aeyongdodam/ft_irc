@@ -18,6 +18,8 @@
 #include <list>
 
 #include "Client.hpp"
+#include "command/command.hpp"
+
 #include <vector>
 
 class Channel;
@@ -58,6 +60,5 @@ class Server
 };
 
 void errProc(const char*);
-int checkPassword(std::string pass, std::string password);
 
 #endif

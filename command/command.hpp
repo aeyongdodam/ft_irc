@@ -10,3 +10,5 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <list>
+
+int checkPassword(std::string pass, std::string password);
