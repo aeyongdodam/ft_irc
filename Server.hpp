@@ -88,7 +88,7 @@ class Server
 		int commandParsing(std::string input);
 		int checkCommand(std::string command);
 
-		void sendMessage(int i, int numeric, std::string str);
+		void sendMessage(int i, std::string str);
 
 };
 
