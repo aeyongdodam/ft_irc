@@ -33,48 +33,48 @@
 
 Client::Client()
 {
-    // channels = NULL;
-    passFlag = 0;
+	// channels = NULL;
+	passFlag = 0;
 }
 
 Client::~Client() {}
 
 std::string Client::getNickName() const
 {
-    return nickName;
+	return nickName;
 }
 
 std::string Client::getLoginName() const
 {
-    return loginName;
+	return loginName;
 }
 
 std::string Client::getRealName() const
 {
-    return realName;
+	return realName;
 }
 
 bool Client::getPassFlag() const
 {
-    return passFlag;
+	return passFlag;
 }
 
 void Client::setNickName(std::string nickName_)
 {
-    nickName = nickName_;
+	nickName = nickName_;
 }
 
 void Client::setLoginName(std::string loginName_)
 {
-    loginName = loginName_;
+	loginName = loginName_;
 }
 
 void Client::setRealName(std::string setRealName_)
 {
-    realName = setRealName_;
+	realName = setRealName_;
 }
 
 void Client::setPassFlag(bool passFlag_)
 {
-    passFlag = passFlag_;
+	passFlag = passFlag_;
 }
