@@ -28,7 +28,6 @@ class Client
 		Client();
 		~Client();
 
-		// void clientInfoinit(std::string input);
 		std::string getNickName() const;
 		std::string getLoginName() const;
 		std::string getRealName() const;
