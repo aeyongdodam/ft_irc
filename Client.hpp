@@ -17,26 +17,26 @@
 
 class Client
 {
-    private:
-        std::string nickName;
-        std::string loginName;
-        std::string realName;
-        // Channel *channels;
-        bool passFlag;
+	private:
+		std::string nickName;
+		std::string loginName;
+		std::string realName;
+		// Channel *channels;
+		bool passFlag;
 
-    public:
-        Client();
-        ~Client();
+	public:
+		Client();
+		~Client();
 
-        // void clientInfoinit(std::string input);
-        std::string getNickName() const;
-        std::string getLoginName() const;
-        std::string getRealName() const;
-        bool getPassFlag() const;
-        void setNickName(std::string nickName_);
-        void setLoginName(std::string loginName_);
-        void setRealName(std::string setRealName_);
-        void setPassFlag(bool passFlag_);
+		// void clientInfoinit(std::string input);
+		std::string getNickName() const;
+		std::string getLoginName() const;
+		std::string getRealName() const;
+		bool getPassFlag() const;
+		void setNickName(std::string nickName_);
+		void setLoginName(std::string loginName_);
+		void setRealName(std::string setRealName_);
+		void setPassFlag(bool passFlag_);
 };
 
 #endif

@@ -3,11 +3,15 @@
 
 Server::Server()
 {
+	commandList[0] = "PASS";
+	commandList[1] = "NICK";
+	commandList[2] = "USER";
+	commandList[3] = "JOIN";
 }
 
 Server::Server(const Server& other)
 {
-    (void)other;
+	(void)other;
 }
 
 Server& Server::operator=(const Server& source)
@@ -16,36 +20,35 @@ Server& Server::operator=(const Server& source)
 	return (*this);
 }
 
-Server::~Server()
-{
-}
+Server::~Server(){}
 
 void Server::init(unsigned short portNum)
 {
-    for (int i = 0; i < MAX_EVENTS + 1; i++) {
-        fds[i].fd = -1;
-        fds[i].events = 0;
-        passFlag[i] = 0;
-    }
+	for (int i = 0; i < MAX_EVENTS + 1; i++) 
+	{
+		fds[i].fd = -1;
+		fds[i].events = 0;
+		passFlag[i] = 0;
+	}
 
 	std::cout << "Server start..." << std::endl;
-    listenSd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (listenSd == -1)
-       	errProc("socket");
+	listenSd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (listenSd == -1)
+		errProc("socket");
 
 	if (fcntl(listenSd, F_SETFL, O_NONBLOCK) == -1)
-        errProc("fcntl");
+		errProc("fcntl");
 
 	std::memset(&srvAddr, 0, sizeof(srvAddr));
-    srvAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    srvAddr.sin_family = AF_INET;
-    srvAddr.sin_port = htons(portNum);
+	srvAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	srvAddr.sin_family = AF_INET;
+	srvAddr.sin_port = htons(portNum);
 
-    if (bind(listenSd, (struct sockaddr*)&srvAddr, sizeof(srvAddr)) == -1)
-        errProc("bind");
+	if (bind(listenSd, (struct sockaddr*)&srvAddr, sizeof(srvAddr)) == -1)
+		errProc("bind");
 
-    if (listen(listenSd, 5) < 0)
-        errProc("listen");
+	if (listen(listenSd, 5) < 0)
+		errProc("listen");
 
 	fds[0].fd = listenSd;
 	fds[0].events = POLLIN;
@@ -55,61 +58,71 @@ void Server::init(unsigned short portNum)
 
 void Server::connectClient(int i)
 {
-    connectSd = accept(listenSd, (struct sockaddr*)&clntAddr, &clntAddrLen);
-    if (connectSd == -1)
-    {
-        std::cerr << "Accept Error";
-        return;
-    }
-    if (fcntl(connectSd, F_SETFL, O_NONBLOCK) == -1) 
-        errProc("fcntl");
-    fds[i].fd = connectSd;
-    fds[i].events = POLLIN;
+	connectSd = accept(listenSd, (struct sockaddr*)&clntAddr, &clntAddrLen);
+	if (connectSd == -1)
+	{
+		std::cerr << "Accept Error";
+		return;
+	}
+	if (fcntl(connectSd, F_SETFL, O_NONBLOCK) == -1) 
+		errProc("fcntl");
+
+	fds[i].fd = connectSd;
+	fds[i].events = POLLIN;
 }
 
 void Server::readClient(int i, std::string password)
 {
-    int readfd = fds[i].fd;
-    int readLen = read(readfd, rBuff, sizeof(rBuff) - 1);
-    if (readLen == 0)
-    {
-        std::cerr << "A client is disconnected" << std::endl;
-        disconnectClient(i, readfd);
-    }
-    else if (readLen == -1 && errno != EWOULDBLOCK)
-    {
-        std::cerr << "A client is disconnected (Bad Exit)" << std::endl;
-        disconnectClient(i, readfd);
-    }
-    else if (readLen > 0)
-    {
-        rBuff[readLen] = '\0';
-        std::cout << "rBuff Message : " << rBuff << std::endl;
-        // rBuff 파싱
-        (void)password;
-    }
-    
+	int readfd = fds[i].fd;
+	int readLen = read(readfd, rBuff, sizeof(rBuff) - 1);
+	if (readLen == 0)
+	{
+		std::cerr << "A client is disconnected" << std::endl;
+		disconnectClient(i, readfd);
+	}
+	else if (readLen == -1 && errno != EWOULDBLOCK)
+	{
+		std::cerr << "A client is disconnected (Bad Exit)" << std::endl;
+		disconnectClient(i, readfd);
+	}
+	else if (readLen > 0)
+	{
+		rBuff[readLen] = '\0';
+		std::cout << "rBuff Message : " << rBuff << std::endl;
+		// rBuff 파싱
+		int commandNum = commandParsing(rBuff);
+		std::string optionString =  std::strchr(rBuff, ' ') + 1;
+		if (commandNum == 0)
+			checkPassword(optionString, password);
+	}
 }
 
 void Server::disconnectClient(int i, int readfd)
 {
-    close(readfd);
-    fds[i].fd = -1;
-    fds[i].events = 0;
-    passFlag[i] = 0;
+	close(readfd);
+	fds[i].fd = -1;
+	fds[i].events = 0;
+	passFlag[i] = 0;
 }
 
 void Server::monitoring(std::string password)
 {
-	while (true) {
-        int ready = poll(fds, MAX_EVENTS + 1, -1);
-        if (ready == -1) errProc("poll");
-		for (int i = 0; i < MAX_EVENTS; i++) {
-            if (fds[i].revents & POLLIN) {
-                if (fds[i].fd == listenSd) connectClient(i);
-                else readClient(i, password);
-            }
-        }
+	while (true)
+	{
+		int ready = poll(fds, MAX_EVENTS + 1, -1);
+		if (ready == -1)
+			errProc("poll");
+
+		for (int i = 0; i < MAX_EVENTS; i++)
+		{
+			if (fds[i].revents & POLLIN)
+			{
+				if (fds[i].fd == listenSd)
+					connectClient(i);
+				else
+					readClient(i, password);
+			}
+		}
 	}
 }
 
@@ -119,63 +132,62 @@ void Server::destroy()
 }
 
 Channel* Server::createChannel(std::string name) {
-    return new Channel(name);
+	return new Channel(name);
 }
 
 void errProc(const char* str)
 {
-    std::cerr << str << ": " << strerror(errno) << std::endl;
-    exit(1);
+	std::cerr << str << ": " << strerror(errno) << std::endl;
+	exit(1);
 }
 
-int checkPassword(char rBuff[BUFSIZ], std::string password, int passflag)
+int checkPassword(std::string pass, std::string password)
 {
-    if (std::strncmp("PASS ", rBuff, 5) == 0)
-    {
-        std::string pass = std::strchr(rBuff, ' ') + 1;
-        std::cout << "문자열 : "<< pass.length() << std::endl;
-        std::cout << "pass=" << pass << "------------------\n";
-        if (pass.c_str() != NULL)
-        {
-            if (std::strncmp(password.c_str(), pass.c_str(), password.size()) == 0)
-            {
-                std::cout << "The password is correct" << std::endl;
-                passflag = 1;
-                return passflag;
-            }
-            else
-            {
-                std::cout << "The password is not correct" << std::endl;
-                return passflag;
-            }
-        }
-        std::cout << "The password is not correct" << std::endl;
-        return passflag;
-    }
-    std::cout << "The password is not correct" << std::endl;
-    return passflag;
+	int passflag = 0;
+	if (pass.c_str() != NULL)
+	{
+		if (std::strncmp(password.c_str(), pass.c_str(), password.size()) == 0)
+		{
+			std::cout << "The password is correct" << std::endl;
+			passflag = 1;
+			return passflag;
+		}
+		else
+		{
+			std::cout << "The password is not correct" << std::endl;
+			return passflag;
+		}
+	}
+	std::cout << "The password is not correct" << std::endl;
+	return passflag;
 }
 
-// int checkPassword(char rBuff[BUFSIZ], std::string password, int passflag)
-// {
-//     int index = 0;
-//     if (strncmp("PASS", rBuff, 4) == 0)
-//     {
-//         index = 4;
-//         while (rBuff[index] == ' ' && rBuff[index] != 0)
-//             index++;
-//         if (strncmp(password.c_str(), &rBuff[index], password.size()) == 0)
-//         {
-//             std::cout << "The password is correct" << std::endl;
-//             passflag = 1;
-//             return passflag;
-//         }
-//         else
-//         {
-//             std::cout << "The password is not correct" << std::endl;
-//             return passflag;
-//         }
-//     }
-//     std::cout << "The password is not correct" << std::endl;
-//     return passflag;
-// }
+int Server::commandParsing(std::string input)
+{
+	int commandNum;
+	size_t end = input.find(' ');
+	if (end != std::string::npos)
+	{
+		std::string command = input.substr(0, end);
+		commandNum = checkCommand(command);
+		if (commandNum == -1)
+		{
+			std::cout << "명령어 없음 " << std::endl;
+			return -1;
+		}
+		return commandNum;
+	}
+	std::cout << "명령어 없음 " << std::endl;
+	return -1;
+}
+
+int Server::checkCommand(std::string command)
+{
+	for (int i = 0; i < (int)sizeof(commandList) ; i++)
+	{
+		if (commandList[i] == command)
+			return i;
+	}
+	std::cout << "그런 명령어는 없어용~" << std::endl;
+	return -1;
+}

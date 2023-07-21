@@ -2,6 +2,7 @@
 #define SERVER_HPP
 
 #define MAX_EVENTS 10
+#define CMD_COUNT 4
 
 #include <iostream>
 #include <cstdlib>
@@ -17,6 +18,7 @@
 #include <list>
 
 #include "Client.hpp"
+#include <vector>
 
 class Channel;
 
@@ -32,13 +34,13 @@ class Server
 		struct sockaddr_in srvAddr, clntAddr;
 		socklen_t clntAddrLen;
 		int listenSd, connectSd;
-    	char rBuff[BUFSIZ];
+		char rBuff[BUFSIZ];
 
 		Client clients[MAX_EVENTS  + 1];
 		std::list<Channel> channels;
-		
+		std::string commandList[CMD_COUNT];
 
-    public:
+	public:
 		Server();
 		~Server();
 
@@ -48,12 +50,14 @@ class Server
 		void readClient(int i, std::string password);
 		void disconnectClient(int i, int readfd);
 		void destroy();
-  
+
 		Channel* createChannel(std::string name);
+		int commandParsing(std::string input);
+		int checkCommand(std::string command);
 
 };
 
 void errProc(const char*);
-int checkPassword(char rBuff[BUFSIZ], std::string password, int passflag);
+int checkPassword(std::string pass, std::string password);
 
 #endif
