@@ -94,7 +94,19 @@ void Server::readClient(int i, std::string password)
 		std::string optionString =  std::strchr(rBuff, ' ') + 1;
 		if (commandNum == 0)
 			checkPassword(optionString, password);
+		if (commandNum == 2) //JOIN
+        {
+            clients[i].setNickName("mkwon");
+            std::string str = " " + clients[i].getNickName() + " :Welcome to the IRC network mkwon!";
+            sendMessage(i, 1, str);
+        }
 	}
+}
+
+void Server::sendMessage(int i, int numeric, std::string str)
+{
+    std::string numericMessage = ":127.0.0.1 " + std::to_string(numeric) + str + "\r\n";
+    write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
 }
 
 void Server::disconnectClient(int i, int readfd)
