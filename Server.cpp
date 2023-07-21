@@ -131,8 +131,35 @@ void Server::destroy()
 	close(Server::listenSd);
 }
 
-Channel* Server::createChannel(std::string name) {
-	return new Channel(name);
+Channel* Server::createChannel(int adminId, std::string &name)
+{
+	Channel* newChannel = new Channel(adminId, name);
+	
+	channelMap[name] = newChannel;
+	return newChannel;
+}
+
+Channel* Server::findChannel(std::string &name)
+{
+	std::map<std::string, Channel*>::iterator it = channelMap.find(name);
+	
+	if (it != channelMap.end())
+		return it->second;
+	else
+		return NULL;
+}
+
+bool Server::deleteChannel(std::string &name)
+{
+	std::map<std::string, Channel*>::iterator it = channelMap.find(name);
+	
+	if (it != channelMap.end())
+	{
+		delete it->second;
+		channelMap.erase(it);
+		return true;
+	}
+	return false;
 }
 
 void errProc(const char* str)

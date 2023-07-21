@@ -12,21 +12,32 @@
 class Channel 
 {
 	private:
-		Client		admin;
-		std::string	name;
-		std::string	*topic;
-		std::string	*key;
-		bool		inviteOnly;
-		int			clientStatus[MAX_EVENTS + 1];
-		int			maxCapacity;
+		const int			adminId;
+		const std::string	name;
+		std::string			*topic;
+		std::string			*key;
+		bool				inviteOnly;
+		int					clientStatus[MAX_EVENTS + 1];
+		int					capacity;
+		int					maxCapacity;
 
 		Channel();
 
 	public:
-		Channel(std::string name);
+		Channel(int adminId, std::string& name);
 		Channel(const Channel& copy);
 		Channel& operator=(const Channel& copy);
 		~Channel();
+
+		int	joinChannel(int clientId);
+		int joinChannel(int clientId, std::string& key);
+		int inviteClient(int adminId, int targetId);
+        int kickClient(int adminId, int targetId);
+		int banClient(int adminId, int targetId);
+
+		int changeInviteOnly(int adminId, bool inviteOnly);
+		int changeTopic(int adminId, std::string* topic);
+		int changeKey(int adminId, std::string* key);
 };
 
 #endif
