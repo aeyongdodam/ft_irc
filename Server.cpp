@@ -141,11 +141,11 @@ void errProc(const char* str)
 	exit(1);
 }
 
-
 int Server::commandParsing(std::string input)
 {
 	int commandNum;
 	size_t end = input.find(' ');
+	// std::cout << "end : " << end << std::endl;
 	if (end != std::string::npos)
 	{
 		std::string command = input.substr(0, end);
