@@ -2,6 +2,7 @@
 #define SERVER_HPP
 
 #define MAX_EVENTS 10
+#define CMD_COUNT 4
 
 #include <iostream>
 #include <cstdlib>
@@ -17,7 +18,7 @@
 #include <list>
 
 #include "Client.hpp"
-#include <array>
+#include <vector>
 
 class Channel;
 
@@ -37,8 +38,7 @@ class Server
 
 		Client clients[MAX_EVENTS  + 1];
 		std::list<Channel> channels;
-		std::array<std::string, 4> commandList;
-		
+		std::string commandList[CMD_COUNT];
 
     public:
 		Server();
