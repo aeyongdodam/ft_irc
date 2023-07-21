@@ -145,7 +145,6 @@ int Server::commandParsing(std::string input)
 {
 	int commandNum;
 	size_t end = input.find(' ');
-	// std::cout << "end : " << end << std::endl;
 	if (end != std::string::npos)
 	{
 		std::string command = input.substr(0, end);
@@ -163,7 +162,7 @@ int Server::commandParsing(std::string input)
 
 int Server::checkCommand(std::string command)
 {
-	for (int i = 0; i < (int)sizeof(commandList) ; i++)
+	for (int i = 0; i < CMD_COUNT ; i++)
 	{
 		if (commandList[i] == command)
 			return i;
