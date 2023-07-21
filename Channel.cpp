@@ -155,3 +155,12 @@ int Channel::changeKey(int adminId, std::string* key)
 	this->key = key;
 	return 1; // SUCCESS
 }
+
+int Channel::changeAdmin(int oldAdminId, int newAdminId)
+{
+	if (this->adminId != oldAdminId)
+		return 482; // ERR_CHANOPRIVSNEEDED
+		
+	adminId = oldAdminId;
+	return 1; // SUCCESS
+}

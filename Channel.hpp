@@ -12,7 +12,7 @@
 class Channel 
 {
 	private:
-		const int			adminId;
+		int					adminId;
 		const std::string	name;
 		std::string			*topic;
 		std::string			*key;
@@ -38,6 +38,7 @@ class Channel
 		int changeInviteOnly(int adminId, bool inviteOnly);
 		int changeTopic(int adminId, std::string* topic);
 		int changeKey(int adminId, std::string* key);
+		int changeAdmin(int oldAdminId, int newAdminId);
 };
 
 #endif
