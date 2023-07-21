@@ -92,6 +92,7 @@ void Server::readClient(int i, std::string password)
 		// rBuff 파싱
 		int commandNum = commandParsing(rBuff);
 		std::string optionString =  std::strchr(rBuff, ' ') + 1;
+		optionString.erase(optionString.size() - 2, optionString.size() - 1);
 		if (commandNum == 0)
 			checkPassword(optionString, password);
 	}

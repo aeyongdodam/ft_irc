@@ -1,13 +1,11 @@
 #include "command.hpp"
 
-
-
 int checkPassword(std::string pass, std::string password)
 {
 	int passflag = 0;
 	if (pass.c_str() != NULL)
 	{
-		if (std::strncmp(password.c_str(), pass.c_str(), password.size()) == 0) // 고쳐야함
+		if (std::strncmp(password.c_str(), pass.c_str(), password.size() + 1) == 0)
 		{
 			std::cout << "The password is correct" << std::endl;
 			passflag = 1;
