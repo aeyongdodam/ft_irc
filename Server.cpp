@@ -92,6 +92,7 @@ void Server::readClient(int i, std::string password)
 		// rBuff 파싱
 		int commandNum = commandParsing(rBuff);
 		std::string optionString =  std::strchr(rBuff, ' ') + 1;
+		optionString.erase(optionString.size() - 2, optionString.size() - 1);
 		if (commandNum == 0)
 			checkPassword(optionString, password);
 		// sendMeddage 함수 사용 예시
@@ -160,27 +161,6 @@ void errProc(const char* str)
 	exit(1);
 }
 
-int checkPassword(std::string pass, std::string password)
-{
-	int passflag = 0;
-	if (pass.c_str() != NULL)
-	{
-		if (std::strncmp(password.c_str(), pass.c_str(), password.size()) == 0)
-		{
-			std::cout << "The password is correct" << std::endl;
-			passflag = 1;
-			return passflag;
-		}
-		else
-		{
-			std::cout << "The password is not correct" << std::endl;
-			return passflag;
-		}
-	}
-	std::cout << "The password is not correct" << std::endl;
-	return passflag;
-}
-
 int Server::commandParsing(std::string input)
 {
 	int commandNum;
@@ -202,7 +182,7 @@ int Server::commandParsing(std::string input)
 
 int Server::checkCommand(std::string command)
 {
-	for (int i = 0; i < (int)sizeof(commandList) ; i++)
+	for (int i = 0; i < CMD_COUNT ; i++)
 	{
 		if (commandList[i] == command)
 			return i;
