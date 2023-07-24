@@ -54,8 +54,8 @@
 // #include "../Client.hpp"
 
 class Server;
-
 int checkPassword(std::string pass, std::string password);
+int pass(std::string pass, std::string password, bool flag);
 std::string NICK(int fd, std::string nickname, Client clients[]);
 std::string USER(int fd, std::string str, Client clients[]);
 const std::string join(Server& server, std::string& channelName, int clientId);

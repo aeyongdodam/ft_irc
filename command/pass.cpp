@@ -1,5 +1,13 @@
 #include "command.hpp"
 
+int pass(std::string pass, std::string password, bool flag)
+{
+	if (flag == 1)
+		return (1);
+	else
+		return (checkPassword(pass, password));
+}
+
 int checkPassword(std::string pass, std::string password)
 {
 	int passflag = 0;

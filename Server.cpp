@@ -101,8 +101,11 @@ void Server::readClient(int i, std::string password)
 		std::string optionString =  std::strchr(rBuff, ' ') + 1;
 		optionString.erase(optionString.size() - 2, optionString.size() - 1);
 		if (commandNum == 0)
-			checkPassword(optionString, password);
+		{
+			int flag = pass(optionString, password, clients[i].getPassFlag());
+			clients[i].setPassFlag(flag);
 
+		}
     // 채널 운영자가 운영자를 강퇴 -> 쿠테타, 그냥 강퇴시키자 -> targetId clientStatus[]
     // 운영자가 채널 운영자 강퇴 ->
     // 강퇴가 안 된다 (방이 안 터져야 되면) -> 쿠데타
