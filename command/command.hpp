@@ -59,5 +59,6 @@ const std::string JOIN(Server& server, std::string& channelName, int clientId);
 const std::string JOIN(Server& server, std::string& channelName, int clientId, std::string& key);
 std::string makeJoinResponse(int responseCode);
 void PRIVMSG(int fd, std::string str);
+std::string KICK(std::string input, int clientId);
 
 #endif

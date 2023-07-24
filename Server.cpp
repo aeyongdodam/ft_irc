@@ -8,6 +8,7 @@ Server::Server()
 	commandList[2] = "USER";
 	commandList[3] = "JOIN";
 	commandList[4] = "PRIVMSG";
+  commandList[5] = "KICK";
 	connectClientNum = 0;
 }
 
@@ -143,6 +144,8 @@ void Server::readClient(int i)
 		}
 		if (commandNum == 4) //PRIVMSG
 			PRIVMSG(i, optionString);
+    if (commandNum == 5)
+			sendMessage(i, KICK(optionString, i));
 	}
 }
 
