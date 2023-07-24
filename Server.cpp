@@ -92,18 +92,35 @@ void Server::readClient(int i, std::string password)
 		// rBuff 파싱
 		int commandNum = commandParsing(rBuff);
 		std::string optionString =  std::strchr(rBuff, ' ') + 1;
+		optionString.erase(optionString.size() - 2, optionString.size() - 1);
 		if (commandNum == 0)
 			checkPassword(optionString, password);
-		
-		
+
+    // 채널 운영자가 운영자를 강퇴 -> 쿠테타, 그냥 강퇴시키자 -> targetId clientStatus[]
+    // 운영자가 채널 운영자 강퇴 ->
+    // 강퇴가 안 된다 (방이 안 터져야 되면) -> 쿠데타
+    // 
+		// sendMeddage 함수 사용 예시
+		// if (commandNum == 2) //USER CMD_USER
+		// {
+		//     clients[i].setNickName("mkwon");
+		//     std::string str = std::to_string(1) + " " + clients[i].getNickName() + " :Welcome to the IRC network mkwon!";
+		//     sendMessage(i, str);
+		// 	// sendMessage(i, join(parameter));
+		// }
+		// if (commandNum == 3) // JOIN
+		// {
+		//     std::string str = std::to_string(331) + " channelName :No topic is set";
+		//     sendMessage(i, str);
+		// }
 	}
 }
 
-// 채널 운영자가 운영자를 강퇴 -> 쿠테타, 그냥 강퇴시키자 -> targetId clientStatus[]
-// 운영자가 채널 운영자 강퇴 ->
-// 강퇴가 안 된다 (방이 안 터져야 되면) -> 쿠데타
-// 
-
+void Server::sendMessage(int i, std::string str)
+{
+    std::string numericMessage = ":127.0.0.1 " + str + "\r\n";
+    write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
+}
 
 void Server::disconnectClient(int i, int readfd)
 {
@@ -176,27 +193,6 @@ void errProc(const char* str)
 	exit(1);
 }
 
-int checkPassword(std::string pass, std::string password)
-{
-	int passflag = 0;
-	if (pass.c_str() != NULL)
-	{
-		if (std::strncmp(password.c_str(), pass.c_str(), password.size()) == 0)
-		{
-			std::cout << "The password is correct" << std::endl;
-			passflag = 1;
-			return passflag;
-		}
-		else
-		{
-			std::cout << "The password is not correct" << std::endl;
-			return passflag;
-		}
-	}
-	std::cout << "The password is not correct" << std::endl;
-	return passflag;
-}
-
 int Server::commandParsing(std::string input)
 {
 	int commandNum;
@@ -218,7 +214,7 @@ int Server::commandParsing(std::string input)
 
 int Server::checkCommand(std::string command)
 {
-	for (int i = 0; i < (int)sizeof(commandList) ; i++)
+	for (int i = 0; i < CMD_COUNT ; i++)
 	{
 		if (commandList[i] == command)
 			return i;
