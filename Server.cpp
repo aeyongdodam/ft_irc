@@ -7,6 +7,8 @@ Server::Server()
 	commandList[1] = "NICK";
 	commandList[2] = "USER";
 	commandList[3] = "JOIN";
+
+	commandList[5] = "KICK";
 }
 
 Server::Server(const Server& other)
@@ -118,6 +120,9 @@ void Server::readClient(int i)
 		//     std::string str = std::to_string(331) + " channelName :No topic is set";
 		//     sendMessage(i, str);
 		// }
+
+		if (commandNum == 5)
+			sendMessage(i, KICK(optionString, i));
 	}
 }
 
