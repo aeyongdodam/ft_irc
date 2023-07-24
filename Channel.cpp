@@ -98,6 +98,17 @@ int Channel::kickClient(int adminId, int targetId)
 	return 1; // SUCCESS
 }
 
+int Channel::partClient(int clientId)
+{
+	if (clientStatus[clientId] != CONNECTED)
+		return ERR_NOTONCHANNEL;
+
+	clientStatus[clientId] = UNCONNECTED;
+	capacity -= 1;
+
+	return SUCCESS;
+}
+
 int Channel::banClient(int adminId, int targetId)
 {
 	// 관리자가 스스로 밴을 하면?

@@ -129,9 +129,9 @@ void Server::readClient(int i)
 		// 
 		if (commandNum == 0)
 		{
-			checkPassword(optionString, i);
-			std::string str = "001 mkwon :Welcome to the IRC Network !!";
-			sendMessage(i, str);
+			std::string str = PASS(optionString, i);
+			if (!str.empty())
+				sendMessage(i, str);
 		}
 		if (commandNum == 1) // NICK
 			sendMessage(i, NICK(i, optionString));

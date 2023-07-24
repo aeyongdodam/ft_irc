@@ -2,59 +2,28 @@
 #include "../Server.hpp"
 #include "../Channel.hpp"
 
-const std::string join(std::string& channelName, int clientId)
-{
-    int responseCode;
-    Server& server = Server::getInstance();
-    Channel *channel = server.findChannel(channelName);
-    if (channel == NULL)
-        channel = server.createChannel(clientId, channelName);
-
-    responseCode = channel->joinChannel(clientId);
-
-    return makeJoinResponse(responseCode, channel);
-}
-
-const std::string join(std::string& channelName, int clientId, std::string& key)
+std::string	PART(std::string channelName, int clientId)
 {
     Server& server = Server::getInstance();
-    Channel *channel = server.findChannel(channelName);
+    Channel* channel = server.findChannel(channelName);
 
-    int responseCode = channel->joinChannel(clientId, key);
+    int	responseCode = channel->partClient(clientId);
 
-    return makeJoinResponse(responseCode, channel);
+	return makePartResponse(responseCode, channelName);
 }
 
-std::string makeJoinResponse(int responseCode, Channel* channel)
+std::string makePartResponse(int responseCode, std::string channelName)
 {
-    std::string resMsg;
+    if (responseCode == SUCCESS)
+        return ":nick!nick@servername JOIN #channel";
 
-    resMsg += std::to_string(responseCode);
+    std::string resMsg = std::to_string(responseCode);
     resMsg += " ";
-    resMsg += channel->getName();
-    resMsg += " :";
-
-    switch (responseCode)
-    {
-        case ERR_INVITEONLYCHAN:
-            resMsg += "Cannot join channel (+i)";
-            break;
-        case ERR_BANNEDFROMCHAN:
-            resMsg += "Cannot join channel (+b)";
-            break;
-        case ERR_BADCHANNELKEY:
-            resMsg += "Cannot join channel (+k)";
-            break;
-        case ERR_CHANNELISFULL:
-            resMsg += "Cannot join channel (+l)";
-            break;
-        default:
-            std::string* topic = channel->getTopic();
-            if (topic)
-                resMsg += *topic;
-            else
-                resMsg += "No topic is set";
-    }
-    
+    resMsg += channelName;
+    if (responseCode == ERR_NOTONCHANNEL)
+        resMsg += " :You're not on that channel";
+    if (responseCode == ERR_NOTONCHANNEL)
+        resMsg += " :No such channel";
+        
     return resMsg;
 }
