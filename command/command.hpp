@@ -3,7 +3,7 @@
 
 
 
-
+#define SUCCESS 1
 #define RPL_WELCOME 1
 #define RPL_AWAY 301
 #define RPL_NOTOPIC 331

@@ -32,6 +32,7 @@ class Channel
 		int	joinChannel(int clientId);
 		int joinChannel(int clientId, std::string& key);
 		int inviteClient(int adminId, int targetId);
+		int partClient(int clientId);
         int kickClient(int adminId, int targetId);
 		int banClient(int adminId, int targetId);
 
