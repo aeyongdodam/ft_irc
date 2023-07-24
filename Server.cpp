@@ -79,6 +79,24 @@ void Server::connectClient(int i)
 
 	fds[i].fd = connectSd;
 	fds[i].events = POLLIN;
+
+	int newConnect;
+	for (newConnect=0; newConnect<MAX_EVENTS; newConnect++)
+	{
+		if (fds[newConnect].fd == -1)
+            break;
+	}
+
+	if (newConnect == MAX_EVENTS)
+	{
+		std::cerr << "MAX_EVENTS limit reached." << std::endl;
+        close(connectSd);
+        return;
+	}
+
+	fds[newConnect].fd = listenSd;
+	fds[newConnect].events = POLLIN;
+	connectClientNum++;
 }
 
 void Server::readClient(int i)
@@ -117,10 +135,7 @@ void Server::readClient(int i)
 		if (commandNum == 1) // NICK
 			sendMessage(i, NICK(i, optionString));
 		if (commandNum == 2) // USER
-		{
 			sendMessage(i, USER(i, optionString));
-			connectClientNum++;
-		}
 		if (commandNum == 3) // JOIN
 		{
 		    std::string str = std::to_string(331) + " channelName :No topic is set";
