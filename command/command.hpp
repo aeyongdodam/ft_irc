@@ -1,8 +1,6 @@
 #ifndef COMMAND_HPP
 #define COMMAND_HPP
 
-
-
 #define SUCCESS 1
 #define RPL_WELCOME 1
 #define RPL_AWAY 301
@@ -51,17 +49,15 @@
 #include <list>
 
 #include "../Server.hpp"
-// #include "../Client.hpp"
 
 class Server;
 
-int checkPassword(std::string pass, int clientId);
 std::string PASS(std::string pass, int clientId);
-std::string NICK(int fd, std::string nickname, Client clients[]);
-std::string USER(int fd, std::string str, Client clients[]);
+std::string NICK(int fd, std::string nickname);
+std::string USER(int fd, std::string str);
 const std::string JOIN(Server& server, std::string& channelName, int clientId);
 const std::string JOIN(Server& server, std::string& channelName, int clientId, std::string& key);
-std::string makeJoinResponse(int responseCode);
-void PRIVMSG(int fd, std::string str, Client clients[]);
+void PRIVMSG(int fd, std::string str);
+std::string KICK(std::string input, int clientId);
 
 #endif

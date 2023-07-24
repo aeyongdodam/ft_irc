@@ -8,6 +8,7 @@ Server::Server()
 	commandList[2] = "USER";
 	commandList[3] = "JOIN";
 	commandList[4] = "PRIVMSG";
+  commandList[5] = "KICK";
 	connectClientNum = 0;
 }
 
@@ -79,6 +80,24 @@ void Server::connectClient(int i)
 
 	fds[i].fd = connectSd;
 	fds[i].events = POLLIN;
+
+	int newConnect;
+	for (newConnect=0; newConnect<MAX_EVENTS; newConnect++)
+	{
+		if (fds[newConnect].fd == -1)
+            break;
+	}
+
+	if (newConnect == MAX_EVENTS)
+	{
+		std::cerr << "MAX_EVENTS limit reached." << std::endl;
+        close(connectSd);
+        return;
+	}
+
+	fds[newConnect].fd = listenSd;
+	fds[newConnect].events = POLLIN;
+	connectClientNum++;
 }
 
 void Server::readClient(int i)
@@ -115,19 +134,18 @@ void Server::readClient(int i)
 				sendMessage(i, str);
 		}
 		if (commandNum == 1) // NICK
-			sendMessage(i, NICK(i, optionString, clients));
+			sendMessage(i, NICK(i, optionString));
 		if (commandNum == 2) // USER
-		{
-			sendMessage(i, USER(i, optionString, clients));
-			connectClientNum++;
-		}
+			sendMessage(i, USER(i, optionString));
 		if (commandNum == 3) // JOIN
 		{
 		    std::string str = std::to_string(331) + " channelName :No topic is set";
 		    sendMessage(i, str);
 		}
 		if (commandNum == 4) //PRIVMSG
-			PRIVMSG(i, optionString, clients);
+			PRIVMSG(i, optionString);
+    if (commandNum == 5)
+			sendMessage(i, KICK(optionString, i));
 	}
 }
 

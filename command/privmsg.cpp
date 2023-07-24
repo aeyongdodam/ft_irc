@@ -1,11 +1,13 @@
 #include "command.hpp"
 #include "../Channel.hpp"
 
-void PRIVMSG(int fd, std::string str, Client clients[])
+void PRIVMSG(int fd, std::string str)
 {
+	Server& server = Server::getInstance();
+	Client* clients = server.getClients();
+
 	int numeric;
 	std::string message;
-	Server& server = Server::getInstance();
 
 	size_t chennelPoint = str.find('#');
 	size_t spacePoint = str.find(' ');

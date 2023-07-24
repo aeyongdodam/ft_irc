@@ -1,7 +1,10 @@
 #include "command.hpp"
 
-std::string NICK(int fd, std::string nickname, Client clients[])
+std::string NICK(int fd, std::string nickname)
 {
+	Server& server = Server::getInstance();
+	Client* clients = server.getClients();
+
 	int numeric;
 	std::string message;
 
