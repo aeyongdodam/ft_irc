@@ -164,3 +164,8 @@ int Channel::changeAdmin(int oldAdminId, int newAdminId)
 	adminId = newAdminId;
 	return 1; // SUCCESS
 }
+
+int* Channel::getClientStatus()
+{
+	return clientStatus;
+}

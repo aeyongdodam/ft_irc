@@ -7,6 +7,8 @@ Server::Server()
 	commandList[1] = "NICK";
 	commandList[2] = "USER";
 	commandList[3] = "JOIN";
+	commandList[4] = "PRIVMSG";
+	connectClientNum = 0;
 }
 
 Server::Server(const Server& other)
@@ -114,18 +116,23 @@ void Server::readClient(int i, std::string password)
 		if (commandNum == 1) // NICK
 			sendMessage(i, NICK(i, optionString, clients));
 		if (commandNum == 2) // USER
+		{
 			sendMessage(i, USER(i, optionString, clients));
+			connectClientNum++;
+		}
 		if (commandNum == 3) // JOIN
 		{
 		    std::string str = std::to_string(331) + " channelName :No topic is set";
 		    sendMessage(i, str);
 		}
+		if (commandNum == 4) //PRIVMSG
+			PRIVMSG(i, optionString, clients);
 	}
 }
 
 void Server::sendMessage(int i, std::string str)
 {
-    std::string numericMessage = ":127.0.0.1 " + str + "\r\n";
+    std::string numericMessage = ":10.14.1.5 " + str + "\r\n";
     write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
 }
 
@@ -228,4 +235,9 @@ int Server::checkCommand(std::string command)
 	}
 	std::cout << "그런 명령어는 없어용~" << std::endl;
 	return -1;
+}
+
+int Server::getConnectClientNum() const
+{
+	return connectClientNum;
 }

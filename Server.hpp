@@ -2,7 +2,7 @@
 #define SERVER_HPP
 
 #define MAX_EVENTS 10
-#define CMD_COUNT 4
+#define CMD_COUNT 5
 
 #include <iostream>
 #include <cstdlib>
@@ -43,6 +43,8 @@ class Server
 		std::map<std::string, Channel*> channelMap;
 		std::string commandList[CMD_COUNT];
 
+		int connectClientNum;
+
 	public:
 		Server& operator=(const Server& copy);
 		static Server& getInstance();
@@ -60,7 +62,7 @@ class Server
 
         int commandParsing(std::string input);
         int checkCommand(std::string command);
-
+		int getConnectClientNum() const;
 		void sendMessage(int i, std::string str);
 
 };
