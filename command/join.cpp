@@ -1,4 +1,5 @@
 #include "command.hpp"
+#include "../Server.hpp"
 
 const std::string join(Server& server, std::string& channelName, int clientId)
 {

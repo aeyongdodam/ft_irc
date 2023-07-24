@@ -1,20 +1,8 @@
 #ifndef COMMAND_HPP
 #define COMMAND_HPP
 
-#include <iostream>
-#include <cstdlib>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <cstring>
-#include <unistd.h>
-#include <sys/time.h>
-#include <poll.h>
-#include <cerrno>
-#include <fcntl.h>
-#include <list>
 
-#include "../Client.hpp"
+
 
 #define RPL_WELCOME 1
 #define RPL_AWAY 301
@@ -49,11 +37,27 @@
 #define ERR_BADCHANMASK 476
 #define ERR_CHANOPRIVSNEEDED 482
 
+#include <iostream>
+#include <cstdlib>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <cstring>
+#include <unistd.h>
+#include <sys/time.h>
+#include <poll.h>
+#include <cerrno>
+#include <fcntl.h>
+#include <list>
+
+#include "../Server.hpp"
+// #include "../Client.hpp"
+
 int checkPassword(std::string pass, std::string password);
 std::string NICK(int fd, std::string nickname, Client clients[]);
 std::string USER(int fd, std::string str, Client clients[]);
-const std::string join(Server& server, std::string& channelName, int clientId);
-const std::string join(Server& server, std::string& channelName, int clientId, std::string& key);
+// const std::string join(Server& server, std::string& channelName, int clientId);
+// const std::string join(Server& server, std::string& channelName, int clientId, std::string& key);
 std::string makeJoinResponse(int responseCode);
 
 #endif
