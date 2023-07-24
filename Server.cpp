@@ -95,6 +95,11 @@ void Server::readClient(int i, std::string password)
 		optionString.erase(optionString.size() - 2, optionString.size() - 1);
 		if (commandNum == 0)
 			checkPassword(optionString, password);
+
+    // 채널 운영자가 운영자를 강퇴 -> 쿠테타, 그냥 강퇴시키자 -> targetId clientStatus[]
+    // 운영자가 채널 운영자 강퇴 ->
+    // 강퇴가 안 된다 (방이 안 터져야 되면) -> 쿠데타
+    // 
 		// sendMeddage 함수 사용 예시
 		// if (commandNum == 2) //USER CMD_USER
 		// {
@@ -151,8 +156,35 @@ void Server::destroy()
 	close(Server::listenSd);
 }
 
-Channel* Server::createChannel(std::string name) {
-	return new Channel(name);
+Channel* Server::createChannel(int adminId, std::string &name)
+{
+	Channel* newChannel = new Channel(adminId, name);
+	
+	channelMap[name] = newChannel;
+	return newChannel;
+}
+
+Channel* Server::findChannel(std::string &name)
+{
+	std::map<std::string, Channel*>::iterator it = channelMap.find(name);
+	
+	if (it != channelMap.end())
+		return it->second;
+	else
+		return NULL;
+}
+
+bool Server::deleteChannel(std::string &name)
+{
+	std::map<std::string, Channel*>::iterator it = channelMap.find(name);
+	
+	if (it != channelMap.end())
+	{
+		delete it->second;
+		channelMap.erase(it);
+		return true;
+	}
+	return false;
 }
 
 void errProc(const char* str)
