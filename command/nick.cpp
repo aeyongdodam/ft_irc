@@ -1,7 +1,10 @@
 #include "command.hpp"
 
-std::string NICK(int fd, std::string nickname, Client clients[])
+std::string NICK(int fd, std::string nickname)
 {
+	Server& server = Server::getInstance();
+	Client* clients = server.getClients();
+
 	int numeric;
 	std::string message;
 
@@ -27,7 +30,7 @@ std::string NICK(int fd, std::string nickname, Client clients[])
 		if (flag)
 		{
 			numeric = RPL_WELCOME;
-			message = " " + nickname + " :Welcome to the IRC Network !! [!" + nickname + "@127.0.0.1]";
+			message = " " + nickname + " :Welcome to the IRC Network !!";
 			clients[fd].setNickName(nickname);
 		}
 	}

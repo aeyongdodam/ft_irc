@@ -7,8 +7,9 @@ Server::Server()
 	commandList[1] = "NICK";
 	commandList[2] = "USER";
 	commandList[3] = "JOIN";
-
-	commandList[5] = "KICK";
+	commandList[4] = "PRIVMSG";
+  commandList[5] = "KICK";
+	connectClientNum = 0;
 }
 
 Server::Server(const Server& other)
@@ -79,6 +80,24 @@ void Server::connectClient(int i)
 
 	fds[i].fd = connectSd;
 	fds[i].events = POLLIN;
+
+	int newConnect;
+	for (newConnect=0; newConnect<MAX_EVENTS; newConnect++)
+	{
+		if (fds[newConnect].fd == -1)
+            break;
+	}
+
+	if (newConnect == MAX_EVENTS)
+	{
+		std::cerr << "MAX_EVENTS limit reached." << std::endl;
+        close(connectSd);
+        return;
+	}
+
+	fds[newConnect].fd = listenSd;
+	fds[newConnect].events = POLLIN;
+	connectClientNum++;
 }
 
 void Server::readClient(int i)
@@ -103,32 +122,36 @@ void Server::readClient(int i)
 		int commandNum = commandParsing(rBuff);
 		std::string optionString =  std::strchr(rBuff, ' ') + 1;
 		optionString.erase(optionString.size() - 2, optionString.size() - 1);
+
+		// 채널 운영자가 운영자를 강퇴 -> 쿠테타, 그냥 강퇴시키자 -> targetId clientStatus[]
+		// 운영자가 채널 운영자 강퇴 ->
+		// 강퇴가 안 된다 (방이 안 터져야 되면) -> 쿠데타
+		// 
 		if (commandNum == 0)
+		{
 			checkPassword(optionString, i);
-
-    // 채널 운영자가 운영자를 강퇴 -> 쿠테타, 그냥 강퇴시키자 -> targetId clientStatus[]
-    // 운영자가 채널 운영자 강퇴 ->
-    // 강퇴가 안 된다 (방이 안 터져야 되면) -> 쿠데타
-    // 
-		// sendMeddage 함수 사용 예시
+			std::string str = "001 mkwon :Welcome to the IRC Network !!";
+			sendMessage(i, str);
+		}
 		if (commandNum == 1) // NICK
-			sendMessage(i, NICK(i, optionString, clients));
+			sendMessage(i, NICK(i, optionString));
 		if (commandNum == 2) // USER
-			sendMessage(i, USER(i, optionString, clients));
-		// if (commandNum == 3) // JOIN
-		// {
-		//     std::string str = std::to_string(331) + " channelName :No topic is set";
-		//     sendMessage(i, str);
-		// }
-
-		if (commandNum == 5)
+			sendMessage(i, USER(i, optionString));
+		if (commandNum == 3) // JOIN
+		{
+		    std::string str = std::to_string(331) + " channelName :No topic is set";
+		    sendMessage(i, str);
+		}
+		if (commandNum == 4) //PRIVMSG
+			PRIVMSG(i, optionString);
+    if (commandNum == 5)
 			sendMessage(i, KICK(optionString, i));
 	}
 }
 
 void Server::sendMessage(int i, std::string str)
 {
-    std::string numericMessage = ":127.0.0.1 " + str + "\r\n";
+    std::string numericMessage = ":10.14.1.5 " + str + "\r\n";
     write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
 }
 

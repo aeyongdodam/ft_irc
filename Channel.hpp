@@ -40,6 +40,7 @@ class Channel
 		int changeKey(int adminId, std::string* key);
 		int changeAdmin(int oldAdminId, int newAdminId);
 
+		int* getClientStatus();
 		const std::string getName();
 		std::string* getTopic();
 		std::string* getKey();

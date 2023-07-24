@@ -179,3 +179,9 @@ std::string* Channel::getKey()
 {
     return this->key;
 }
+
+int* Channel::getClientStatus()
+{
+	return clientStatus;
+}
+
