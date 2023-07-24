@@ -18,7 +18,7 @@ std::string USER(int fd, std::string str, Client clients[])
     else
     {
         numeric = RPL_WELCOME;
-        message = " " + clients[fd].getNickName() + " :Welcome to the IRC Network !! [!" + clients[fd].getNickName()  + "@127.0.0.1]";
+        message = " " + clients[fd].getNickName() + " :Welcome to the IRC Network !!";
         size_t point = str.rfind(' ');
 		std::string realname = str.substr(point+1);
         clients[fd].setRealName(realname);
