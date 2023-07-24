@@ -13,7 +13,7 @@ std::string USER(int fd, std::string str, Client clients[])
 	else if (clients[fd].getRealName() != "")
 	{
 		numeric = ERR_ALREADYREGISTERED;
-		message = " :You may not reregiste";
+		message = " :You may not reregister";
 	}
     else
     {
