@@ -161,7 +161,6 @@ int Channel::changeAdmin(int oldAdminId, int newAdminId)
 {
 	if (this->adminId != oldAdminId)
 		return 482; // ERR_CHANOPRIVSNEEDED
-	(void)newAdminId;
-	adminId = oldAdminId;
+	adminId = newAdminId;
 	return 1; // SUCCESS
 }

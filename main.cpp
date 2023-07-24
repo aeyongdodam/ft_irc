@@ -8,7 +8,7 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	Server server;
+	Server& server = Server::getInstance();
 	server.init(std::atoi(argv[1]));
 	server.monitoring(argv[2]);
 	server.destroy();
