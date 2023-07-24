@@ -38,7 +38,7 @@ int Channel::joinChannel(int clientId)
 	case BANNED:
 		return 474; // ERR_BANNEDFROMCHAN
 	case CONNECTED:
-		return 1; // SUCCESS
+		return 462; // SUCCESS
 	case UNCONNECTED:
 		if (inviteOnly)
 			return 473; // ERR_INVITEONLYCHAN
@@ -90,7 +90,7 @@ int Channel::kickClient(int adminId, int targetId)
 		return 482; // ERR_CHANOPRIVSNEEDED
 
 	int	targetStatus = clientStatus[targetId];
-	if (targetStatus == BANNED || targetStatus == UNCONNECTED)
+	if (targetStatus != CONNECTED)
 		return 441; // ERR_USERNOTINCHANNEL
 	clientStatus[targetId] = UNCONNECTED;
 	capacity -= 1;
@@ -103,7 +103,8 @@ int Channel::banClient(int adminId, int targetId)
 	// 관리자가 스스로 밴을 하면?
 	if (this->adminId != adminId)
 		return 482; // ERR_CHANOPRIVSNEEDED
-
+	if (clientStatus[targetId] == CONNECTED)
+		capacity -= 1;
 	clientStatus[targetId] = BANNED;
 
 	return 1; // SUCCESS
