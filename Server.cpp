@@ -115,10 +115,10 @@ void Server::readClient(int i)
 			sendMessage(i, str);
 		}
 		if (commandNum == 1) // NICK
-			sendMessage(i, NICK(i, optionString, clients));
+			sendMessage(i, NICK(i, optionString));
 		if (commandNum == 2) // USER
 		{
-			sendMessage(i, USER(i, optionString, clients));
+			sendMessage(i, USER(i, optionString));
 			connectClientNum++;
 		}
 		if (commandNum == 3) // JOIN
@@ -127,7 +127,7 @@ void Server::readClient(int i)
 		    sendMessage(i, str);
 		}
 		if (commandNum == 4) //PRIVMSG
-			PRIVMSG(i, optionString, clients);
+			PRIVMSG(i, optionString);
 	}
 }
 
