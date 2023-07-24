@@ -9,7 +9,19 @@ std::string KICK(std::string input, int clientId)
 
     Server& server = Server::getInstance();
     size_t firstWord = input.find(' ');
+    if (firstWord == std::string::npos)
+    {
+        numeric = ERR_NEEDMOREPARAMS;
+        message = "KICK :Not enough parameters";
+        return (std::to_string(numeric) + message);
+    }
     size_t secondWord =  input.find(' ', firstWord + 1);
+    if (secondWord == std::string::npos)
+    {
+        numeric = ERR_NEEDMOREPARAMS;
+        message = "KICK :Not enough parameters";
+        return (std::to_string(numeric) + message);     
+    }
     std::string channelName = input.substr(0, firstWord);
     std::string kickUserName = input.substr(firstWord + 1, secondWord - firstWord - 1);
 
@@ -21,6 +33,11 @@ std::string KICK(std::string input, int clientId)
         numeric = ERR_NOSUCHCHANNEL;
         message = channelName + " :NO such channel";
         return (std::to_string(numeric) + message);
+    }
+    int *clientStatus = channel->getClientStatus();
+    if (clientStatus[i] != CONNECTED)
+    {
+        
     }
     int nickNameId = getNickNameId(clients, kickUserName);
     if (nickNameId == -1)
