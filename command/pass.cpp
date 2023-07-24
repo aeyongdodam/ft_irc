@@ -7,29 +7,50 @@ int checkPassword(std::string pass, int clientId)
 	Client* clients = server.getClients();
 
 	if (clients[clientId].getPassFlag())
-	{
-		return 462;
-	}
+		return ERR_ALREADYREGISTERED;
 
- 	int passflag = 0;
 	if (pass.c_str() != NULL)
 	{
 		if (std::strncmp(server.getGenernalPass().c_str(), pass.c_str(), server.getGenernalPass().size() + 1) == 0)
 		{
-			std::cout << "The password is correct" << std::endl;
 			clients[clientId].setAdminFlag(false);
+			return RPL_WELCOME;
 		}
 		else if (std::strncmp(server.getOperatorPass().c_str(), pass.c_str(), server.getOperatorPass().size() + 1) == 0)
 		{
-			std::cout << "The password is correct (Operator)" << std::endl;
 			(server.getClients()[clientId]).setAdminFlag(true);
-			passflag = 2;
+			return RPL_WELCOME;
 		}
 		else
-			std::cout << "The password is not correct" << std::endl;
+			return ERR_PASSWDMISMATCH;
 	}
 	else
-		std::cout << "The password is not correct" << std::endl;
+		return ERR_PASSWDMISMATCH;
+}
 
-	return passflag;
+std::string makePassResponse(int responseCode)
+{
+	if (responseCode == RPL_WELCOME)
+		return "";
+
+	std::string resMsg;
+    resMsg += std::to_string(responseCode);
+    resMsg += " :";
+
+    switch (responseCode)
+    {
+        case ERR_ALREADYREGISTERED:
+            resMsg += "You may not reregister";
+            break;
+        case ERR_BANNEDFROMCHAN:
+            resMsg += "Password incorrect";
+    }
+	return resMsg;
+}
+
+std::string	PASS(std::string pass, int clientId)
+{
+	int	responseCode = checkPassword(pass, clientId);
+
+	return makePassResponse(responseCode);
 }
