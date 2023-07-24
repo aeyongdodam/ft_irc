@@ -16,12 +16,11 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <list>
+#include <vector>
+#include <map>
 
 #include "Client.hpp"
 #include "command/command.hpp"
-
-#include <vector>
-#include <map>
 
 class Channel;
 

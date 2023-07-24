@@ -102,15 +102,9 @@ void Server::readClient(int i, std::string password)
     // 
 		// sendMeddage 함수 사용 예시
 		if (commandNum == 1) // NICK
-		{
 			sendMessage(i, NICK(i, optionString, clients));
-			std::cout << clients[i].getNickName() << std::endl;
-		}
 		if (commandNum == 2) // USER
-		{
 			sendMessage(i, USER(i, optionString, clients));
-			std::cout << clients[i].getRealkName() << std::endl;
-		}
 		// if (commandNum == 3) // JOIN
 		// {
 		//     std::string str = std::to_string(331) + " channelName :No topic is set";

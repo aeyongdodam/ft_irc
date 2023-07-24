@@ -51,6 +51,6 @@
 
 int checkPassword(std::string pass, std::string password);
 std::string NICK(int fd, std::string nickname, Client clients[]);
-std::string USER(int fd, std::string str, Client clients[])
+std::string USER(int fd, std::string str, Client clients[]);
 
 #endif
