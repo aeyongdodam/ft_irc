@@ -1,30 +1,28 @@
 #include "command.hpp"
+#include "../Server.hpp"
 
-int pass(std::string pass, std::string password, bool flag)
+int checkPassword(std::string pass, int clientId)
 {
-	if (flag == 1)
-		return (1);
-	else
-		return (checkPassword(pass, password));
-}
-
-int checkPassword(std::string pass, std::string password)
-{
+	Server& server = Server::getInstance();
 	int passflag = 0;
 	if (pass.c_str() != NULL)
 	{
-		if (std::strncmp(password.c_str(), pass.c_str(), password.size() + 1) == 0)
+		if (std::strncmp(server.getGenernalPass().c_str(), pass.c_str(), server.getGenernalPass().size() + 1) == 0)
 		{
 			std::cout << "The password is correct" << std::endl;
-			passflag = 1;
-			return passflag;
+			(server.getClients()[clientId]).setAdminFlag(false);
+		}
+		else if (std::strncmp(server.getGenernalPass().c_str(), pass.c_str(), server.getGenernalPass().size() + 1) == 0)
+		{
+			std::cout << "The password is correct (Operator)" << std::endl;
+			(server.getClients()[clientId]).setAdminFlag(true);
+			passflag = 2;
 		}
 		else
-		{
 			std::cout << "The password is not correct" << std::endl;
-			return passflag;
-		}
 	}
-	std::cout << "The password is not correct" << std::endl;
+	else
+		std::cout << "The password is not correct" << std::endl;
+
 	return passflag;
 }

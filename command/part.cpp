@@ -2,7 +2,7 @@
 #include "../Server.hpp"
 #include "../Channel.hpp"
 
-const std::string JOIN(std::string& channelName, int clientId)
+const std::string join(std::string& channelName, int clientId)
 {
     int responseCode;
     Server& server = Server::getInstance();
@@ -15,7 +15,7 @@ const std::string JOIN(std::string& channelName, int clientId)
     return makeJoinResponse(responseCode, channel);
 }
 
-const std::string JOIN(std::string& channelName, int clientId, std::string& key)
+const std::string join(std::string& channelName, int clientId, std::string& key)
 {
     Server& server = Server::getInstance();
     Channel *channel = server.findChannel(channelName);
