@@ -21,6 +21,7 @@
 #include "command/command.hpp"
 
 #include <vector>
+#include <map>
 
 class Channel;
 
@@ -39,7 +40,7 @@ class Server
 		char rBuff[BUFSIZ];
 
 		Client clients[MAX_EVENTS  + 1];
-		std::list<Channel> channels;
+		std::map<std::string, Channel*> channelMap;
 		std::string commandList[CMD_COUNT];
 
 	public:
@@ -53,9 +54,12 @@ class Server
 		void disconnectClient(int i, int readfd);
 		void destroy();
 
-		Channel* createChannel(std::string name);
-		int commandParsing(std::string input);
-		int checkCommand(std::string command);
+		Channel*	createChannel(int adminId, std::string& name);
+        Channel*	findChannel(std::string &name);
+        bool		deleteChannel(std::string &name);
+
+        int commandParsing(std::string input);
+        int checkCommand(std::string command);
 
 		void sendMessage(int i, std::string str);
 
