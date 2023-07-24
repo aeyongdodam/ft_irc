@@ -29,13 +29,14 @@ Server& Server::getInstance()
 	return server;
 }
 
-void Server::init(unsigned short portNum)
+void Server::init(unsigned short portNum, std::string generalPassword)
 {
+	this->generalPass = generalPassword;
+	this->operatorPass = "admin";
 	for (int i = 0; i < MAX_EVENTS + 1; i++) 
 	{
 		fds[i].fd = -1;
 		fds[i].events = 0;
-		passFlag[i] = 0;
 	}
 
 	std::cout << "Server start..." << std::endl;
@@ -78,7 +79,7 @@ void Server::connectClient(int i)
 	fds[i].events = POLLIN;
 }
 
-void Server::readClient(int i, std::string password)
+void Server::readClient(int i)
 {
 	int readfd = fds[i].fd;
 	int readLen = read(readfd, rBuff, sizeof(rBuff) - 1);
@@ -101,7 +102,7 @@ void Server::readClient(int i, std::string password)
 		std::string optionString =  std::strchr(rBuff, ' ') + 1;
 		optionString.erase(optionString.size() - 2, optionString.size() - 1);
 		if (commandNum == 0)
-			checkPassword(optionString, password);
+			checkPassword(optionString, i);
 
     // 채널 운영자가 운영자를 강퇴 -> 쿠테타, 그냥 강퇴시키자 -> targetId clientStatus[]
     // 운영자가 채널 운영자 강퇴 ->
@@ -126,15 +127,29 @@ void Server::sendMessage(int i, std::string str)
     write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
 }
 
+const std::string Server::getGenernalPass()
+{
+    return this->generalPass;
+}
+
+const std::string Server::getOperatorPass()
+{
+    return this->operatorPass;
+}
+
+Client *Server::getClients()
+{
+    return this->clients;
+}
+
 void Server::disconnectClient(int i, int readfd)
 {
 	close(readfd);
 	fds[i].fd = -1;
 	fds[i].events = 0;
-	passFlag[i] = 0;
 }
 
-void Server::monitoring(std::string password)
+void Server::monitoring()
 {
 	while (true)
 	{
@@ -149,7 +164,7 @@ void Server::monitoring(std::string password)
 				if (fds[i].fd == listenSd)
 					connectClient(i);
 				else
-					readClient(i, password);
+					readClient(i);
 			}
 		}
 	}

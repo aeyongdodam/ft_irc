@@ -9,8 +9,8 @@ int main(int argc, char** argv)
 	}
 
 	Server& server = Server::getInstance();
-	server.init(std::atoi(argv[1]));
-	server.monitoring(argv[2]);
+	server.init(std::atoi(argv[1]), argv[2]);
+	server.monitoring();
 	server.destroy();
 	
 	return 0;

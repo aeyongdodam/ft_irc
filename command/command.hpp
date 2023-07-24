@@ -55,11 +55,11 @@
 
 class Server;
 
-int checkPassword(std::string pass, std::string password);
+int checkPassword(std::string pass, int clientId);
 std::string NICK(int fd, std::string nickname, Client clients[]);
 std::string USER(int fd, std::string str, Client clients[]);
-const std::string join(Server& server, std::string& channelName, int clientId);
-const std::string join(Server& server, std::string& channelName, int clientId, std::string& key);
+const std::string JOIN(Server& server, std::string& channelName, int clientId);
+const std::string JOIN(Server& server, std::string& channelName, int clientId, std::string& key);
 std::string makeJoinResponse(int responseCode);
 
 #endif
