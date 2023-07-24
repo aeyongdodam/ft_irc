@@ -56,6 +56,7 @@
 class Server;
 
 int checkPassword(std::string pass, int clientId);
+int pass(std::string pass, std::string password, bool flag);
 std::string NICK(int fd, std::string nickname, Client clients[]);
 std::string USER(int fd, std::string str, Client clients[]);
 const std::string JOIN(Server& server, std::string& channelName, int clientId);
