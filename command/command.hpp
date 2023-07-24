@@ -12,3 +12,5 @@
 #include <list>
 
 int checkPassword(std::string pass, std::string password);
+
+int pass(std::string pass, std::string password, bool flag);
