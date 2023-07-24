@@ -41,6 +41,9 @@ class Channel
 		int changeAdmin(int oldAdminId, int newAdminId);
 
 		int* getClientStatus();
+		const std::string getName();
+		std::string* getTopic();
+		std::string* getKey();
 };
 
 #endif

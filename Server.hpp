@@ -31,9 +31,7 @@ class Server
 		Server(const Server& copy);
 		~Server();
 
-		std::string nickNames[MAX_EVENTS + 1];
 		struct pollfd fds[MAX_EVENTS + 1];
-		bool passFlag[MAX_EVENTS + 1];
 		struct sockaddr_in srvAddr, clntAddr;
 		socklen_t clntAddrLen;
 		int listenSd, connectSd;
@@ -44,15 +42,17 @@ class Server
 		std::string commandList[CMD_COUNT];
 
 		int connectClientNum;
+		std::string generalPass;
+		std::string operatorPass;
 
 	public:
 		Server& operator=(const Server& copy);
 		static Server& getInstance();
 
-		void init(unsigned short portNum);
-		void monitoring(std::string password);
+		void init(unsigned short portNum, std::string generalPassword);
+		void monitoring();
 		void connectClient(int i);
-		void readClient(int i, std::string password);
+		void readClient(int i);
 		void disconnectClient(int i, int readfd);
 		void destroy();
 
@@ -64,6 +64,10 @@ class Server
         int checkCommand(std::string command);
 		int getConnectClientNum() const;
 		void sendMessage(int i, std::string str);
+
+		const std::string getGenernalPass();
+		const std::string getOperatorPass();
+		Client* getClients();
 
 };
 

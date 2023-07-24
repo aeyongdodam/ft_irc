@@ -165,7 +165,23 @@ int Channel::changeAdmin(int oldAdminId, int newAdminId)
 	return 1; // SUCCESS
 }
 
+const std::string Channel::getName()
+{
+    return this->name;
+}
+
+std::string* Channel::getTopic()
+{
+    return this->topic;
+}
+
+std::string* Channel::getKey()
+{
+    return this->key;
+}
+
 int* Channel::getClientStatus()
 {
 	return clientStatus;
 }
+

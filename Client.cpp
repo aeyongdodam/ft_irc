@@ -1,10 +1,17 @@
 #include "Client.hpp"
 
 
-Client::Client()
+Client::Client() : nickName(""), loginName(""), realName(""), passFlag(false), adminFlag(false) {}
+
+Client::Client(const Client &copy)
 {
-	// channels = NULL;
-	passFlag = 0;
+	(void)copy;
+}
+
+Client &Client::operator=(const Client &copy)
+{
+	(void)copy;
+    return (*this);
 }
 
 Client::~Client() {}
@@ -47,4 +54,9 @@ void Client::setRealName(std::string setRealName_)
 void Client::setPassFlag(bool passFlag_)
 {
 	passFlag = passFlag_;
+}
+
+void Client::setAdminFlag(bool adminFlag_)
+{
+	adminFlag = adminFlag_;
 }
