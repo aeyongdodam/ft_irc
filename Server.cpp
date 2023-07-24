@@ -110,7 +110,7 @@ void Server::readClient(int i)
 		// 
 		if (commandNum == 0)
 		{
-			checkPassword(optionString, password);
+			checkPassword(optionString, i);
 			std::string str = "001 mkwon :Welcome to the IRC Network !!";
 			sendMessage(i, str);
 		}
