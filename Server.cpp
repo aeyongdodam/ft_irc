@@ -22,6 +22,13 @@ Server& Server::operator=(const Server& source)
 
 Server::~Server(){}
 
+Server& Server::getInstance()
+{
+	static Server server;
+
+	return server;
+}
+
 void Server::init(unsigned short portNum)
 {
 	for (int i = 0; i < MAX_EVENTS + 1; i++) 

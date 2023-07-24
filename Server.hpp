@@ -49,20 +49,20 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <list>
+#include <vector>
+#include <map>
 
 #include "Client.hpp"
 #include "command/command.hpp"
-
-#include <vector>
-#include <map>
 
 class Channel;
 
 class Server
 {
 	private:
+		Server();
 		Server(const Server& copy);
-		Server& operator=(const Server& copy);
+		~Server();
 
 		std::string nickNames[MAX_EVENTS + 1];
 		struct pollfd fds[MAX_EVENTS + 1];
@@ -77,8 +77,8 @@ class Server
 		std::string commandList[CMD_COUNT];
 
 	public:
-		Server();
-		~Server();
+		Server& operator=(const Server& copy);
+		static Server& getInstance();
 
 		void init(unsigned short portNum);
 		void monitoring(std::string password);
