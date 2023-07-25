@@ -59,5 +59,6 @@ const std::string JOIN(Server& server, std::string& channelName, int clientId);
 const std::string JOIN(Server& server, std::string& channelName, int clientId, std::string& key);
 void PRIVMSG(int fd, std::string str);
 std::string KICK(std::string input, int clientId);
+int getNickNameId(Client *clients, std::string kickUserName);
 
 #endif

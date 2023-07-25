@@ -45,6 +45,12 @@ class Channel
 		const std::string getName();
 		std::string* getTopic();
 		std::string* getKey();
+		int getAdminId();
+
+		// std::string examineChannel() //방에 사람이 줄었을 때 검사	
+		// {
+		// 	// if (capacity - 1 == 0 || )
+		// }
 };
 
 #endif

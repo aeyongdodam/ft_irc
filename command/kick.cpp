@@ -26,9 +26,15 @@ std::string KICK(std::string input, int clientId)
     if (nickNameId == -1)
     {
         numeric = ERR_USERNOTINCHANNEL;
-        message = kickUserName + " " + channel + " :They aren't on that channel";
+        message = kickUserName + " " + channelName + " :They aren't on that channel";
         return (std::to_string(numeric) + message);
     }
+    int *clientStatus = channel->getClientStatus();
+    if (clientStatus[nickNameId] == CONNECTED && clientId == nickNameId) //연결되어있고 방장인 경우
+    {
+
+    }
+    return "aaaa";
 
 }
 

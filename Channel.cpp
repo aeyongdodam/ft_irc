@@ -196,3 +196,7 @@ int* Channel::getClientStatus()
 	return clientStatus;
 }
 
+int Channel::getAdminId()
+{
+	return adminId;
+}

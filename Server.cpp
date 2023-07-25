@@ -8,7 +8,7 @@ Server::Server()
 	commandList[2] = "USER";
 	commandList[3] = "JOIN";
 	commandList[4] = "PRIVMSG";
-  commandList[5] = "KICK";
+  	commandList[5] = "KICK";
 	connectClientNum = 0;
 }
 
