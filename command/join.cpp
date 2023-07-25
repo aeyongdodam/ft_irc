@@ -2,6 +2,12 @@
 #include "../Server.hpp"
 #include "../Channel.hpp"
 
+void splitChannelKey(std::string optionString, std::list<std::string> channelNameList, std::list<std::string> keyList)
+{
+    
+    
+}
+
 const std::string JOIN(std::string& channelName, int clientId)
 {
     int responseCode;

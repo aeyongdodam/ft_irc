@@ -123,10 +123,6 @@ void Server::readClient(int i)
 		std::string optionString =  std::strchr(rBuff, ' ') + 1;
 		optionString.erase(optionString.size() - 2, optionString.size() - 1);
 
-		// 채널 운영자가 운영자를 강퇴 -> 쿠테타, 그냥 강퇴시키자 -> targetId clientStatus[]
-		// 운영자가 채널 운영자 강퇴 ->
-		// 강퇴가 안 된다 (방이 안 터져야 되면) -> 쿠데타
-		// 
 		if (commandNum == 0)
 		{
 			std::string str = PASS(optionString, i);
@@ -139,8 +135,22 @@ void Server::readClient(int i)
 			sendMessage(i, USER(i, optionString));
 		if (commandNum == 3) // JOIN
 		{
-		    std::string str = std::to_string(331) + " channelName :No topic is set";
-		    sendMessage(i, str);
+			std::list<std::string> channelNameList;
+			std::list<std::string> keyList;
+			splitChannelKey(optionString, channelNameList, keyList);
+
+			while (channelNameList.size() > 0)
+			{
+				std::string channelName = channelNameList.front();
+				channelNameList.pop_front();
+				if (keyList.size() > 0)
+				{
+					sendMessage(i, JOIN(channelName, i, keyList.front()));
+					keyList.pop_front();
+				}
+				else
+					sendMessage(i, JOIN(channelName, i));
+			}
 		}
 		if (commandNum == 4) //PRIVMSG
 			PRIVMSG(i, optionString);
