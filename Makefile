@@ -1,7 +1,7 @@
 NAME	=	ircserv
 
 SRCS	=	main.cpp Server.cpp Client.cpp Channel.cpp
-SRCS	+=	command/pass.cpp command/nick.cpp command/user.cpp command/privmsg.cpp command/kick.cpp command/join.cpp
+SRCS	+=	command/pass.cpp command/nick.cpp command/user.cpp command/privmsg.cpp command/kick.cpp
 OBJS	=	$(SRCS:%.cpp=%.o)
 HEADER	=	Server.hpp Client.hpp Channel.hpp 
 HEADER	+=	command/command.hpp

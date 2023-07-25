@@ -6,8 +6,7 @@ Channel::Channel(int adminId, std::string& name) : adminId(adminId), name(name),
 {
 	for (int i = 0; i < MAX_EVENTS; i++)
 		clientStatus[i] = 0;
-	// clientStatus[adminId] = CONNECTED;
-	// 첫 채널 생성시 client 462 -> 채널 안 들어가짐
+	clientStatus[adminId] = CONNECTED;
 }
 
 Channel::Channel(const Channel& other) : adminId(other.adminId), name(other.name) {}
@@ -45,8 +44,7 @@ int Channel::joinChannel(int clientId)
 			return 473; // ERR_INVITEONLYCHAN
 		clientStatus[clientId] = CONNECTED;
 		capacity += 1;
-		return 311; // SUCCESS
-		// 임의로 성공(토픽없음) 리턴
+		return 1; // SUCCESS
 	case INVITED:
 		clientStatus[clientId] = CONNECTED;
 		capacity += 1;
