@@ -59,7 +59,7 @@ void sendChannel(int fd, std::string str, size_t chennelPoint)
 		message += " ";
 		message += clients[fd].getNickName();
 		message += " ";
-		message += userNick;
+		message += channelName;
         message += " :No such channel";
 		server.sendMessage(fd, (std::to_string(numeric) + message));
         return ;
@@ -91,7 +91,7 @@ void PRIVMSG(int fd, std::string str)
 {
 	size_t chennelPoint = str.find('#');
 	if (chennelPoint == std::string::npos)
-		sendUser();
+		sendUser(fd, str);
 	else
 		sendChannel(fd, str, chennelPoint);
 }
