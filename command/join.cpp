@@ -30,31 +30,32 @@ std::string makeJoinResponse(int responseCode, Channel* channel)
     std::string resMsg;
 
     resMsg += std::to_string(responseCode);
-    resMsg += " ";
+    resMsg += " JOIN ";
     resMsg += channel->getName();
-    resMsg += " :";
+    // 리턴 형식이 안 맞아서 주석처리 했어요
+    // resMsg += " :";
 
-    switch (responseCode)
-    {
-        case ERR_INVITEONLYCHAN:
-            resMsg += "Cannot join channel (+i)";
-            break;
-        case ERR_BANNEDFROMCHAN:
-            resMsg += "Cannot join channel (+b)";
-            break;
-        case ERR_BADCHANNELKEY:
-            resMsg += "Cannot join channel (+k)";
-            break;
-        case ERR_CHANNELISFULL:
-            resMsg += "Cannot join channel (+l)";
-            break;
-        default:
-            std::string* topic = channel->getTopic();
-            if (topic)
-                resMsg += *topic;
-            else
-                resMsg += "No topic is set";
-    }
+    // switch (responseCode)
+    // {
+    //     case ERR_INVITEONLYCHAN:
+    //         resMsg += "Cannot join channel (+i)";
+    //         break;
+    //     case ERR_BANNEDFROMCHAN:
+    //         resMsg += "Cannot join channel (+b)";
+    //         break;
+    //     case ERR_BADCHANNELKEY:
+    //         resMsg += "Cannot join channel (+k)";
+    //         break;
+    //     case ERR_CHANNELISFULL:
+    //         resMsg += "Cannot join channel (+l)";
+    //         break;
+    //     default:
+    //         std::string* topic = channel->getTopic();
+    //         if (topic)
+    //             resMsg += *topic;
+    //         else
+    //             resMsg += "No topic is set";
+    // }
     
     return resMsg;
 }
