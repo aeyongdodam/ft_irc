@@ -50,7 +50,8 @@ void sendChannel(int fd, std::string str, size_t chennelPoint)
 	Client* clients = server.getClients();
 
 	size_t spacePoint = str.find(' ');
-	std::string channelName = str.substr(chennelPoint + 1, spacePoint);
+	std::string channelName = str.substr(chennelPoint, spacePoint);
+	// #포함되어있음. # 빼서 저장된다면 수정해야함
 
 	Channel *channel = server.findChannel(channelName);
 	if (channel == NULL)
@@ -78,7 +79,7 @@ void sendChannel(int fd, std::string str, size_t chennelPoint)
 		numeric = RPL_AWAY;
 		message += " ";
 		message += clients[fd].getNickName();
-		message += " PRIVMSG #";
+		message += " PRIVMSG ";
 		message += channelName;
 		message += " :";
 		message += chatMessage;
