@@ -18,6 +18,7 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <sstream>
 
 #include "Client.hpp"
 #include "command/command.hpp"
@@ -68,6 +69,8 @@ class Server
 		const std::string getGenernalPass();
 		const std::string getOperatorPass();
 		Client* getClients();
+
+		void executeCommand(int commandNum, std::string optionString, int i);
 
 };
 
