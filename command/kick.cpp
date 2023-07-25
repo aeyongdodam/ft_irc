@@ -2,7 +2,7 @@
 #include "../Server.hpp"
 #include "../Channel.hpp"
 
-std::string KICK(std::string input, int clientId)
+std::string KICK(std::string input, int clientId) //clientId가 쫓아내는입장
 {
     int numeric;
     std::string message;
@@ -22,7 +22,7 @@ std::string KICK(std::string input, int clientId)
         message = channelName + " :NO such channel";
         return (std::to_string(numeric) + message);
     }
-    int nickNameId = server.getNickNameId(kickUserName);
+    int nickNameId = server.getNickNameId(kickUserName); //nickNameId가 쫓겨나는 입장
     if (nickNameId == -1)
     {
         numeric = ERR_USERNOTINCHANNEL;
@@ -30,9 +30,22 @@ std::string KICK(std::string input, int clientId)
         return (std::to_string(numeric) + message);
     }
     int *clientStatus = channel->getClientStatus();
-    if (clientStatus[nickNameId] == CONNECTED && clientId == nickNameId) //연결되어있고 방장인 경우
+    if (clientStatus[clientId] != CONNECTED) // 명령 사용자가 채널에 참여하지 않은 경우
     {
+        numeric = ERR_NOTONCHANNEL;
+        message = channelName + " :You're not on that channel";
+        return (std::to_string(numeric) + message);
+    }
 
+    if (channel->getAdminId() == clientId || clients[clientId].getAdminFlag() == true) //방장이거나 서버 관리자인경우
+    {
+        channel->kickClient(clientId, nickNameId);
+        return ("KICK " + channelName + " " + kickUserName);
+    }
+    else //채널 운영자가 아닐 경우
+    {
+        numeric = ERR_CHANOPRIVSNEEDED;
+        message = channelName + " :You're not channel operator";
     }
     return "aaaa";
 
