@@ -31,11 +31,11 @@ void sendUser(int fd, std::string str)
 	std::string chatMessage = str.substr(messagePoint);
 
 	numeric = RPL_AWAY;
-	message += " ";
+	message += ":";
 	message += clients[fd].getNickName();
 	message += " PRIVMSG ";
 	message += userNick;
-	message += " :";
+	message += " ";
 	message += chatMessage;
 	
 	server.sendMessage(nickNameId, (std::to_string(numeric) + message));

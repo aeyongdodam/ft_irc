@@ -58,7 +58,7 @@ void Server::init(unsigned short portNum, std::string generalPassword)
 	if (bind(listenSd, (struct sockaddr*)&srvAddr, sizeof(srvAddr)) == -1)
 		errProc("bind");
 
-	if (listen(listenSd, 5) < 0)
+	if (listen(listenSd, 10) < 0)
 		errProc("listen");
 
 	fds[0].fd = listenSd;
@@ -161,6 +161,11 @@ void Server::disconnectClient(int i, int readfd)
 	close(readfd);
 	fds[i].fd = -1;
 	fds[i].events = 0;
+	clients[i].setNickName("");
+	clients[i].setLoginName("");
+	clients[i].setRealName("");
+	clients[i].setPassFlag(false);
+	clients[i].setAdminFlag(false);
 }
 
 void Server::monitoring()
