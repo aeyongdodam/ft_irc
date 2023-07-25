@@ -20,11 +20,11 @@ std::string USER(int fd, std::string str)
 	}
 	else
 	{
-		numeric = RPL_WELCOME;
-		message = " " + clients[fd].getNickName() + " :Welcome to the IRC Network !!";
+		message = "001 " + clients[fd].getNickName() + " :Welcome to the IRC Network !!";
 		size_t point = str.rfind(' ');
 		std::string realname = str.substr(point+1);
 		clients[fd].setRealName(realname);
+		return (message);
 	}
 	return (std::to_string(numeric) + message);
 }
