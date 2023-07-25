@@ -1,34 +1,55 @@
 #include "command.hpp"
 #include "../Channel.hpp"
 
-void PRIVMSG(int fd, std::string str)
-{
-	Server& server = Server::getInstance();
-	Client* clients = server.getClients();
+// void sendUser(int fd, std::string str)
+// {
+// 	int numeric;
+// 	std::string message;
 
+// 	Server& server = Server::getInstance();
+// 	Client* clients = server.getClients();
+
+// 	// , 단위로 split
+// 	// clients돌면서 PRIV보내기
+// }
+
+void sendChannel(int fd, std::string str, size_t chennelPoint)
+{
 	int numeric;
 	std::string message;
 
-	size_t chennelPoint = str.find('#');
+	Server& server = Server::getInstance();
+	Client* clients = server.getClients();
+
 	size_t spacePoint = str.find(' ');
 	std::string channelName = str.substr(chennelPoint + 1, spacePoint);
-	
+
 	Channel *channel = server.findChannel(channelName);
 	int* clientStatus = channel->getClientStatus();
+
+	size_t messagePoint = str.find(':');
+	std::string chatMessage = str.substr(messagePoint);
 
 	for (int i=0; i<MAX_EVENTS; i++)
 	{
 		if (clients[i].getRealName() == "")
 			continue;
-		numeric = 301;
-		size_t messagePoint = str.find(':');
-		std::string chatMessage = str.substr(messagePoint);
-		message = " " + clients[fd].getNickName() + " :" + chatMessage;
-		if (fd != i && clientStatus[i] == CONNECTED)
-		{
-			server.sendMessage(i, message);
-			// 세그폴트 발생 가능성 있음
-			// 1번 client가 disconnect된 후, 연결 안 된 채로 메세지 보내면 터질 듯 ?
-		}
+		
+		numeric = RPL_AWAY;
+		message += " PRIVMSG ";
+		message += clients[fd].getNickName();
+		message += " :";
+		message += chatMessage;
+		if (i != fd && clientStatus[i] == CONNECTED)
+			server.sendMessage(i, (std::to_string(numeric) + message));
 	}
+}
+
+void PRIVMSG(int fd, std::string str)
+{
+	size_t chennelPoint = str.find('#');
+	// if (chennelPoint == std::string::npos)
+	// 	sendUser();
+	// else
+		sendChannel(fd, str, chennelPoint);
 }
