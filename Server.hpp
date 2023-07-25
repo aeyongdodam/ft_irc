@@ -62,7 +62,7 @@ class Server
 
         int commandParsing(std::string input);
         int checkCommand(std::string command);
-		int getConnectClientNum() const;
+		int getNickNameId(std::string kickUserName);
 		void sendMessage(int i, std::string str);
 
 		const std::string getGenernalPass();

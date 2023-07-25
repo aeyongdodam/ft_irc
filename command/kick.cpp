@@ -22,7 +22,7 @@ std::string KICK(std::string input, int clientId)
         message = channelName + " :NO such channel";
         return (std::to_string(numeric) + message);
     }
-    int nickNameId = getNickNameId(clients, kickUserName);
+    int nickNameId = server.getNickNameId(kickUserName);
     if (nickNameId == -1)
     {
         numeric = ERR_USERNOTINCHANNEL;
@@ -36,14 +36,4 @@ std::string KICK(std::string input, int clientId)
     }
     return "aaaa";
 
-}
-
-int getNickNameId(Client *clients, std::string kickUserName)
-{
-    for (int i = 0; i < MAX_EVENTS; i++)
-    {
-        if (clients[i].getNickName() == kickUserName)
-            return i;
-    }
-    return -1;
 }

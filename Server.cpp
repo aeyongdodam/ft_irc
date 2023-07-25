@@ -269,3 +269,13 @@ int Server::checkCommand(std::string command)
 	std::cout << "그런 명령어는 없어용~" << std::endl;
 	return -1;
 }
+
+int Server::getNickNameId(std::string kickUserName)
+{
+    for (int i = 0; i < MAX_EVENTS; i++)
+    {
+        if (clients[i].getNickName() == kickUserName)
+            return i;
+    }
+    return -1;
+}
