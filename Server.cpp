@@ -124,8 +124,7 @@ void Server::readClient(int i)
 			std::cout << "rBuff Message : " << line << std::endl;
 			int commandNum = commandParsing(line);
 			std::string optionString =  std::strchr(line.c_str(), ' ') + 1;
-			optionString.erase(optionString.size() - 2, optionString.size() - 1);
-		
+			optionString.erase(optionString.size() - 1, optionString.size() - 1);
 			executeCommand(commandNum, optionString, i); //commandNum에 따라서 명령어 실행하고 sendMessage보내는거 뺐습니다~
 		}
 		
