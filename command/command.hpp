@@ -64,4 +64,7 @@ void PRIVMSG(int fd, std::string str);
 std::string KICK(std::string input, int clientId);
 int getNickNameId(Client *clients, std::string kickUserName);
 
+std::string	PART(std::string channelName, int clientId);
+std::string makePartResponse(int responseCode, std::string channelName);
+
 #endif

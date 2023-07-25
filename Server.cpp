@@ -9,6 +9,7 @@ Server::Server()
 	commandList[3] = "JOIN";
 	commandList[4] = "PRIVMSG";
   	commandList[5] = "KICK";
+	commandList[6] = "PART";
 	connectClientNum = 0;
 }
 
@@ -139,6 +140,7 @@ void Server::sendMessage(int i, std::string str)
 {
     std::string numericMessage = str + "\r\n";
     write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
+	std::cout << "output : " << numericMessage << std::endl;
 }
 
 const std::string Server::getGenernalPass()
@@ -303,7 +305,9 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 		sendMessage(i, JOIN(optionString, i));
 	if (commandNum == 4) //PRIVMSG
 		PRIVMSG(i, optionString);
-	if (commandNum == 5)
+	if (commandNum == 5) //KICK
 		sendMessage(i, KICK(optionString, i));
+	if (commandNum == 6) //PART
+		sendMessage(i, PART(optionString, i));
 }
 

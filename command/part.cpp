@@ -14,14 +14,18 @@ std::string	PART(std::string channelName, int clientId)
 
     int	responseCode = channel->partClient(clientId);
 
+    if (responseCode == 1)
+    {
+        std::string resMsg = "PART :";
+        resMsg += channelName;
+        return resMsg;
+    }
+
 	return makePartResponse(responseCode, channelName);
 }
 
 std::string makePartResponse(int responseCode, std::string channelName)
 {
-    if (responseCode == SUCCESS)
-        return ":nick!nick@servername JOIN #channel";
-
     std::string resMsg = std::to_string(responseCode);
     resMsg += " ";
     resMsg += channelName;
