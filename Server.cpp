@@ -137,7 +137,7 @@ void Server::readClient(int i)
 
 void Server::sendMessage(int i, std::string str)
 {
-    std::string numericMessage = ":10.14.2.4 " + str + "\r\n";
+    std::string numericMessage = str + "\r\n";
     write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
 }
 

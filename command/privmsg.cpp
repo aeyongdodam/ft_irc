@@ -71,20 +71,23 @@ void sendChannel(int fd, std::string str, size_t chennelPoint)
 	size_t messagePoint = str.find(':');
 	std::string chatMessage = str.substr(messagePoint);
 
+	numeric = RPL_AWAY;
+	message += ":";
+	message += clients[fd].getNickName();
+	message += " PRIVMSG ";
+	message += channelName;
+	message += " ";
+	message += chatMessage;
 	for (int i=0; i<MAX_EVENTS; i++) // 얘도요
 	{
 		if (clients[i].getRealName() == "")
 			continue;
 		
-		numeric = RPL_AWAY;
-		message += " ";
-		message += clients[fd].getNickName();
-		message += " PRIVMSG ";
-		message += channelName;
-		message += " :";
-		message += chatMessage;
 		if (i != fd && clientStatus[i] == CONNECTED)
-			server.sendMessage(i, (std::to_string(numeric) + message));
+		{
+			server.sendMessage(i, message);
+			std::cout<< clients[i].getNickName() << " " << message<<std::endl;
+		}
 	}
 }
 
