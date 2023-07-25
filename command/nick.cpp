@@ -27,12 +27,12 @@ std::string NICK(int fd, std::string nickname)
 				break ;
 			}
 		}
-		// if (flag)
-		// {
-		// 	numeric = RPL_WELCOME;
-		// 	message = " " + nickname + " :Welcome to the IRC Network !!";
-		// 	clients[fd].setNickName(nickname);
-		// }
+		if (flag)
+		{
+			numeric = RPL_WELCOME;
+			message = " " + nickname + " :Welcome to the IRC Network !!";
+			clients[fd].setNickName(nickname);
+		}
 	}
 	return (std::to_string(numeric) + message);
 }
