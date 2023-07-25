@@ -58,7 +58,6 @@ std::string KICK(std::string input, int clientId) //clientId가 쫓아내는입�
     {
         numeric = ERR_CHANOPRIVSNEEDED;
         message = channelName + " :You're not channel operator";
+        return (std::to_string(numeric) + message);
     }
-    return "aaaa";
-
 }
