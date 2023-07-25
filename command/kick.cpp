@@ -27,7 +27,6 @@ std::string KICK(std::string input, int clientId) //clientId가 쫓아내는입�
     
     Channel *channel = server.findChannel(channelName);
     Client *clients = server.getClients();
-    std::cout << "clientId ㄴㅔ이ㅁ : " << clients[clientId].getNickName() << std::endl;
     if (channel == NULL)
     {
         numeric = ERR_NOSUCHCHANNEL;
