@@ -224,7 +224,21 @@ Channel* Server::findChannel(std::string &name)
 bool Server::deleteChannel(std::string &name)
 {
 	std::map<std::string, Channel*>::iterator it = channelMap.find(name);
+
+	// 아직 채널에 남아있는 클라이언트들 킥
+	Channel* channel = it->second;
+	Server& server = Server::getInstance();
 	
+	for(int i = 0; i < MAX_EVENTS; i++)
+	{
+		if (channel->getClientStatus()[i] == CONNECTED)
+		{
+			std::string kickParameter = channel->getName();
+			kickParameter += server.getClients()[i].getNickName();
+			server.sendMessage(i, KICK(kickParameter, i));
+		}
+	}
+
 	if (it != channelMap.end())
 	{
 		delete it->second;
