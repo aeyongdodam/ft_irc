@@ -270,6 +270,16 @@ int Server::checkCommand(std::string command)
 	return -1;
 }
 
+int Server::getNickNameId(std::string kickUserName)
+{
+    for (int i = 0; i < MAX_EVENTS; i++)
+    {
+        if (clients[i].getNickName() == kickUserName)
+            return i;
+    }
+    return -1;
+}
+
 void Server::executeCommand(int commandNum, std::string optionString, int i)
 {
 	if (commandNum == 0)
@@ -294,3 +304,4 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 	if (commandNum == 5)
 		sendMessage(i, KICK(optionString, i));
 }
+
