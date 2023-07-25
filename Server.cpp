@@ -117,35 +117,21 @@ void Server::readClient(int i)
 	else if (readLen > 0)
 	{
 		rBuff[readLen] = '\0';
-		std::cout << "rBuff Message : " << rBuff << std::endl;
+		std::istringstream iss(rBuff);
+		std::string line;
+		while (std::getline(iss, line))
+		{
+			std::cout << "rBuff Message : " << line << std::endl;
+			int commandNum = commandParsing(line);
+			std::string optionString =  std::strchr(line.c_str(), ' ') + 1;
+			optionString.erase(optionString.size() - 1, optionString.size() - 1);
+			executeCommand(commandNum, optionString, i); //commandNum에 따라서 명령어 실행하고 sendMessage보내는거 뺐습니다~
+		}
+		
 		// rBuff 파싱
-		int commandNum = commandParsing(rBuff);
-		std::string optionString =  std::strchr(rBuff, ' ') + 1;
-		optionString.erase(optionString.size() - 2, optionString.size() - 1);
-
 		// 채널 운영자가 운영자를 강퇴 -> 쿠테타, 그냥 강퇴시키자 -> targetId clientStatus[]
 		// 운영자가 채널 운영자 강퇴 ->
 		// 강퇴가 안 된다 (방이 안 터져야 되면) -> 쿠데타
-		// 
-		if (commandNum == 0)
-		{
-			std::string str = PASS(optionString, i);
-			if (!str.empty())
-				sendMessage(i, str);
-		}
-		if (commandNum == 1) // NICK
-			sendMessage(i, NICK(i, optionString));
-		if (commandNum == 2) // USER
-			sendMessage(i, USER(i, optionString));
-		if (commandNum == 3) // JOIN
-		{
-		    std::string str = std::to_string(331) + " channelName :No topic is set";
-		    sendMessage(i, str);
-		}
-		if (commandNum == 4) //PRIVMSG
-			PRIVMSG(i, optionString);
-    if (commandNum == 5)
-			sendMessage(i, KICK(optionString, i));
 	}
 }
 
@@ -224,7 +210,21 @@ Channel* Server::findChannel(std::string &name)
 bool Server::deleteChannel(std::string &name)
 {
 	std::map<std::string, Channel*>::iterator it = channelMap.find(name);
+
+	// 아직 채널에 남아있는 클라이언트들 킥
+	Channel* channel = it->second;
+	Server& server = Server::getInstance();
 	
+	for(int i = 0; i < MAX_EVENTS; i++)
+	{
+		if (channel->getClientStatus()[i] == CONNECTED)
+		{
+			std::string kickParameter = channel->getName();
+			kickParameter += server.getClients()[i].getNickName();
+			server.sendMessage(i, KICK(kickParameter, i));
+		}
+	}
+
 	if (it != channelMap.end())
 	{
 		delete it->second;
@@ -279,3 +279,29 @@ int Server::getNickNameId(std::string kickUserName)
     }
     return -1;
 }
+
+void Server::executeCommand(int commandNum, std::string optionString, int i)
+{
+	if (commandNum == 0)
+	{
+		std::string str = PASS(optionString, i);
+		if (!str.empty())
+			sendMessage(i, str);
+		if (clients[i].getPassFlag() == false)
+			disconnectClient(i, fds[i].fd);
+	}
+	if (commandNum == 1) // NICK
+		sendMessage(i, NICK(i, optionString));
+	if (commandNum == 2) // USER
+		sendMessage(i, USER(i, optionString));
+	if (commandNum == 3) // JOIN
+	{
+		std::string str = std::to_string(331) + " channelName :No topic is set";
+		sendMessage(i, str);
+	}
+	if (commandNum == 4) //PRIVMSG
+		PRIVMSG(i, optionString);
+	if (commandNum == 5)
+		sendMessage(i, KICK(optionString, i));
+}
+
