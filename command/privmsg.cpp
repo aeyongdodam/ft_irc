@@ -22,7 +22,7 @@ void sendUser(int fd, std::string str)
 		message += clients[fd].getNickName();
 		message += " ";
 		message += userNick;
-        message += " :NO such nick";
+        message += " :No such nick";
 		server.sendMessage(fd, (std::to_string(numeric) + message));
         return ;
 	}
@@ -53,12 +53,24 @@ void sendChannel(int fd, std::string str, size_t chennelPoint)
 	std::string channelName = str.substr(chennelPoint + 1, spacePoint);
 
 	Channel *channel = server.findChannel(channelName);
-	int* clientStatus = channel->getClientStatus();
+	if (channel == NULL)
+    {
+		numeric = ERR_NOSUCHCHANNEL;
+		message += " ";
+		message += clients[fd].getNickName();
+		message += " ";
+		message += userNick;
+        message += " :No such channel";
+		server.sendMessage(fd, (std::to_string(numeric) + message));
+        return ;
+    }
+
+	int* clientStatus = channel->getClientStatus(); // 전체 채널 메세지 전송으로 변경예정
 
 	size_t messagePoint = str.find(':');
 	std::string chatMessage = str.substr(messagePoint);
 
-	for (int i=0; i<MAX_EVENTS; i++)
+	for (int i=0; i<MAX_EVENTS; i++) // 얘도요
 	{
 		if (clients[i].getRealName() == "")
 			continue;
