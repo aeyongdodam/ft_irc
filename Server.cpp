@@ -141,7 +141,6 @@ void Server::sendMessage(int i, std::string str)
     std::string numericMessage = str + "\r\n";
 	std::cout << "메세지내용 : " << numericMessage << std::endl;
     write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
-	std::cout << "output : " << numericMessage << std::endl;
 }
 
 const std::string Server::getGenernalPass()
