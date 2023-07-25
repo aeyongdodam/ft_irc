@@ -7,6 +7,11 @@ std::string	PART(std::string channelName, int clientId)
     Server& server = Server::getInstance();
     Channel* channel = server.findChannel(channelName);
 
+    if (channel->getAdminId() == clientId)
+    {
+        server.deleteChannel(channelName);
+    }
+
     int	responseCode = channel->partClient(clientId);
 
 	return makePartResponse(responseCode, channelName);
