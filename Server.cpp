@@ -125,7 +125,7 @@ void Server::readClient(int i)
 			int commandNum = commandParsing(line);
 			std::string optionString =  std::strchr(line.c_str(), ' ') + 1;
 			optionString.erase(optionString.size() - 1, optionString.size() - 1);
-			executeCommand(commandNum, optionString, i); //commandNum에 따라서 명령어 실행하고 sendMessage보내는거 뺐습니다~
+			executeCommand(commandNum, optionString, i);
 		}
 		
 		// rBuff 파싱
@@ -137,7 +137,7 @@ void Server::readClient(int i)
 
 void Server::sendMessage(int i, std::string str)
 {
-    std::string numericMessage = ":10.14.1.5 " + str + "\r\n";
+    std::string numericMessage = ":10.14.2.4 " + str + "\r\n";
     write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
 }
 
@@ -295,10 +295,7 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 	if (commandNum == 2) // USER
 		sendMessage(i, USER(i, optionString));
 	if (commandNum == 3) // JOIN
-	{
-		std::string str = std::to_string(331) + " channelName :No topic is set";
-		sendMessage(i, str);
-	}
+		sendMessage(i, JOIN(optionString, i));
 	if (commandNum == 4) //PRIVMSG
 		PRIVMSG(i, optionString);
 	if (commandNum == 5)
