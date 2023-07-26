@@ -93,7 +93,7 @@ const std::string joinWithKey(std::string &channelName, int clientId, std::strin
 
     int responseCode = channel->joinChannel(clientId, key);
 
-    return makeJoinResponse(responseCode, channel);
+    return makeJoinResponse(responseCode, channel, clientId);
 }
 
 void JOIN(int clientId, std::string optionString)
