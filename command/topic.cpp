@@ -47,8 +47,8 @@ std::string TOPIC(std::string input, int clientId)
         numeric = ERR_CHANOPRIVSNEEDED;
         message = " " + channelName + " :You're not channel operator";
     }
-    channel->changeTopic(clientId, &topicString);
-    numeric = 332;
-    message = " " + channelName + " :" + topicString;
-    return (std::to_string(numeric) + message);
+    channel->changeTopic(clientId, topicString);
+    std::cout << "channelName " << channelName + " topiccstring : " << topicString << std::endl;
+    message = "TOPIC " + channelName + " :" + topicString;
+    return (message);
 }

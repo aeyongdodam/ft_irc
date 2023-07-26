@@ -41,7 +41,7 @@ class Channel
 		int banClient(int adminId, int targetId);
 
 		int changeInviteOnly(int adminId, bool inviteOnly);
-		int changeTopic(int adminId, std::string* topic);
+		int changeTopic(int adminId, std::string& topic);
 		int changeKey(int adminId, std::string* key);
 		int changeAdmin(int oldAdminId, int newAdminId);
 

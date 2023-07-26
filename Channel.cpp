@@ -146,14 +146,13 @@ int Channel::changeInviteOnly(int adminId, bool inviteOnly)
 	return 1; // SUCCESS
 }
 
-int Channel::changeTopic(int adminId, std::string* topic)
+int Channel::changeTopic(int adminId, std::string& topic)
 {
 	// if (this->adminId != adminId)
 	// 	return 482; // ERR_CHANOPRIVSNEEDED
 
 	if (this->topic != NULL)
-		delete this->topic;
-	this->topic = topic;
+		*(this->topic) = topic;
 	this->lastTopicSetId = adminId; //마지막으로 바꾼 사람 id 저장
 
 	std::time_t timestamp = std::time(0);
