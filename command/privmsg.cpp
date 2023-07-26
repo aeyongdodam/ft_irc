@@ -68,6 +68,18 @@ void sendChannel(int fd, std::string str, size_t chennelPoint)
 
 	int* clientStatus = channel->getClientStatus(); // 전체 채널 메세지 전송으로 변경예정
 
+	if (clientStatus[fd] != CONNECTED)
+	{
+		numeric = ERR_CANNOTSENDTOCHAN;
+		message += " ";
+		message += clients[fd].getNickName();
+		message += " ";
+		message += channelName;
+        message += " :Cannot send to channel";
+		server.sendMessage(fd, (std::to_string(numeric) + message));
+        return ;
+	}
+
 	size_t messagePoint = str.find(':');
 	std::string chatMessage = str.substr(messagePoint);
 
