@@ -19,20 +19,20 @@ std::string TOPIC(std::string input, int clientId)
     Channel *channel = server.findChannel(channelName);
     if (channel == NULL) //채널이 없는 경우
     {
-        numberic = ERR_NOSUCHCHANNEL;
+        numeric = ERR_NOSUCHCHANNEL;
         message = " " + clients[clientId].getNickName() + " " + channelName + " :No such channel";
         return (std::to_string(numeric) + message);
     }
     size_t secondWord =  input.find(' ', firstWord + 1);
     if (secondWord == std::string::npos) // 첫 번째 파라미터만 있는 경우
     {
-        if (channel.getTopic() == "")
+        if (channel->getTopic() == NULL)
         {
             numeric = RPL_NOTOPIC;
             message = " " + channelName + " :No topic is set";
         }
         else
-            return (channel.getTopic());
+            return (*channel->getTopic());
     }
     std::string topicString = input.substr(firstWord + 2, secondWord - firstWord - 2);
     int *clientStatus = channel->getClientStatus();
@@ -47,7 +47,7 @@ std::string TOPIC(std::string input, int clientId)
         numeric = ERR_CHANOPRIVSNEEDED;
         message = " " + channelName + " :You're not channel operator";
     }
-    channel->changeTopic(clientId, topicString);
+    channel->changeTopic(clientId, &topicString);
     numeric = 332;
     message = " " + channelName + " :" + topicString;
     return (std::to_string(numeric) + message);

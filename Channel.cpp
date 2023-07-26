@@ -156,10 +156,7 @@ int Channel::changeTopic(int adminId, std::string* topic)
 	this->topic = topic;
 	this->lastTopicSetId = adminId; //마지막으로 바꾼 사람 id 저장
 
-	auto now = std::chrono::system_clock::now();
-    auto duration = now.time_since_epoch();
-    auto timestamp = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
-
+	std::time_t timestamp = std::time(0);
 	this->lastTopicSetTime = timestamp; // 마지막으로 바꾼 시간 설정
 	return 332; // SUCCESS
 }
