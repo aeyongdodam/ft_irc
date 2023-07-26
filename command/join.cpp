@@ -14,15 +14,18 @@ std::list<std::string> split(std::string input, char delimiter)
     return channels;
 }
 
-void splitChannelKey(std::string optionString, std::list<std::string> channelNameList, std::list<std::string> keyList)
+void splitChannelKey(std::string optionString, std::list<std::string>& channelNameList, std::list<std::string>& keyList)
 {
     std::list<std::string> channel_key = split(optionString, ' ');
 
     std::string channelStr = channel_key.front();
     channelNameList = split(channelStr, ',');
 
-    std::string keyStr = channel_key.back();
-    keyList = split(keyStr, ',');
+    if (channel_key.front() != channel_key.back())
+    {
+        std::string keyStr = channel_key.back();
+        keyList = split(keyStr, ',');
+    }
 }
 
 std::string makeJoinResponse(int responseCode, Channel *channel, int clientId)
@@ -51,11 +54,11 @@ std::string makeJoinResponse(int responseCode, Channel *channel, int clientId)
             resMsg += ": Cannot join channel (channel is full)";
             break;
         default:
-            resMsg += "\r\n";
             std::string* topic = channel->getTopic();
             if (topic)
             {
-                resMsg += "332 " + clientName;
+                resMsg += "\r\n332 ";
+                resMsg += clientName;
                 resMsg += " " + channel->getName();
                 resMsg += " :" + *topic;
             }
@@ -90,6 +93,8 @@ const std::string joinWithKey(std::string &channelName, int clientId, std::strin
 {
     Server &server = Server::getInstance();
     Channel *channel = server.findChannel(channelName);
+
+    std::cout << "joinWithKey(): " << key << std::endl;
 
     int responseCode = channel->joinChannel(clientId, key);
 

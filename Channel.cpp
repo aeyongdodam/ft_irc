@@ -207,9 +207,7 @@ std::string Channel::getClientList()
 {
 	Server& server = Server::getInstance();
 
-	std::string listStr = "353 ";
-	listStr += name;
-	listStr += " :";
+	std::string listStr = "";
 
     for (int i = 0; i < MAX_EVENTS; i++)
 	{
