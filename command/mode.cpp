@@ -1,17 +1,18 @@
 #include "command.hpp"
 #include "../Channel.hpp"
 
-void MODE(int fd, std::string str)
+std::string MODE(int fd, std::string str)
 {
 	size_t spacePoint = str.find(' ');
 	std::string channelName = str.substr(0, spacePoint);
 	std::string optionFlag = str.substr(spacePoint+1, spacePoint+3);
 
 	if (optionFlag[1] == 'i')
-		modeFlagI(fd, channelName, optionFlag);
+		return modeFlagI(fd, channelName, optionFlag);
+	return "";
 }
 
-void modeFlagI(int fd, std::string channelName, std::string optionFlag)
+std::string modeFlagI(int fd, std::string channelName, std::string optionFlag)
 {
 	int numeric;
 	std::string message;
@@ -20,8 +21,9 @@ void modeFlagI(int fd, std::string channelName, std::string optionFlag)
 	Channel *channel = server.findChannel(channelName);
 	Client* clients = server.getClients();
 
+	// 젤 처음에 mode <nick> +i 들어오는거 어케 할지 정해야함
 	if (channel == NULL)
-		return ;
+		return "";
 
 	if (optionFlag[0] == '+')
 		numeric = channel->changeInviteOnly(fd,true);
@@ -37,7 +39,6 @@ void modeFlagI(int fd, std::string channelName, std::string optionFlag)
 		message += " :";
 		message += optionFlag;
 		server.sendChannelMessge(channel, message, fd);
-		server.sendMessage(fd, message);
 	}
 	else
 	{
@@ -47,6 +48,6 @@ void modeFlagI(int fd, std::string channelName, std::string optionFlag)
 		message += " ";
 		message += channelName;
 		message += " :You must have channel op access or above to set channel mode i";
-		server.sendMessage(fd, message);
 	}
+	return message;
 }
