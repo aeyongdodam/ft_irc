@@ -66,8 +66,7 @@ void sendChannel(int fd, std::string str, size_t chennelPoint)
         return ;
     }
 
-	int* clientStatus = channel->getClientStatus(); // 전체 채널 메세지 전송으로 변경예정
-
+	int* clientStatus = channel->getClientStatus();
 	if (clientStatus[fd] != CONNECTED)
 	{
 		numeric = ERR_CANNOTSENDTOCHAN;
@@ -90,17 +89,7 @@ void sendChannel(int fd, std::string str, size_t chennelPoint)
 	message += channelName;
 	message += " ";
 	message += chatMessage;
-	for (int i=0; i<MAX_EVENTS; i++) // 얘도요
-	{
-		if (clients[i].getRealName() == "")
-			continue;
-		
-		if (i != fd && clientStatus[i] == CONNECTED)
-		{
-			server.sendMessage(i, message);
-			std::cout<< clients[i].getNickName() << " " << message<<std::endl;
-		}
-	}
+	server.sendChannelMessge(channel, message, fd);
 }
 
 void PRIVMSG(int fd, std::string str)

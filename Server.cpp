@@ -311,3 +311,15 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 		sendMessage(i, PART(optionString, i));
 }
 
+void Server::sendChannelMessge(Channel *channel, std::string message, int fd)
+{
+	int* clientStatus = channel->getClientStatus();
+	for (int i=0; i<MAX_EVENTS; i++)
+	{
+		if (clients[i].getRealName() == "")
+			continue;
+		
+		if (i != fd && clientStatus[i] == CONNECTED)
+			sendMessage(i, message);
+	}
+}

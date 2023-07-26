@@ -71,6 +71,7 @@ class Server
 		Client* getClients();
 
 		void executeCommand(int commandNum, std::string optionString, int i);
+		void sendChannelMessge(Channel *channel, std::string message, int fd);
 
 };
 
