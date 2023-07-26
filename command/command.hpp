@@ -67,4 +67,7 @@ int getNickNameId(Client *clients, std::string kickUserName);
 std::string	PART(std::string channelName, int clientId);
 std::string makePartResponse(int responseCode, std::string channelName);
 
+void MODE(int fd, std::string str);
+void modeFlagI(int fd, std::string channelName, std::string optionFlag);
+
 #endif
