@@ -9,6 +9,7 @@ Server::Server()
 	commandList[3] = "JOIN";
 	commandList[4] = "PRIVMSG";
   	commandList[5] = "KICK";
+	commandList[6] = "PART";
 	connectClientNum = 0;
 }
 
@@ -304,7 +305,21 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 		sendMessage(i, JOIN(optionString, i));
 	if (commandNum == 4) //PRIVMSG
 		PRIVMSG(i, optionString);
-	if (commandNum == 5)
+	if (commandNum == 5) //KICK
 		sendMessage(i, KICK(optionString, i));
+	if (commandNum == 6) //PART
+		sendMessage(i, PART(optionString, i));
 }
 
+void Server::sendChannelMessge(Channel *channel, std::string message, int fd)
+{
+	int* clientStatus = channel->getClientStatus();
+	for (int i=0; i<MAX_EVENTS; i++)
+	{
+		if (clients[i].getRealName() == "")
+			continue;
+		
+		if (i != fd && clientStatus[i] == CONNECTED)
+			sendMessage(i, message);
+	}
+}

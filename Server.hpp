@@ -2,7 +2,7 @@
 #define SERVER_HPP
 
 #define MAX_EVENTS 10
-#define CMD_COUNT 6
+#define CMD_COUNT 7
 
 #include <iostream>
 #include <cstdlib>
@@ -71,6 +71,7 @@ class Server
 		Client* getClients();
 
 		void executeCommand(int commandNum, std::string optionString, int i);
+		void sendChannelMessge(Channel *channel, std::string message, int fd);
 
 };
 
