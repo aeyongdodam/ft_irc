@@ -1,4 +1,6 @@
 #include "command.hpp"
+#include "../Server.hpp"
+#include "../Channel.hpp"
 
 std::string TOPIC(std::string input, int clientId)
 {
@@ -7,17 +9,46 @@ std::string TOPIC(std::string input, int clientId)
     Server& server = Server::getInstance();
     Client *clients = server.getClients();
     size_t firstWord = input.find(' ');
-    if (firstWord == std::string::npos)
+    if (firstWord == std::string::npos) //topic 다음 파라미터가 없는 경우
     {
         numeric = ERR_NEEDMOREPARAMS;
-        message = "KICK :Not enough parameters";
+        message = " TOPIC :Not enough parameters";
+        return (std::to_string(numeric) + message);
+    }
+    std::string channelName = input.substr(0, firstWord);
+    Channel *channel = server.findChannel(channelName);
+    if (channel == NULL) //채널이 없는 경우
+    {
+        numberic = ERR_NOSUCHCHANNEL;
+        message = " " + clients[clientId].getNickName() + " " + channelName + " :No such channel";
         return (std::to_string(numeric) + message);
     }
     size_t secondWord =  input.find(' ', firstWord + 1);
-    if (secondWord == std::string::npos)
+    if (secondWord == std::string::npos) // 첫 번째 파라미터만 있는 경우
     {
-        numeric = ERR_NEEDMOREPARAMS;
-        message = "KICK :Not enough parameters";
-        return (std::to_string(numeric) + message);     
+        if (channel.getTopic() == "")
+        {
+            numeric = RPL_NOTOPIC;
+            message = " " + channelName + " :No topic is set";
+        }
+        else
+            return (channel.getTopic());
     }
+    std::string topicString = input.substr(firstWord + 2, secondWord - firstWord - 2);
+    int *clientStatus = channel->getClientStatus();
+    if (clientStatus[clientId] != CONNECTED) // 명령 사용자가 채널에 참여하지 않은 경우
+    {
+        numeric = ERR_NOTONCHANNEL;
+        message = " " + channelName + " :You're not on that channel";
+    }
+
+    if (channel->getAdminId() != clientId && channel->gettopicSetting() == 0) //방장 여러 명 배열로 바뀌면 고쳐야함
+    {
+        numeric = ERR_CHANOPRIVSNEEDED;
+        message = " " + channelName + " :You're not channel operator";
+    }
+    channel->changeTopic(clientId, topicString);
+    numeric = 332;
+    message = " " + channelName + " :" + topicString;
+    return (std::to_string(numeric) + message);
 }

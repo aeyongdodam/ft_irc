@@ -148,14 +148,20 @@ int Channel::changeInviteOnly(int adminId, bool inviteOnly)
 
 int Channel::changeTopic(int adminId, std::string* topic)
 {
-	if (this->adminId != adminId)
-		return 482; // ERR_CHANOPRIVSNEEDED
+	// if (this->adminId != adminId)
+	// 	return 482; // ERR_CHANOPRIVSNEEDED
 
 	if (this->topic != NULL)
 		delete this->topic;
-
 	this->topic = topic;
-	return 1; // SUCCESS
+	this->lastTopicSetId = adminId; //마지막으로 바꾼 사람 id 저장
+
+	auto now = std::chrono::system_clock::now();
+    auto duration = now.time_since_epoch();
+    auto timestamp = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
+
+	this->lastTopicSetTime = timestamp; // 마지막으로 바꾼 시간 설정
+	return 332; // SUCCESS
 }
 
 int Channel::changeKey(int adminId, std::string* key)
@@ -201,4 +207,9 @@ int* Channel::getClientStatus()
 int Channel::getAdminId()
 {
 	return adminId;
+}
+
+bool Channel::gettopicSetting()
+{
+	return topicSetting;
 }

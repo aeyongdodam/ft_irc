@@ -66,5 +66,5 @@ int getNickNameId(Client *clients, std::string kickUserName);
 
 std::string	PART(std::string channelName, int clientId);
 std::string makePartResponse(int responseCode, std::string channelName);
-
+std::string TOPIC(std::string input, int clientId);
 #endif
