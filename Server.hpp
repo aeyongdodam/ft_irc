@@ -69,6 +69,7 @@ class Server
 		const std::string getGenernalPass();
 		const std::string getOperatorPass();
 		Client* getClients();
+		struct pollfd* getFds();
 
 		void executeCommand(int commandNum, std::string optionString, int i);
 		void sendChannelMessge(Channel *channel, std::string message, int fd);

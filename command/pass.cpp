@@ -3,8 +3,8 @@
 
 int checkPassword(std::string pass, int clientId)
 {
-	Server& server = Server::getInstance();
-	Client* clients = server.getClients();
+	Server &server = Server::getInstance();
+	Client *clients = server.getClients();
 
 	if (clients[clientId].getPassFlag())
 		return ERR_ALREADYREGISTERED;
@@ -36,23 +36,31 @@ std::string makePassResponse(int responseCode)
 		return "";
 
 	std::string resMsg;
-    resMsg += std::to_string(responseCode);
-    resMsg += " :";
+	resMsg += std::to_string(responseCode);
+	resMsg += " :";
 
-    switch (responseCode)
-    {
-        case ERR_ALREADYREGISTERED:
-            resMsg += "You may not reregister";
-            break;
-        case ERR_BANNEDFROMCHAN:
-            resMsg += "Password incorrect";
-    }
+	switch (responseCode)
+	{
+	case ERR_ALREADYREGISTERED:
+		resMsg += "You may not reregister";
+		break;
+	case ERR_BANNEDFROMCHAN:
+		resMsg += "Password incorrect";
+	}
 	return resMsg;
 }
 
-std::string	PASS(std::string pass, int clientId)
+void PASS(std::string pass, int clientId)
 {
-	int	responseCode = checkPassword(pass, clientId);
+	Server &server = Server::getInstance();
+	Client* clients = server.getClients();
 
-	return makePassResponse(responseCode);
+	int responseCode = checkPassword(pass, clientId);
+
+	std::string resMsg = makePassResponse(responseCode);
+
+	if (!resMsg.empty())
+		server.sendMessage(clientId, resMsg);
+	if (clients[clientId].getPassFlag() == false)
+		server.disconnectClient(clientId, server.getFds()[clientId].fd);
 }

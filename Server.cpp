@@ -128,46 +128,6 @@ void Server::readClient(int i)
 			optionString.erase(optionString.size() - 1, optionString.size() - 1);
 			executeCommand(commandNum, optionString, i);
 		}
-		
-		// rBuff 파싱
-		int commandNum = commandParsing(rBuff);
-		std::string optionString =  std::strchr(rBuff, ' ') + 1;
-		optionString.erase(optionString.size() - 2, optionString.size() - 1);
-
-		if (commandNum == 0)
-		{
-			std::string str = PASS(optionString, i);
-			if (!str.empty())
-				sendMessage(i, str);
-		}
-		if (commandNum == 1) // NICK
-			sendMessage(i, NICK(i, optionString));
-		if (commandNum == 2) // USER
-			sendMessage(i, USER(i, optionString));
-		if (commandNum == 3) // JOIN
-		{
-			std::list<std::string> channelNameList;
-			std::list<std::string> keyList;
-			splitChannelKey(optionString, channelNameList, keyList);
-
-			while (channelNameList.size() > 0)
-			{
-				std::string channelName = channelNameList.front();
-				channelNameList.pop_front();
-				if (keyList.size() > 0)
-				{
-					sendMessage(i, JOIN(channelName, i, keyList.front()));
-					keyList.pop_front();
-				}
-				else
-					sendMessage(i, JOIN(channelName, i));
-			}
-		}
-		if (commandNum == 4) //PRIVMSG
-			PRIVMSG(i, optionString);
-    	if (commandNum == 5)
-			sendMessage(i, KICK(optionString, i));
-
 	}
 }
 
@@ -191,6 +151,11 @@ const std::string Server::getOperatorPass()
 Client *Server::getClients()
 {
     return this->clients;
+}
+
+struct pollfd* Server::getFds()
+{
+    return fds;
 }
 
 void Server::disconnectClient(int i, int readfd)
@@ -325,19 +290,13 @@ int Server::getNickNameId(std::string kickUserName)
 void Server::executeCommand(int commandNum, std::string optionString, int i)
 {
 	if (commandNum == 0)
-	{
-		std::string str = PASS(optionString, i);
-		if (!str.empty())
-			sendMessage(i, str);
-		if (clients[i].getPassFlag() == false)
-			disconnectClient(i, fds[i].fd);
-	}
+		PASS(optionString, i);
 	if (commandNum == 1) // NICK
 		sendMessage(i, NICK(i, optionString));
 	if (commandNum == 2) // USER
 		sendMessage(i, USER(i, optionString));
 	if (commandNum == 3) // JOIN
-		sendMessage(i, JOIN(optionString, i));
+		JOIN(i, optionString);
 	if (commandNum == 4) //PRIVMSG
 		PRIVMSG(i, optionString);
 	if (commandNum == 5) //KICK
