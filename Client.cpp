@@ -36,6 +36,11 @@ bool Client::getPassFlag() const
 	return passFlag;
 }
 
+bool Client::getAdminFlag() const
+{
+	return adminFlag;
+}
+
 void Client::setNickName(std::string nickName_)
 {
 	nickName = nickName_;

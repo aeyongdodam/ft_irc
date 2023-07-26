@@ -18,6 +18,7 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <sstream>
 
 #include "Client.hpp"
 #include "command/command.hpp"
@@ -62,12 +63,14 @@ class Server
 
         int commandParsing(std::string input);
         int checkCommand(std::string command);
-		int getConnectClientNum() const;
+		int getNickNameId(std::string kickUserName);
 		void sendMessage(int i, std::string str);
 
 		const std::string getGenernalPass();
 		const std::string getOperatorPass();
 		Client* getClients();
+
+		void executeCommand(int commandNum, std::string optionString, int i);
 
 };
 

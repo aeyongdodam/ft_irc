@@ -58,7 +58,7 @@ void Server::init(unsigned short portNum, std::string generalPassword)
 	if (bind(listenSd, (struct sockaddr*)&srvAddr, sizeof(srvAddr)) == -1)
 		errProc("bind");
 
-	if (listen(listenSd, 5) < 0)
+	if (listen(listenSd, 10) < 0)
 		errProc("listen");
 
 	fds[0].fd = listenSd;
@@ -117,7 +117,17 @@ void Server::readClient(int i)
 	else if (readLen > 0)
 	{
 		rBuff[readLen] = '\0';
-		std::cout << "rBuff Message : " << rBuff << std::endl;
+		std::istringstream iss(rBuff);
+		std::string line;
+		while (std::getline(iss, line))
+		{
+			std::cout << "rBuff Message : " << line << std::endl;
+			int commandNum = commandParsing(line);
+			std::string optionString =  std::strchr(line.c_str(), ' ') + 1;
+			optionString.erase(optionString.size() - 1, optionString.size() - 1);
+			executeCommand(commandNum, optionString, i);
+		}
+		
 		// rBuff 파싱
 		int commandNum = commandParsing(rBuff);
 		std::string optionString =  std::strchr(rBuff, ' ') + 1;
@@ -154,14 +164,16 @@ void Server::readClient(int i)
 		}
 		if (commandNum == 4) //PRIVMSG
 			PRIVMSG(i, optionString);
-    if (commandNum == 5)
+    	if (commandNum == 5)
 			sendMessage(i, KICK(optionString, i));
+
 	}
 }
 
 void Server::sendMessage(int i, std::string str)
 {
-    std::string numericMessage = ":10.14.1.5 " + str + "\r\n";
+    std::string numericMessage = str + "\r\n";
+	std::cout << "메세지내용 : " << numericMessage << std::endl;
     write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
 }
 
@@ -185,6 +197,11 @@ void Server::disconnectClient(int i, int readfd)
 	close(readfd);
 	fds[i].fd = -1;
 	fds[i].events = 0;
+	clients[i].setNickName("");
+	clients[i].setLoginName("");
+	clients[i].setRealName("");
+	clients[i].setPassFlag(false);
+	clients[i].setAdminFlag(false);
 }
 
 void Server::monitoring()
@@ -293,3 +310,36 @@ int Server::checkCommand(std::string command)
 	std::cout << "그런 명령어는 없어용~" << std::endl;
 	return -1;
 }
+
+int Server::getNickNameId(std::string kickUserName)
+{
+    for (int i = 0; i < MAX_EVENTS; i++)
+    {
+        if (clients[i].getNickName() == kickUserName)
+            return i;
+    }
+    return -1;
+}
+
+void Server::executeCommand(int commandNum, std::string optionString, int i)
+{
+	if (commandNum == 0)
+	{
+		std::string str = PASS(optionString, i);
+		if (!str.empty())
+			sendMessage(i, str);
+		if (clients[i].getPassFlag() == false)
+			disconnectClient(i, fds[i].fd);
+	}
+	if (commandNum == 1) // NICK
+		sendMessage(i, NICK(i, optionString));
+	if (commandNum == 2) // USER
+		sendMessage(i, USER(i, optionString));
+	if (commandNum == 3) // JOIN
+		sendMessage(i, JOIN(optionString, i));
+	if (commandNum == 4) //PRIVMSG
+		PRIVMSG(i, optionString);
+	if (commandNum == 5)
+		sendMessage(i, KICK(optionString, i));
+}
+

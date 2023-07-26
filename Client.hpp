@@ -34,6 +34,7 @@ class Client
 		std::string getLoginName() const;
 		std::string getRealName() const;
 		bool getPassFlag() const;
+		bool getAdminFlag() const;
 		void setNickName(std::string nickName_);
 		void setLoginName(std::string loginName_);
 		void setRealName(std::string setRealName_);
