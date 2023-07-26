@@ -46,6 +46,8 @@ class Channel
 		std::string* getTopic();
 		std::string* getKey();
 		int getAdminId();
+
+		std::string getClientList();
 		
 };
 
