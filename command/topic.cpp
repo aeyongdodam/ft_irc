@@ -40,12 +40,14 @@ std::string TOPIC(std::string input, int clientId)
     {
         numeric = ERR_NOTONCHANNEL;
         message = " " + channelName + " :You're not on that channel";
+        return (std::to_string(numeric) + message);
     }
 
     if (channel->getAdminId() != clientId && channel->gettopicSetting() == 0) //방장 여러 명 배열로 바뀌면 고쳐야함
     {
         numeric = ERR_CHANOPRIVSNEEDED;
         message = " " + channelName + " :You're not channel operator";
+        return (std::to_string(numeric) + message);
     }
     channel->changeTopic(clientId, topicString);
     std::cout << "channelName " << channelName + " topiccstring : " << topicString << std::endl;
