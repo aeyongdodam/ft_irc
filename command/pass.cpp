@@ -1,5 +1,4 @@
 #include "command.hpp"
-#include "../Server.hpp"
 
 int checkPassword(std::string pass, int clientId)
 {

@@ -1,5 +1,4 @@
 #include "command.hpp"
-#include "../Channel.hpp"
 
 void sendUser(int fd, std::string str)
 {

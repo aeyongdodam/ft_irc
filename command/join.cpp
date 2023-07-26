@@ -1,6 +1,4 @@
 #include "command.hpp"
-#include "../Server.hpp"
-#include "../Channel.hpp"
 
 std::list<std::string> split(std::string input, char delimiter)
 {

@@ -1,6 +1,4 @@
 #include "command.hpp"
-#include "../Server.hpp"
-#include "../Channel.hpp"
 
 std::string	PART(std::string channelName, int clientId)
 {

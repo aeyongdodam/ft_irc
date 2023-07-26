@@ -49,6 +49,7 @@
 #include <list>
 
 #include "../Server.hpp"
+#include "../Channel.hpp"
 
 class Server;
 class Channel;
