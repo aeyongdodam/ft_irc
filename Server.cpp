@@ -10,6 +10,7 @@ Server::Server()
 	commandList[4] = "PRIVMSG";
   	commandList[5] = "KICK";
 	commandList[6] = "PART";
+	commandList[8] = "QUIT";
 	connectClientNum = 0;
 }
 
@@ -303,6 +304,8 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 		sendMessage(i, KICK(optionString, i));
 	if (commandNum == 6) //PART
 		sendMessage(i, PART(optionString, i));
+	if (commandNum == 8) //QUIT
+		QUIT(i, optionString);
 }
 
 void Server::sendChannelMessge(Channel *channel, std::string message, int fd)
@@ -316,4 +319,9 @@ void Server::sendChannelMessge(Channel *channel, std::string message, int fd)
 		if (i != fd && clientStatus[i] == CONNECTED)
 			sendMessage(i, message);
 	}
+}
+
+std::map<std::string, Channel*>& Server::getChannelMap()
+{
+        return channelMap;
 }
