@@ -210,3 +210,22 @@ bool Channel::gettopicSetting()
 {
 	return topicSetting;
 }
+
+std::string Channel::getClientList()
+{
+	Server& server = Server::getInstance();
+
+	std::string listStr = "";
+
+    for (int i = 0; i < MAX_EVENTS; i++)
+	{
+		if (clientStatus[i] == CONNECTED)
+		{
+			listStr += " ";
+			if (i == adminId)
+				listStr += "@";
+			listStr += server.getClients()[i].getNickName();
+		}
+	}
+	return listStr;
+}
