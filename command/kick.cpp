@@ -48,7 +48,7 @@ std::string KICK(std::string input, int clientId) //clientId가 쫓아내는입�
         return (std::to_string(numeric) + message);
     }
 
-    if (channel->getAdminId() == clientId)
+    if (channel->isAdmin(clientId))
     {
         channel->kickClient(clientId, nickNameId);
         return ("KICK " + channelName + " " + kickUserName + " " + clients[clientId].getNickName());

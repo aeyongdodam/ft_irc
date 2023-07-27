@@ -96,9 +96,9 @@ void modeFlagT(int fd, std::string channelName, std::string optionFlag)
 	Client* clients = server.getClients();
 
 	if (optionFlag[0] == '+')
-		numeric = channel->changeTopicSetting(fd,false);
+		numeric = channel->changeTopicSetting(false);
 	else
-		numeric = channel->changeTopicSetting(fd,true);
+		numeric = channel->changeTopicSetting(true);
 
 	if (numeric == 1)
 	{

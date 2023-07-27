@@ -13,8 +13,9 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <vector>
+#include <list>
 
-#include "Channel.hpp"
+class Channel;
 
 class Client
 {
