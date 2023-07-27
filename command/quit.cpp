@@ -12,7 +12,7 @@ void QUIT(int fd)
         int *clientstatus = channel->getClientStatus();
         if (clientstatus[fd] == CONNECTED)
         {
-            message = clients[fd].getNickName() + "!user" + "@127.0.0.1 QUIT :Quit: leaving " + channel->getName();
+            message = ":" + clients[fd].getNickName() + "!user@10.14.1.2 QUIT :leaving";
             server.sendChannelMessge(channel,message, fd);
         }
     }

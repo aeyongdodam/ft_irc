@@ -136,7 +136,7 @@ void Server::readClient(int i)
 
 void Server::sendMessage(int i, std::string str)
 {
-    std::string numericMessage = str + "\r\n";
+    std::string numericMessage = str + "\n";
 	std::cout << "메세지내용 : " << numericMessage << std::endl;
     write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
 }
