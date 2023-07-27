@@ -3,6 +3,7 @@
 
 #include "Client.hpp"
 #include "Server.hpp"
+#include <ctime>
 
 #define UNCONNECTED 0
 #define CONNECTED 1
@@ -17,9 +18,12 @@ class Channel
 		std::string			*topic;
 		std::string			*key;
 		bool				inviteOnly;
+		bool				topicSetting; // 0이면 방장만, 1이면 모두 가능
 		int					clientStatus[MAX_EVENTS + 1];
 		int					capacity;
 		int					maxCapacity;
+		int					lastTopicSetId;
+		long				lastTopicSetTime;
 
 		Channel();
 
@@ -37,7 +41,7 @@ class Channel
 		int banClient(int adminId, int targetId);
 
 		int changeInviteOnly(int adminId, bool inviteOnly);
-		int changeTopic(int adminId, std::string* topic);
+		int changeTopic(int adminId, std::string& topic);
 		int changeKey(int adminId, std::string* key);
 		int changeAdmin(int oldAdminId, int newAdminId);
 
@@ -46,7 +50,7 @@ class Channel
 		std::string* getTopic();
 		std::string* getKey();
 		int getAdminId();
-
+		bool gettopicSetting();
 		std::string getClientList();
 		
 };

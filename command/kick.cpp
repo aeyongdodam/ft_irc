@@ -11,14 +11,14 @@ std::string KICK(std::string input, int clientId) //clientId가 쫓아내는입�
     if (firstWord == std::string::npos)
     {
         numeric = ERR_NEEDMOREPARAMS;
-        message = "KICK :Not enough parameters";
+        message = " KICK :Not enough parameters";
         return (std::to_string(numeric) + message);
     }
     size_t secondWord =  input.find(' ', firstWord + 1);
     if (secondWord == std::string::npos)
     {
         numeric = ERR_NEEDMOREPARAMS;
-        message = "KICK :Not enough parameters";
+        message = " KICK :Not enough parameters";
         return (std::to_string(numeric) + message);     
     }
     std::string channelName = input.substr(0, firstWord);

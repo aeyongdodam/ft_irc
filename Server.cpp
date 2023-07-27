@@ -10,6 +10,7 @@ Server::Server()
 	commandList[4] = "PRIVMSG";
   	commandList[5] = "KICK";
 	commandList[6] = "PART";
+	commandList[7] = "TOPIC";
 	connectClientNum = 0;
 }
 
@@ -303,6 +304,8 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 		sendMessage(i, KICK(optionString, i));
 	if (commandNum == 6) //PART
 		sendMessage(i, PART(optionString, i));
+	if (commandNum == 7) // TOPIC
+		sendMessage(i, TOPIC(optionString, i));
 }
 
 void Server::sendChannelMessge(Channel *channel, std::string message, int fd)
