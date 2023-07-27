@@ -12,7 +12,6 @@ Server::Server()
 	commandList[6] = "PART";
 	commandList[7] = "TOPIC";
 	commandList[8] = "MODE";
-	commandList[7] = "TOPIC";
 	connectClientNum = 0;
 }
 
