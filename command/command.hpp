@@ -70,5 +70,6 @@ std::string TOPIC(std::string input, int clientId);
 void MODE(int fd, std::string str);
 int modeNoChannel(int fd, std::string channelName);
 void modeFlagI(int fd, std::string channelName, std::string optionFlag);
+void modeFlagT(int fd, std::string channelName, std::string optionFlag);
 
 #endif

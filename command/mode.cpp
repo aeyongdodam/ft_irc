@@ -16,9 +16,10 @@ void MODE(int fd, std::string str)
 	if (modeNoChannel(fd, channelName))
 		return ;
 	
-
 	if (optionFlag[1] == 'i')
 		modeFlagI(fd, channelName, optionFlag);
+	if (optionFlag[1] == 't')
+		modeFlagT(fd, channelName, optionFlag);
 }
 
 int modeNoChannel(int fd, std::string channelName)
@@ -65,7 +66,7 @@ void modeFlagI(int fd, std::string channelName, std::string optionFlag)
 		message += optionFlag;
 		server.sendChannelMessge(channel, message, fd);
 	}
-	else
+	else if (numeric == 482)
 	{
 		message = std::to_string(numeric);
 		message += " ";
@@ -74,5 +75,45 @@ void modeFlagI(int fd, std::string channelName, std::string optionFlag)
 		message += channelName;
 		message += " :You must have channel op access or above to set channel mode i";
 	}
+	else
+		return ;
+	server.sendMessage(fd, message);
+}
+
+void modeFlagT(int fd, std::string channelName, std::string optionFlag)
+{
+	int numeric;
+	std::string message;
+
+	Server& server = Server::getInstance();
+	Channel *channel = server.findChannel(channelName);
+	Client* clients = server.getClients();
+
+	if (optionFlag[0] == '+')
+		numeric = channel->changeInviteOnly(fd,true);
+	else
+		numeric = channel->changeInviteOnly(fd,false);
+
+	if (numeric == 1)
+	{
+		message = ":";
+		message += clients[fd].getNickName();
+		message += " MODE ";
+		message += channelName;
+		message += " :";
+		message += optionFlag;
+		server.sendChannelMessge(channel, message, fd);
+	}
+	else if (numeric == 482)
+	{
+		message = std::to_string(numeric);
+		message += " ";
+		message += clients[fd].getNickName();
+		message += " ";
+		message += channelName;
+		message += " :You must have channel op access or above to set channel mode i";
+	}
+	else
+		return ;
 	server.sendMessage(fd, message);
 }

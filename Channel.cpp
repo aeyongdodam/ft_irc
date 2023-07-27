@@ -2,7 +2,7 @@
 
 Channel::Channel() : adminId(-1), name("default") {}
 
-Channel::Channel(int adminId, std::string& name) : adminId(adminId), name(name), topic(NULL), key(NULL), inviteOnly(false), capacity(1), maxCapacity(-1)
+Channel::Channel(int adminId, std::string& name) : adminId(adminId), name(name), topic(NULL), key(NULL), inviteOnly(false), topicSetting(false), capacity(1), maxCapacity(-1), lastTopicSetId(-1), lastTopicSetTime(-1)
 {
 	for (int i = 0; i < MAX_EVENTS; i++)
 		clientStatus[i] = 0;
@@ -141,6 +141,9 @@ int Channel::changeInviteOnly(int adminId, bool inviteOnly)
 {
 	if (this->adminId != adminId)
 		return 482; // ERR_CHANOPRIVSNEEDED
+	
+	if (this->inviteOnly == inviteOnly)
+		return 0; // notihing change
 
 	this->inviteOnly = inviteOnly;
 	return 1; // SUCCESS
@@ -177,6 +180,18 @@ int Channel::changeAdmin(int oldAdminId, int newAdminId)
 	if (this->adminId != oldAdminId)
 		return 482; // ERR_CHANOPRIVSNEEDED
 	adminId = newAdminId;
+	return 1; // SUCCESS
+}
+
+int Channel::changeTopicSetting(int oldAdminId, bool topicSetting)
+{
+	if (this->adminId != oldAdminId)
+		return 482; // ERR_CHANOPRIVSNEEDED
+
+	if (this->topicSetting == topicSetting)
+		return 0; // notihing change
+
+	this->topicSetting = topicSetting;
 	return 1; // SUCCESS
 }
 
