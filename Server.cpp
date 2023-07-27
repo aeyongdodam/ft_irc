@@ -308,8 +308,8 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 		sendMessage(i, PART(optionString, i));
 	if (commandNum == 7) // TOPIC
 		sendMessage(i, TOPIC(optionString, i));
-	if (commandNum == 8) //QUIT
-		QUIT(i, optionString);
+	if (commandNum == 9) //QUIT
+		QUIT(i);
 }
 
 void Server::sendChannelMessge(Channel *channel, std::string message, int fd)
@@ -321,7 +321,10 @@ void Server::sendChannelMessge(Channel *channel, std::string message, int fd)
 			continue;
 		
 		if (i != fd && clientStatus[i] == CONNECTED)
+		{
+			std::cout << "메세지 받는 사람 : " << getClients()[i].getNickName() << std::endl;
 			sendMessage(i, message);
+		}
 	}
 }
 
