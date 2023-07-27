@@ -2,7 +2,7 @@
 
 Channel::Channel() : adminId(-1), name("default") {}
 
-Channel::Channel(int adminId, std::string& name) : adminId(adminId), name(name), topic(NULL), key(NULL), inviteOnly(false), capacity(1), maxCapacity(-1)
+Channel::Channel(int adminId, std::string& name) : adminId(adminId), name(name), topic(NULL), key(""), inviteOnly(false), topicSetting(false), capacity(1), maxCapacity(-1), lastTopicSetId(-1), lastTopicSetTime(-1)
 {
 	for (int i = 0; i < MAX_EVENTS; i++)
 		clientStatus[i] = 0;
@@ -22,13 +22,13 @@ Channel::~Channel()
 {
 	if (topic)
 		delete topic;
-	if (key)
-		delete key;
+	// if (key)
+	// 	delete key;
 }
 
 int Channel::joinChannel(int clientId)
 {
-	if (key != NULL)
+	if (key != "")
 		return 475; // ERR_BADCHANNELKEY
 	if (capacity == maxCapacity)
 		return 471; // ERR_CHANNELISFULL
@@ -56,9 +56,9 @@ int Channel::joinChannel(int clientId)
     return false;
 }
 
-int Channel::joinChannel(int clientId, std::string& key)
+int Channel::joinChannel(int clientId, std::string key)
 {
-	if (this->key->compare(key) != 0)
+	if (this->key.compare(key) != 0)
 		return 475; // ERR_BADCHANNELKEY
 	if (capacity == maxCapacity)
 		return 471; // ERR_CHANNELISFULL
@@ -141,6 +141,9 @@ int Channel::changeInviteOnly(int adminId, bool inviteOnly)
 {
 	if (this->adminId != adminId)
 		return 482; // ERR_CHANOPRIVSNEEDED
+	
+	if (this->inviteOnly == inviteOnly)
+		return 0; // notihing change
 
 	this->inviteOnly = inviteOnly;
 	return 1; // SUCCESS
@@ -160,13 +163,10 @@ int Channel::changeTopic(int adminId, std::string& topic)
 	return 332; // SUCCESS
 }
 
-int Channel::changeKey(int adminId, std::string* key)
+int Channel::changeKey(int adminId, std::string key)
 {
 	if (this->adminId != adminId)
 		return 482; // ERR_CHANOPRIVSNEEDED
-
-	if (this->key != NULL)
-		delete this->key;
 
 	this->key = key;
 	return 1; // SUCCESS
@@ -180,6 +180,18 @@ int Channel::changeAdmin(int oldAdminId, int newAdminId)
 	return 1; // SUCCESS
 }
 
+int Channel::changeTopicSetting(int oldAdminId, bool topicSetting)
+{
+	if (this->adminId != oldAdminId)
+		return 482; // ERR_CHANOPRIVSNEEDED
+      
+	if (this->topicSetting == topicSetting)
+		return 0; // notihing change
+
+	this->topicSetting = topicSetting;
+	return 1; // SUCCESS
+}
+
 const std::string Channel::getName()
 {
     return this->name;
@@ -190,7 +202,7 @@ std::string* Channel::getTopic()
     return this->topic;
 }
 
-std::string* Channel::getKey()
+std::string Channel::getKey()
 {
     return this->key;
 }
