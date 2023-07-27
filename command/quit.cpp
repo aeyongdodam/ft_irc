@@ -10,7 +10,6 @@ void QUIT(int fd)
     {
         Channel* channel = it->second;
         int *clientstatus = channel->getClientStatus();
-        std::cout << "채널이름 : " << channel->getName() << "-------------- " << std::endl;
         if (clientstatus[fd] == CONNECTED)
         {
             message = clients[fd].getNickName() + "!user" + "@127.0.0.1 QUIT :Quit: leaving " + channel->getName();

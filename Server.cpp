@@ -321,10 +321,7 @@ void Server::sendChannelMessge(Channel *channel, std::string message, int fd)
 			continue;
 		
 		if (i != fd && clientStatus[i] == CONNECTED)
-		{
-			std::cout << "메세지 받는 사람 : " << getClients()[i].getNickName() << std::endl;
 			sendMessage(i, message);
-		}
 	}
 }
 
