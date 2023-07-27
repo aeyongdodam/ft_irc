@@ -44,7 +44,6 @@ class Server
 
 		int connectClientNum;
 		std::string generalPass;
-		std::string operatorPass;
 
 	public:
 		Server& operator=(const Server& copy);
@@ -67,7 +66,6 @@ class Server
 		void sendMessage(int i, std::string str);
 
 		const std::string getGenernalPass();
-		const std::string getOperatorPass();
 		Client* getClients();
 		struct pollfd* getFds();
 

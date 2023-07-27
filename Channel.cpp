@@ -39,18 +39,17 @@ int Channel::joinChannel(int clientId)
 	case BANNED:
 		return 474; // ERR_BANNEDFROMCHAN
 	case CONNECTED:
-		return 462; // SUCCESS
+		return 462;
 	case UNCONNECTED:
 		if (inviteOnly)
 			return 473; // ERR_INVITEONLYCHAN
 		clientStatus[clientId] = CONNECTED;
 		capacity += 1;
-		return 311; // SUCCESS
-		// 임의로 성공(토픽없음) 리턴
+		return SUCCESS;
 	case INVITED:
 		clientStatus[clientId] = CONNECTED;
 		capacity += 1;
-		return 1; // SUCCESS
+		return SUCCESS;
 	}
 
     return false;
@@ -69,17 +68,17 @@ int Channel::joinChannel(int clientId, std::string& key)
 	case BANNED:
 		return 474; // ERR_BANNEDFROMCHAN
 	case CONNECTED:
-		return 1; // SUCCESS
+		return SUCCESS;
 	case UNCONNECTED:
 		if (inviteOnly)
 			return 473; // ERR_INVITEONLYCHAN
 		clientStatus[clientId] = CONNECTED;
 		capacity += 1;
-		return 1; // SUCCESS
+		return SUCCESS;
 	case INVITED:
 		clientStatus[clientId] = CONNECTED;
 		capacity += 1;
-		return 1; // SUCCESS
+		return SUCCESS;
 	}
 
     return false;
