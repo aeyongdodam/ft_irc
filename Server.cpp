@@ -309,7 +309,7 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 	if (commandNum == 7) // TOPIC
 		sendMessage(i, TOPIC(optionString, i));
 	if (commandNum == 8) //MODE
-		sendMessage(i, MODE(i, optionString));
+		MODE(i, optionString);
 }
 
 void Server::sendChannelMessge(Channel *channel, std::string message, int fd)

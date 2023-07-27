@@ -1,18 +1,47 @@
 #include "command.hpp"
 #include "../Channel.hpp"
 
-std::string MODE(int fd, std::string str)
+void MODE(int fd, std::string str)
 {
 	size_t spacePoint = str.find(' ');
 	std::string channelName = str.substr(0, spacePoint);
 	std::string optionFlag = str.substr(spacePoint+1, spacePoint+3);
 
+	// #channel이 아닐때 무시
+	size_t channelPoint = str.find('#');
+	if (channelPoint == std::string::npos)
+		return ;
+	
+	// 채널 없을때 403
+	if (modeNoChannel(fd, channelName))
+		return ;
+	
+
 	if (optionFlag[1] == 'i')
-		return modeFlagI(fd, channelName, optionFlag);
-	return "";
+		modeFlagI(fd, channelName, optionFlag);
 }
 
-std::string modeFlagI(int fd, std::string channelName, std::string optionFlag)
+int modeNoChannel(int fd, std::string channelName)
+{
+	Server& server = Server::getInstance();
+	Channel *channel = server.findChannel(channelName);
+	Client* clients = server.getClients();
+
+	if (channel != NULL)
+		return 0;
+
+	std::string message = std::to_string(403);
+	message += " ";
+	message += clients[fd].getNickName();
+	message += " ";
+	message += channelName;
+	message += " :No such channel";
+	server.sendMessage(fd, message);
+
+	return 1;
+}
+
+void modeFlagI(int fd, std::string channelName, std::string optionFlag)
 {
 	int numeric;
 	std::string message;
@@ -20,10 +49,6 @@ std::string modeFlagI(int fd, std::string channelName, std::string optionFlag)
 	Server& server = Server::getInstance();
 	Channel *channel = server.findChannel(channelName);
 	Client* clients = server.getClients();
-
-	// 젤 처음에 mode <nick> +i 들어오는거 어케 할지 정해야함
-	if (channel == NULL)
-		return "";
 
 	if (optionFlag[0] == '+')
 		numeric = channel->changeInviteOnly(fd,true);
@@ -49,5 +74,5 @@ std::string modeFlagI(int fd, std::string channelName, std::string optionFlag)
 		message += channelName;
 		message += " :You must have channel op access or above to set channel mode i";
 	}
-	return message;
+	server.sendMessage(fd, message);
 }

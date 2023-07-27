@@ -57,16 +57,18 @@ void PASS(std::string pass, int clientId);
 std::string NICK(int fd, std::string nickname);
 std::string USER(int fd, std::string str);
 void JOIN(int clientId, std::string optionString);
-
-
 void PRIVMSG(int fd, std::string str);
 std::string KICK(std::string input, int clientId);
+
 int getNickNameId(Client *clients, std::string kickUserName);
 
 std::string	PART(std::string channelName, int clientId);
 std::string makePartResponse(int responseCode, std::string channelName);
+
 std::string TOPIC(std::string input, int clientId);
-std::string MODE(int fd, std::string str);
-std::string modeFlagI(int fd, std::string channelName, std::string optionFlag);
+
+void MODE(int fd, std::string str);
+int modeNoChannel(int fd, std::string channelName);
+void modeFlagI(int fd, std::string channelName, std::string optionFlag);
 
 #endif
