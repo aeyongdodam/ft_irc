@@ -26,20 +26,20 @@ Channel::~Channel()
 int Channel::joinChannel(int clientId)
 {
 	if (key != "")
-		return 475; // ERR_BADCHANNELKEY
+		return ERR_BADCHANNELKEY;
 	if (capacity == maxCapacity)
-		return 471; // ERR_CHANNELISFULL
+		return ERR_CHANNELISFULL;
 
 	int	cStatus = clientStatus[clientId];
 	switch (cStatus)
 	{
 	case BANNED:
-		return 474; // ERR_BANNEDFROMCHAN
+		return ERR_BANNEDFROMCHAN;
 	case CONNECTED:
-		return 462;
+		return ERR_ALREADYREGISTERED;
 	case UNCONNECTED:
 		if (inviteOnly)
-			return 473; // ERR_INVITEONLYCHAN
+			return ERR_INVITEONLYCHAN;
 		clientStatus[clientId] = CONNECTED;
 		capacity += 1;
 		return SUCCESS;
@@ -55,20 +55,20 @@ int Channel::joinChannel(int clientId)
 int Channel::joinChannel(int clientId, std::string key)
 {
 	if (this->key.compare(key) != 0)
-		return 475; // ERR_BADCHANNELKEY
+		return ERR_BADCHANNELKEY;
 	if (capacity == maxCapacity)
-		return 471; // ERR_CHANNELISFULL
+		return ERR_CHANNELISFULL;
 
 	int	cStatus = clientStatus[clientId];
 	switch (cStatus)
 	{
 	case BANNED:
-		return 474; // ERR_BANNEDFROMCHAN
+		return ERR_BANNEDFROMCHAN;
 	case CONNECTED:
 		return SUCCESS;
 	case UNCONNECTED:
 		if (inviteOnly)
-			return 473; // ERR_INVITEONLYCHAN
+			return ERR_INVITEONLYCHAN;
 		clientStatus[clientId] = CONNECTED;
 		capacity += 1;
 		return SUCCESS;
@@ -88,11 +88,11 @@ int Channel::kickClient(int adminId, int targetId)
 
 	int	targetStatus = clientStatus[targetId];
 	if (targetStatus != CONNECTED)
-		return 441; // ERR_USERNOTINCHANNEL
+		return ERR_USERNOTINCHANNEL;
 	clientStatus[targetId] = UNCONNECTED;
 	capacity -= 1;
 
-	return 1; // SUCCESS
+	return SUCCESS;
 }
 
 int Channel::partClient(int clientId)
@@ -115,7 +115,7 @@ int Channel::banClient(int adminId, int targetId)
 		capacity -= 1;
 	clientStatus[targetId] = BANNED;
 
-	return 1; // SUCCESS
+	return SUCCESS;
 }
 
 int Channel::inviteClient(int adminId, int targetId)
@@ -127,9 +127,9 @@ int Channel::inviteClient(int adminId, int targetId)
 	if (targetStatus != CONNECTED)
 	{
 		clientStatus[targetId] = INVITED;
-		return 341; // RPL_INVITING
+		return RPL_INVITING;
 	}
-	return 443; // ERR_USERONCHANNEL
+	return ERR_USERONCHANNEL; // ERR_USERONCHANNEL
 }
 
 int Channel::changeInviteOnly(int adminId, bool inviteOnly)
@@ -174,8 +174,11 @@ int Channel::addAdmin(int oldAdminId, int newAdminId)
 	return SUCCESS;
 }
 
-int Channel::changeTopicSetting(bool topicSetting)
+int Channel::changeTopicSetting(int adminId, bool topicSetting)
 {
+	if (isAdmin(adminId) == false)
+		return ERR_CHANOPRIVSNEEDED;
+
 	if (this->topicSetting == topicSetting)
 		return 0; // notihing change
 

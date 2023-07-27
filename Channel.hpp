@@ -43,7 +43,7 @@ class Channel
 		int changeInviteOnly(int adminId, bool inviteOnly);
 		int changeTopic(int adminId, std::string& topic);
 		int changeKey(int adminId, std::string key);
-		int changeTopicSetting(bool topicSetting);
+		int changeTopicSetting(int adminId, bool topicSetting);
 
 		int* getClientStatus();
 		const std::string getName();
