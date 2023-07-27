@@ -12,6 +12,7 @@ Server::Server()
 	commandList[6] = "PART";
 	commandList[7] = "TOPIC";
 	commandList[8] = "MODE";
+	commandList[7] = "TOPIC";
 	connectClientNum = 0;
 }
 
@@ -130,11 +131,6 @@ void Server::readClient(int i)
 			optionString.erase(optionString.size() - 1, optionString.size() - 1);
 			executeCommand(commandNum, optionString, i);
 		}
-		
-		// rBuff 파싱
-		// 채널 운영자가 운영자를 강퇴 -> 쿠테타, 그냥 강퇴시키자 -> targetId clientStatus[]
-		// 운영자가 채널 운영자 강퇴 ->
-		// 강퇴가 안 된다 (방이 안 터져야 되면) -> 쿠데타
 	}
 }
 
@@ -158,6 +154,11 @@ const std::string Server::getOperatorPass()
 Client *Server::getClients()
 {
     return this->clients;
+}
+
+struct pollfd* Server::getFds()
+{
+    return fds;
 }
 
 void Server::disconnectClient(int i, int readfd)
@@ -292,25 +293,21 @@ int Server::getNickNameId(std::string kickUserName)
 void Server::executeCommand(int commandNum, std::string optionString, int i)
 {
 	if (commandNum == 0)
-	{
-		std::string str = PASS(optionString, i);
-		if (!str.empty())
-			sendMessage(i, str);
-		if (clients[i].getPassFlag() == false)
-			disconnectClient(i, fds[i].fd);
-	}
+		PASS(optionString, i);
 	if (commandNum == 1) // NICK
 		sendMessage(i, NICK(i, optionString));
 	if (commandNum == 2) // USER
 		sendMessage(i, USER(i, optionString));
 	if (commandNum == 3) // JOIN
-		sendMessage(i, JOIN(optionString, i));
+		JOIN(i, optionString);
 	if (commandNum == 4) //PRIVMSG
 		PRIVMSG(i, optionString);
 	if (commandNum == 5) //KICK
 		sendMessage(i, KICK(optionString, i));
 	if (commandNum == 6) //PART
 		sendMessage(i, PART(optionString, i));
+	if (commandNum == 7) // TOPIC
+		sendMessage(i, TOPIC(optionString, i));
 	if (commandNum == 8) //MODE
 		sendMessage(i, MODE(i, optionString));
 }

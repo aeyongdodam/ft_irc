@@ -146,16 +146,18 @@ int Channel::changeInviteOnly(int adminId, bool inviteOnly)
 	return 1; // SUCCESS
 }
 
-int Channel::changeTopic(int adminId, std::string* topic)
+int Channel::changeTopic(int adminId, std::string& topic)
 {
-	if (this->adminId != adminId)
-		return 482; // ERR_CHANOPRIVSNEEDED
+	// if (this->adminId != adminId)
+	// 	return 482; // ERR_CHANOPRIVSNEEDED
 
 	if (this->topic != NULL)
-		delete this->topic;
+		*(this->topic) = topic;
+	this->lastTopicSetId = adminId; //마지막으로 바꾼 사람 id 저장
 
-	this->topic = topic;
-	return 1; // SUCCESS
+	std::time_t timestamp = std::time(0);
+	this->lastTopicSetTime = timestamp; // 마지막으로 바꾼 시간 설정
+	return 332; // SUCCESS
 }
 
 int Channel::changeKey(int adminId, std::string* key)
@@ -201,4 +203,28 @@ int* Channel::getClientStatus()
 int Channel::getAdminId()
 {
 	return adminId;
+}
+
+bool Channel::gettopicSetting()
+{
+	return topicSetting;
+}
+
+std::string Channel::getClientList()
+{
+	Server& server = Server::getInstance();
+
+	std::string listStr = "";
+
+    for (int i = 0; i < MAX_EVENTS; i++)
+	{
+		if (clientStatus[i] == CONNECTED)
+		{
+			listStr += " ";
+			if (i == adminId)
+				listStr += "@";
+			listStr += server.getClients()[i].getNickName();
+		}
+	}
+	return listStr;
 }
