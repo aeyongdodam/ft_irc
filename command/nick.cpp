@@ -39,6 +39,7 @@ std::string NICK(int fd, std::string nickname)
 			message += ":";
 			message += nickname;
 			clients[fd].setNickName(nickname);
+			server.sendChannelUser(fd, message);
 		}
 	}
 	return (message);

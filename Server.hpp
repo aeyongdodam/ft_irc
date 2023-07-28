@@ -58,22 +58,21 @@ class Server
 		void destroy();
 
 		Channel*	createChannel(int adminId, std::string& name);
-        Channel*	findChannel(std::string &name);
-        bool		deleteChannel(std::string &name);
+		Channel*	findChannel(std::string &name);
+		bool		deleteChannel(std::string &name);
 
-        int commandParsing(std::string input);
-        int checkCommand(std::string command);
+		int commandParsing(std::string input);
+		int checkCommand(std::string command);
 		int getNickNameId(std::string kickUserName);
 		void sendMessage(int i, std::string str);
 
 		const std::string getGenernalPass();
 		Client* getClients();
 		struct pollfd* getFds();
-		std::map<std::string, Channel*>& getChannelMap();
 
 		void executeCommand(int commandNum, std::string optionString, int i);
 		void sendChannelMessage(Channel *channel, std::string message, int fd);
-
+		void sendChannelUser(int fd, std::string message);
 };
 
 void errProc(const char*);

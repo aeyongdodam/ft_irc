@@ -8,7 +8,7 @@ Server::Server()
 	commandList[2] = "USER";
 	commandList[3] = "JOIN";
 	commandList[4] = "PRIVMSG";
-  	commandList[5] = "KICK";
+	commandList[5] = "KICK";
 	commandList[6] = "PART";
 	commandList[7] = "TOPIC";
 	commandList[8] = "MODE";
@@ -82,8 +82,8 @@ void Server::connectClient(int i)
 	if (connectClientNum == MAX_EVENTS)
 	{
 		std::cerr << "MAX_EVENTS limit reached." << std::endl;
-        close(connectSd);
-        return;
+		close(connectSd);
+		return;
 	}
 
 	if (fcntl(connectSd, F_SETFL, O_NONBLOCK) == -1) 
@@ -142,24 +142,24 @@ void Server::openNewListenSd()
 
 void Server::sendMessage(int i, std::string str)
 {
-    std::string numericMessage = str + "\n";
+	std::string numericMessage = str + "\n";
 	std::cout << "메세지내용 : " << numericMessage << std::endl;
-    write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
+	write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
 }
 
 const std::string Server::getGenernalPass()
 {
-    return this->generalPass;
+	return this->generalPass;
 }
 
 Client *Server::getClients()
 {
-    return this->clients;
+	return this->clients;
 }
 
 struct pollfd* Server::getFds()
 {
-    return fds;
+	return fds;
 }
 
 void Server::disconnectClient(int i, int readfd)
@@ -301,12 +301,12 @@ int Server::checkCommand(std::string command)
 
 int Server::getNickNameId(std::string kickUserName)
 {
-    for (int i = 0; i < MAX_EVENTS; i++)
-    {
-        if (clients[i].getNickName() == kickUserName)
-            return i;
-    }
-    return -1;
+	for (int i = 0; i < MAX_EVENTS; i++)
+	{
+		if (clients[i].getNickName() == kickUserName)
+			return i;
+	}
+	return -1;
 }
 
 void Server::executeCommand(int commandNum, std::string optionString, int i)
@@ -346,7 +346,25 @@ void Server::sendChannelMessage(Channel *channel, std::string message, int fd)
 	}
 }
 
-std::map<std::string, Channel*>& Server::getChannelMap()
+void Server::sendChannelUser(int fd, std::string message)
 {
-        return channelMap;
+	std::vector<int> alreadySent;
+	alreadySent.push_back(fd);
+
+	for (std::map<std::string, Channel*>::const_iterator it = channelMap.begin(); it != channelMap.end(); it++)
+	{
+		Channel* channel = it->second;
+		int *clientstatus = channel->getClientStatus();
+		if (clientstatus[fd] == CONNECTED)
+		{
+			for (int i = 0; i < MAX_EVENTS; i++)
+			{
+				if (clientstatus[i] == CONNECTED && std::find(alreadySent.begin(), alreadySent.end(), i) == alreadySent.end())
+				{
+					sendMessage(i, message);
+					alreadySent.push_back(i);
+				}
+			}
+		}
+	}
 }
