@@ -1,6 +1,4 @@
 #include "command.hpp"
-#include "../Server.hpp"
-#include "../Channel.hpp"
 
 const std::string OPER(std::string& channelName, int clientId)
 {

@@ -30,6 +30,7 @@ std::string TOPIC(std::string input, int clientId)
         {
             numeric = RPL_NOTOPIC;
             message = " " + channelName + " :No topic is set";
+            return (std::to_string(numeric) + message);
         }
         else
             return (*channel->getTopic());

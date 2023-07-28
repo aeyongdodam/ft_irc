@@ -72,7 +72,7 @@ void modeFlagI(int fd, std::string channelName, std::string optionFlag)
 		message += channelName;
 		message += " :";
 		message += optionFlag;
-		server.sendChannelMessge(channel, message, fd);
+		server.sendChannelMessage(channel, message, fd);
 	}
 	else if (numeric == ERR_CHANOPRIVSNEEDED)
 	{
@@ -110,7 +110,7 @@ void modeFlagT(int fd, std::string channelName, std::string optionFlag)
 		message += channelName;
 		message += " :";
 		message += optionFlag;
-		server.sendChannelMessge(channel, message, fd);
+		server.sendChannelMessage(channel, message, fd);
 	}
 	else if (numeric == ERR_CHANOPRIVSNEEDED)
 	{
@@ -154,7 +154,7 @@ void modeFlagK(int fd, std::string channelName, std::string optionFlag, std::str
 		message += " :";
 		message += optionFlag;
 		message += textString;
-		server.sendChannelMessge(channel, message, fd);
+		server.sendChannelMessage(channel, message, fd);
 	}
 	else if (numeric == ERR_CHANOPRIVSNEEDED)
 	{
