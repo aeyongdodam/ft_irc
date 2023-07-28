@@ -88,7 +88,7 @@ void sendChannel(int fd, std::string str, size_t chennelPoint)
 	message += channelName;
 	message += " ";
 	message += chatMessage;
-	server.sendChannelMessge(channel, message, fd);
+	server.sendChannelMessage(channel, message, fd);
 }
 
 void PRIVMSG(int fd, std::string str)

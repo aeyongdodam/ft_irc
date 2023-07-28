@@ -315,7 +315,7 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 		QUIT(i);
 }
 
-void Server::sendChannelMessge(Channel *channel, std::string message, int fd)
+void Server::sendChannelMessage(Channel *channel, std::string message, int fd)
 {
 	int* clientStatus = channel->getClientStatus();
 	for (int i=0; i<MAX_EVENTS; i++)

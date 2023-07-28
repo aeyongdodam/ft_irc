@@ -21,7 +21,7 @@ std::string	PART(std::string channelName, int clientId)
         channelMsg += clients[clientId].getNickName();
         channelMsg += " PART :";
         channelMsg += channelName;
-        server.sendChannelMessge(channel, channelMsg, clientId);
+        server.sendChannelMessage(channel, channelMsg, clientId);
 
         std::string resMsg = "PART ";
         resMsg += channelName;

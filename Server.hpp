@@ -71,7 +71,7 @@ class Server
 		std::map<std::string, Channel*>& getChannelMap();
 
 		void executeCommand(int commandNum, std::string optionString, int i);
-		void sendChannelMessge(Channel *channel, std::string message, int fd);
+		void sendChannelMessage(Channel *channel, std::string message, int fd);
 
 };
 
