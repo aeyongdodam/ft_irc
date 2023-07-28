@@ -1,7 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#define MAX_EVENTS 10
+#define MAX_EVENTS 3
 #define CMD_COUNT 10
 
 #include <iostream>
@@ -53,26 +53,26 @@ class Server
 		void monitoring();
 		void connectClient(int i);
 		void readClient(int i);
+		void openNewListenSd();
 		void disconnectClient(int i, int readfd);
 		void destroy();
 
 		Channel*	createChannel(int adminId, std::string& name);
-        Channel*	findChannel(std::string &name);
-        bool		deleteChannel(std::string &name);
+		Channel*	findChannel(std::string &name);
+		bool		deleteChannel(std::string &name);
 
-        int commandParsing(std::string input);
-        int checkCommand(std::string command);
+		int commandParsing(std::string input);
+		int checkCommand(std::string command);
 		int getNickNameId(std::string kickUserName);
 		void sendMessage(int i, std::string str);
 
 		const std::string getGenernalPass();
 		Client* getClients();
 		struct pollfd* getFds();
-		std::map<std::string, Channel*>& getChannelMap();
 
 		void executeCommand(int commandNum, std::string optionString, int i);
 		void sendChannelMessage(Channel *channel, std::string message, int fd);
-
+		void sendChannelUser(int fd, std::string message);
 };
 
 void errProc(const char*);
