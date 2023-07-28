@@ -129,7 +129,7 @@ int Channel::inviteClient(int adminId, int targetId)
 		clientStatus[targetId] = INVITED;
 		return RPL_INVITING;
 	}
-	return ERR_USERONCHANNEL; // ERR_USERONCHANNEL
+	return ERR_USERONCHANNEL;
 }
 
 int Channel::changeInviteOnly(int adminId, bool inviteOnly)
@@ -152,7 +152,7 @@ int Channel::changeTopic(int adminId, std::string& topic)
 
 	std::time_t timestamp = std::time(0);
 	this->lastTopicSetTime = timestamp; // 마지막으로 바꾼 시간 설정
-	return 332; // SUCCESS
+	return RPL_TOPIC;
 }
 
 int Channel::changeKey(int adminId, std::string key)
