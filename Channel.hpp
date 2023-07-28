@@ -13,10 +13,10 @@
 class Channel 
 {
 	private:
-		int					adminId;
+		std::list<int>		adminIdList;
 		const std::string	name;
 		std::string			*topic;
-		std::string			*key;
+		std::string			key;
 		bool				inviteOnly;
 		bool				topicSetting; // 0이면 방장만, 1이면 모두 가능
 		int					clientStatus[MAX_EVENTS + 1];
@@ -34,7 +34,7 @@ class Channel
 		~Channel();
 
 		int	joinChannel(int clientId);
-		int joinChannel(int clientId, std::string& key);
+		int joinChannel(int clientId, std::string key);
 		int inviteClient(int adminId, int targetId);
 		int partClient(int clientId);
         int kickClient(int adminId, int targetId);
@@ -42,16 +42,19 @@ class Channel
 
 		int changeInviteOnly(int adminId, bool inviteOnly);
 		int changeTopic(int adminId, std::string& topic);
-		int changeKey(int adminId, std::string* key);
-		int changeAdmin(int oldAdminId, int newAdminId);
+		int changeKey(int adminId, std::string key);
+		int changeTopicSetting(int adminId, bool topicSetting);
 
 		int* getClientStatus();
 		const std::string getName();
 		std::string* getTopic();
-		std::string* getKey();
-		int getAdminId();
+		std::string getKey();
 		bool gettopicSetting();
 		std::string getClientList();
+		std::list<int> getAdminIdList();
+
+		bool isAdmin(int id);
+		int addAdmin(int oldAdminId, int newAdminId);
 		
 };
 

@@ -11,7 +11,7 @@ Server::Server()
   	commandList[5] = "KICK";
 	commandList[6] = "PART";
 	commandList[7] = "TOPIC";
-
+	commandList[8] = "MODE";
 	commandList[9] = "QUIT";
 	connectClientNum = 0;
 }
@@ -39,7 +39,6 @@ Server& Server::getInstance()
 void Server::init(unsigned short portNum, std::string generalPassword)
 {
 	this->generalPass = generalPassword;
-	this->operatorPass = "admin";
 	for (int i = 0; i < MAX_EVENTS + 1; i++) 
 	{
 		fds[i].fd = -1;
@@ -146,11 +145,6 @@ const std::string Server::getGenernalPass()
     return this->generalPass;
 }
 
-const std::string Server::getOperatorPass()
-{
-    return this->operatorPass;
-}
-
 Client *Server::getClients()
 {
     return this->clients;
@@ -170,7 +164,14 @@ void Server::disconnectClient(int i, int readfd)
 	clients[i].setLoginName("");
 	clients[i].setRealName("");
 	clients[i].setPassFlag(false);
-	clients[i].setAdminFlag(false);
+
+	std::list<Channel*> channels = clients[i].getChannels();
+	while (channels.size() > 0)
+	{
+		Channel *channel = channels.front();
+		channel->getClientStatus()[i] = UNCONNECTED;
+		channels.pop_front();
+	}
 }
 
 void Server::monitoring()
@@ -308,6 +309,8 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 		sendMessage(i, PART(optionString, i));
 	if (commandNum == 7) // TOPIC
 		sendMessage(i, TOPIC(optionString, i));
+	if (commandNum == 8) //MODE
+		MODE(i, optionString);
 	if (commandNum == 9) //QUIT
 		QUIT(i);
 }

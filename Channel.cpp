@@ -1,16 +1,15 @@
 #include "Channel.hpp"
 
-Channel::Channel() : adminId(-1), name("default") {}
+Channel::Channel() : name("default") {}
 
-Channel::Channel(int adminId, std::string& name) : adminId(adminId), name(name), topic(NULL), key(NULL), inviteOnly(false), capacity(1), maxCapacity(-1)
+Channel::Channel(int adminId, std::string& name) : name(name), topic(NULL), key(""), inviteOnly(false), topicSetting(false), capacity(1), maxCapacity(-1), lastTopicSetId(-1), lastTopicSetTime(-1)
 {
 	for (int i = 0; i < MAX_EVENTS; i++)
 		clientStatus[i] = 0;
-	// clientStatus[adminId] = CONNECTED;
-	// 첫 채널 생성시 client 462 -> 채널 안 들어가짐
+	adminIdList.push_back(adminId);
 }
 
-Channel::Channel(const Channel& other) : adminId(other.adminId), name(other.name) {}
+Channel::Channel(const Channel& other) : name(other.name) {}
 
 Channel& Channel::operator=(const Channel& source)
 {
@@ -22,64 +21,61 @@ Channel::~Channel()
 {
 	if (topic)
 		delete topic;
-	if (key)
-		delete key;
 }
 
 int Channel::joinChannel(int clientId)
 {
-	if (key != NULL)
-		return 475; // ERR_BADCHANNELKEY
+	if (key != "")
+		return ERR_BADCHANNELKEY;
 	if (capacity == maxCapacity)
-		return 471; // ERR_CHANNELISFULL
+		return ERR_CHANNELISFULL;
 
 	int	cStatus = clientStatus[clientId];
 	switch (cStatus)
 	{
 	case BANNED:
-		return 474; // ERR_BANNEDFROMCHAN
+		return ERR_BANNEDFROMCHAN;
 	case CONNECTED:
-		return 462; // SUCCESS
+		return ERR_ALREADYREGISTERED;
 	case UNCONNECTED:
 		if (inviteOnly)
-			return 473; // ERR_INVITEONLYCHAN
+			return ERR_INVITEONLYCHAN;
 		clientStatus[clientId] = CONNECTED;
 		capacity += 1;
-		return 311; // SUCCESS
-		// 임의로 성공(토픽없음) 리턴
+		return SUCCESS;
 	case INVITED:
 		clientStatus[clientId] = CONNECTED;
 		capacity += 1;
-		return 1; // SUCCESS
+		return SUCCESS;
 	}
 
     return false;
 }
 
-int Channel::joinChannel(int clientId, std::string& key)
+int Channel::joinChannel(int clientId, std::string key)
 {
-	if (this->key->compare(key) != 0)
-		return 475; // ERR_BADCHANNELKEY
+	if (this->key.compare(key) != 0)
+		return ERR_BADCHANNELKEY;
 	if (capacity == maxCapacity)
-		return 471; // ERR_CHANNELISFULL
+		return ERR_CHANNELISFULL;
 
 	int	cStatus = clientStatus[clientId];
 	switch (cStatus)
 	{
 	case BANNED:
-		return 474; // ERR_BANNEDFROMCHAN
+		return ERR_BANNEDFROMCHAN;
 	case CONNECTED:
-		return 1; // SUCCESS
+		return SUCCESS;
 	case UNCONNECTED:
 		if (inviteOnly)
-			return 473; // ERR_INVITEONLYCHAN
+			return ERR_INVITEONLYCHAN;
 		clientStatus[clientId] = CONNECTED;
 		capacity += 1;
-		return 1; // SUCCESS
+		return SUCCESS;
 	case INVITED:
 		clientStatus[clientId] = CONNECTED;
 		capacity += 1;
-		return 1; // SUCCESS
+		return SUCCESS;
 	}
 
     return false;
@@ -87,17 +83,16 @@ int Channel::joinChannel(int clientId, std::string& key)
 
 int Channel::kickClient(int adminId, int targetId)
 {
-	// 관리자가 스스로 강퇴를 하면?
-	if (this->adminId != adminId)
-		return 482; // ERR_CHANOPRIVSNEEDED
+	if (isAdmin(adminId) == false)
+		return ERR_CHANOPRIVSNEEDED;
 
 	int	targetStatus = clientStatus[targetId];
 	if (targetStatus != CONNECTED)
-		return 441; // ERR_USERNOTINCHANNEL
+		return ERR_USERNOTINCHANNEL;
 	clientStatus[targetId] = UNCONNECTED;
 	capacity -= 1;
 
-	return 1; // SUCCESS
+	return SUCCESS;
 }
 
 int Channel::partClient(int clientId)
@@ -113,34 +108,37 @@ int Channel::partClient(int clientId)
 
 int Channel::banClient(int adminId, int targetId)
 {
-	// 관리자가 스스로 밴을 하면?
-	if (this->adminId != adminId)
-		return 482; // ERR_CHANOPRIVSNEEDED
+	if (isAdmin(adminId) == false)
+		return ERR_CHANOPRIVSNEEDED;
+
 	if (clientStatus[targetId] == CONNECTED)
 		capacity -= 1;
 	clientStatus[targetId] = BANNED;
 
-	return 1; // SUCCESS
+	return SUCCESS;
 }
 
 int Channel::inviteClient(int adminId, int targetId)
 {
-	if (this->adminId != adminId)
-		return 482; // ERR_CHANOPRIVSNEEDED
+	if (isAdmin(adminId) == false)
+		return ERR_CHANOPRIVSNEEDED;
 
 	int	targetStatus = clientStatus[targetId];
 	if (targetStatus != CONNECTED)
 	{
 		clientStatus[targetId] = INVITED;
-		return 341; // RPL_INVITING
+		return RPL_INVITING;
 	}
-	return 443; // ERR_USERONCHANNEL
+	return ERR_USERONCHANNEL;
 }
 
 int Channel::changeInviteOnly(int adminId, bool inviteOnly)
 {
-	if (this->adminId != adminId)
-		return 482; // ERR_CHANOPRIVSNEEDED
+	if (isAdmin(adminId) == false)
+		return ERR_CHANOPRIVSNEEDED;
+	
+	if (this->inviteOnly == inviteOnly)
+		return 0; // notihing change
 
 	this->inviteOnly = inviteOnly;
 	return 1; // SUCCESS
@@ -148,35 +146,43 @@ int Channel::changeInviteOnly(int adminId, bool inviteOnly)
 
 int Channel::changeTopic(int adminId, std::string& topic)
 {
-	// if (this->adminId != adminId)
-	// 	return 482; // ERR_CHANOPRIVSNEEDED
-
 	if (this->topic != NULL)
 		*(this->topic) = topic;
 	this->lastTopicSetId = adminId; //마지막으로 바꾼 사람 id 저장
 
 	std::time_t timestamp = std::time(0);
 	this->lastTopicSetTime = timestamp; // 마지막으로 바꾼 시간 설정
-	return 332; // SUCCESS
+	return RPL_TOPIC;
 }
 
-int Channel::changeKey(int adminId, std::string* key)
+int Channel::changeKey(int adminId, std::string key)
 {
-	if (this->adminId != adminId)
-		return 482; // ERR_CHANOPRIVSNEEDED
-
-	if (this->key != NULL)
-		delete this->key;
+	if (isAdmin(adminId) == false)
+		return ERR_CHANOPRIVSNEEDED;
 
 	this->key = key;
 	return 1; // SUCCESS
 }
 
-int Channel::changeAdmin(int oldAdminId, int newAdminId)
+int Channel::addAdmin(int oldAdminId, int newAdminId)
 {
-	if (this->adminId != oldAdminId)
-		return 482; // ERR_CHANOPRIVSNEEDED
-	adminId = newAdminId;
+	if (isAdmin(oldAdminId) == false)
+		return ERR_CHANOPRIVSNEEDED;
+
+	adminIdList.push_back(newAdminId);
+	
+	return SUCCESS;
+}
+
+int Channel::changeTopicSetting(int adminId, bool topicSetting)
+{
+	if (isAdmin(adminId) == false)
+		return ERR_CHANOPRIVSNEEDED;
+
+	if (this->topicSetting == topicSetting)
+		return 0; // notihing change
+
+	this->topicSetting = topicSetting;
 	return 1; // SUCCESS
 }
 
@@ -190,7 +196,7 @@ std::string* Channel::getTopic()
     return this->topic;
 }
 
-std::string* Channel::getKey()
+std::string Channel::getKey()
 {
     return this->key;
 }
@@ -198,11 +204,6 @@ std::string* Channel::getKey()
 int* Channel::getClientStatus()
 {
 	return clientStatus;
-}
-
-int Channel::getAdminId()
-{
-	return adminId;
 }
 
 bool Channel::gettopicSetting()
@@ -221,10 +222,25 @@ std::string Channel::getClientList()
 		if (clientStatus[i] == CONNECTED)
 		{
 			listStr += " ";
-			if (i == adminId)
+			if (isAdmin(i))
 				listStr += "@";
 			listStr += server.getClients()[i].getNickName();
 		}
 	}
 	return listStr;
+}
+
+std::list<int> Channel::getAdminIdList()
+{
+    return adminIdList;
+}
+
+bool Channel::isAdmin(int id)
+{
+	for(std::list<int>::iterator it = adminIdList.begin(); it != adminIdList.end(); ++it)
+	{
+		if (*it == id)
+			return true;
+	}
+	return false;
 }

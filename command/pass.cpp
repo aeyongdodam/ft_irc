@@ -13,13 +13,6 @@ int checkPassword(std::string pass, int clientId)
 		if (std::strncmp(server.getGenernalPass().c_str(), pass.c_str(), server.getGenernalPass().size() + 1) == 0)
 		{
 			clients[clientId].setPassFlag(true);
-			clients[clientId].setAdminFlag(false);
-			return RPL_WELCOME;
-		}
-		else if (std::strncmp(server.getOperatorPass().c_str(), pass.c_str(), server.getOperatorPass().size() + 1) == 0)
-		{
-			clients[clientId].setPassFlag(true);
-			(server.getClients()[clientId]).setAdminFlag(true);
 			return RPL_WELCOME;
 		}
 		else

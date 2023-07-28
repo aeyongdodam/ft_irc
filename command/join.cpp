@@ -29,7 +29,8 @@ void splitChannelKey(std::string optionString, std::list<std::string>& channelNa
 std::string makeJoinResponse(int responseCode, Channel *channel, int clientId)
 {
     Server& server = Server::getInstance();
-    std::string clientName = server.getClients()[clientId].getNickName();
+    Client* client = &(server.getClients()[clientId]);
+    std::string clientName = client->getNickName();
 
     std::string resMsg;
 
@@ -52,6 +53,8 @@ std::string makeJoinResponse(int responseCode, Channel *channel, int clientId)
             resMsg += ": Cannot join channel (channel is full)";
             break;
         default:
+            client->addChannel(channel);
+            
             std::string* topic = channel->getTopic();
             if (topic)
             {
@@ -78,6 +81,7 @@ const std::string joinWithoutKey(std::string &channelName, int clientId)
 {
     int responseCode;
     Server &server = Server::getInstance();
+    Client client = server.getClients()[clientId];
     Channel *channel = server.findChannel(channelName);
     if (channel == NULL)
         channel = server.createChannel(clientId, channelName);
