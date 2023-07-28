@@ -11,28 +11,36 @@ std::string NICK(int fd, std::string nickname)
 	if (nickname == "")
 	{
 		numeric = ERR_NONICKNAMEGIVEN;
-		message = " :No nickname given";
+		message = std::to_string(numeric);
+		message += " :No nickname given";
 	}
 	else
 	{
 		int flag = 1;
-		for (int i=0; i<5; i++)
+		for (int i=0; i<MAX_EVENTS; i++)
 		{
 			std::string tempnick = clients[i].getNickName();
 			if (nickname == tempnick)
 			{
+				if (clients[fd].getNickName() == "")
+					clients[fd].setNickName(nickname);
 				numeric = ERR_NICKNAMEINUSE;
-				message = " " + nickname + " :Nickname is already in use.";
+				message = std::to_string(numeric);
+				message += " * " + nickname + " :Nickname is already in use.";
 				flag = 0;
 				break ;
 			}
 		}
 		if (flag)
 		{
-			numeric = RPL_WELCOME;
-			message = " " + nickname + " :Welcome to the IRC Network !!";
+			message = ":";
+			message += clients[fd].getNickName();
+			message += " NICK ";
+			message += ":";
+			message += nickname;
 			clients[fd].setNickName(nickname);
+			server.sendChannelUser(fd, message);
 		}
 	}
-	return (std::to_string(numeric) + message);
+	return (message);
 }
