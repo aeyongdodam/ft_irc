@@ -7,9 +7,9 @@ std::string	PART(std::string channelName, int clientId)
 
     if (channel->isAdmin(clientId))
     {
-        channel->getAdminIdList().remove(clientId);
-        if (channel->getAdminIdList().size() == 0)
-            server.deleteChannel(channelName);
+        // channel->getAdminIdList().remove(clientId);
+        if (channel->getAdminIdList().size() - 1 == 0)
+            server.deleteChannel(channelName, clientId);
     }
 
     int	responseCode = channel->partClient(clientId);
