@@ -12,6 +12,7 @@ Server::Server()
 	commandList[6] = "PART";
 	commandList[7] = "TOPIC";
 	commandList[8] = "MODE";
+	commandList[9] = "QUIT";
 	connectClientNum = 0;
 }
 
@@ -134,7 +135,7 @@ void Server::readClient(int i)
 
 void Server::sendMessage(int i, std::string str)
 {
-    std::string numericMessage = str + "\r\n";
+    std::string numericMessage = str + "\n";
 	std::cout << "메세지내용 : " << numericMessage << std::endl;
     write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
 }
@@ -310,9 +311,11 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 		sendMessage(i, TOPIC(optionString, i));
 	if (commandNum == 8) //MODE
 		MODE(i, optionString);
+	if (commandNum == 9) //QUIT
+		QUIT(i);
 }
 
-void Server::sendChannelMessge(Channel *channel, std::string message, int fd)
+void Server::sendChannelMessage(Channel *channel, std::string message, int fd)
 {
 	int* clientStatus = channel->getClientStatus();
 	for (int i=0; i<MAX_EVENTS; i++)
@@ -323,4 +326,9 @@ void Server::sendChannelMessge(Channel *channel, std::string message, int fd)
 		if (i != fd && clientStatus[i] == CONNECTED)
 			sendMessage(i, message);
 	}
+}
+
+std::map<std::string, Channel*>& Server::getChannelMap()
+{
+        return channelMap;
 }
