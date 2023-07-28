@@ -170,8 +170,7 @@ void modeFlagK(int fd, std::string channelName, std::string optionFlag, std::str
 	server.sendMessage(fd, message);
 }
 
-void 
-modeFlagO(int fd, std::string channelName, std::string optionFlag, std::string targetName)
+void modeFlagO(int fd, std::string channelName, std::string optionFlag, std::string targetName)
 {
 	std::string message;
 
@@ -187,7 +186,7 @@ modeFlagO(int fd, std::string channelName, std::string optionFlag, std::string t
 		message += " ";
 		message += channelName;
 		message += " :You must have channel op access";
-		server.sendChannelMessge(channel, message, fd);
+		server.sendChannelMessage(channel, message, fd);
 		return;
 	}
 
@@ -201,7 +200,7 @@ modeFlagO(int fd, std::string channelName, std::string optionFlag, std::string t
 		message += " ";
 		message += channelName; 
 		message += " :They aren't on that channel";
-		server.sendChannelMessge(channel, message, fd);
+		server.sendChannelMessage(channel, message, fd);
 		return;
 	}
 
@@ -227,7 +226,7 @@ modeFlagO(int fd, std::string channelName, std::string optionFlag, std::string t
     		message += clients[i].getNickName();
     		message += " " + channel->getName();
     		message += " :End of /Names list";
-			server.sendChannelMessge(channel, message, i);
+			server.sendChannelMessage(channel, message, i);
 		}
 	}
 }

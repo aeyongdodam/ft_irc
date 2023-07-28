@@ -62,8 +62,7 @@ void JOIN(int clientId, std::string optionString);
 void PRIVMSG(int fd, std::string str);
 std::string KICK(std::string input, int clientId);
 
-std::string	PART(std::string channelName, int clientId);
-std::string makePartResponse(int responseCode, std::string channelName);
+void PART(std::string channelName, int clientId);
 
 std::string TOPIC(std::string input, int clientId);
 
