@@ -1,7 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#define MAX_EVENTS 10
+#define MAX_EVENTS 3
 #define CMD_COUNT 10
 
 #include <iostream>
@@ -53,6 +53,7 @@ class Server
 		void monitoring();
 		void connectClient(int i);
 		void readClient(int i);
+		void openNewListenSd();
 		void disconnectClient(int i, int readfd);
 		void destroy();
 

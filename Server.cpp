@@ -38,7 +38,7 @@ Server& Server::getInstance()
 void Server::init(unsigned short portNum, std::string generalPassword)
 {
 	this->generalPass = generalPassword;
-	for (int i = 0; i < MAX_EVENTS + 1; i++) 
+	for (int i = 0; i < MAX_EVENTS+1; i++) 
 	{
 		fds[i].fd = -1;
 		fds[i].events = 0;
@@ -60,7 +60,7 @@ void Server::init(unsigned short portNum, std::string generalPassword)
 	if (bind(listenSd, (struct sockaddr*)&srvAddr, sizeof(srvAddr)) == -1)
 		errProc("bind");
 
-	if (listen(listenSd, 10) < 0)
+	if (listen(listenSd, MAX_EVENTS+1) < 0)
 		errProc("listen");
 
 	fds[0].fd = listenSd;
@@ -77,29 +77,21 @@ void Server::connectClient(int i)
 		std::cerr << "Accept Error";
 		return;
 	}
-	if (fcntl(connectSd, F_SETFL, O_NONBLOCK) == -1) 
-		errProc("fcntl");
 
-	fds[i].fd = connectSd;
-	fds[i].events = POLLIN;
-
-	int newConnect;
-	for (newConnect=0; newConnect<MAX_EVENTS; newConnect++)
-	{
-		if (fds[newConnect].fd == -1)
-            break;
-	}
-
-	if (newConnect == MAX_EVENTS)
+	if (connectClientNum == MAX_EVENTS)
 	{
 		std::cerr << "MAX_EVENTS limit reached." << std::endl;
         close(connectSd);
         return;
 	}
 
-	fds[newConnect].fd = listenSd;
-	fds[newConnect].events = POLLIN;
+	if (fcntl(connectSd, F_SETFL, O_NONBLOCK) == -1) 
+		errProc("fcntl");
+
+	fds[i].fd = connectSd;
+	fds[i].events = POLLIN;
 	connectClientNum++;
+	openNewListenSd();
 }
 
 void Server::readClient(int i)
@@ -128,6 +120,21 @@ void Server::readClient(int i)
 			std::string optionString =  std::strchr(line.c_str(), ' ') + 1;
 			optionString.erase(optionString.size() - 1, optionString.size() - 1);
 			executeCommand(commandNum, optionString, i);
+		}
+	}
+}
+
+void Server::openNewListenSd()
+{
+	int flag = 1;
+	for (int i=0; i<MAX_EVENTS; i++)
+	{
+		if (fds[i].fd == -1)
+		{
+			fds[i].fd = listenSd;
+			fds[i].events = POLLIN;
+			flag = 0;
+			break;
 		}
 	}
 }
@@ -163,6 +170,7 @@ void Server::disconnectClient(int i, int readfd)
 	clients[i].setLoginName("");
 	clients[i].setRealName("");
 	clients[i].setPassFlag(false);
+	connectClientNum--;
 
 	std::list<Channel*> channels = clients[i].getChannels();
 	while (channels.size() > 0)
@@ -171,6 +179,16 @@ void Server::disconnectClient(int i, int readfd)
 		channel->getClientStatus()[i] = UNCONNECTED;
 		channels.pop_front();
 	}
+
+	int listenFlag = 1;
+	for (int i=0; i<MAX_EVENTS; i++)
+		if (fds[i].fd == listenSd)
+		{
+			listenFlag = 0;
+			break;
+		}
+	if (listenFlag)
+		openNewListenSd();
 }
 
 void Server::monitoring()
