@@ -8,7 +8,7 @@ Server::Server()
 	commandList[2] = "USER";
 	commandList[3] = "JOIN";
 	commandList[4] = "PRIVMSG";
-  	commandList[5] = "KICK";
+	commandList[5] = "KICK";
 	commandList[6] = "PART";
 	commandList[7] = "TOPIC";
 	commandList[8] = "MODE";
@@ -39,7 +39,7 @@ Server& Server::getInstance()
 void Server::init(unsigned short portNum, std::string generalPassword)
 {
 	this->generalPass = generalPassword;
-	for (int i = 0; i < MAX_EVENTS + 1; i++) 
+	for (int i = 0; i < MAX_EVENTS+1; i++) 
 	{
 		fds[i].fd = -1;
 		fds[i].events = 0;
@@ -61,7 +61,7 @@ void Server::init(unsigned short portNum, std::string generalPassword)
 	if (bind(listenSd, (struct sockaddr*)&srvAddr, sizeof(srvAddr)) == -1)
 		errProc("bind");
 
-	if (listen(listenSd, 10) < 0)
+	if (listen(listenSd, MAX_EVENTS+1) < 0)
 		errProc("listen");
 
 	fds[0].fd = listenSd;
@@ -78,29 +78,21 @@ void Server::connectClient(int i)
 		std::cerr << "Accept Error";
 		return;
 	}
+
+	if (connectClientNum == MAX_EVENTS)
+	{
+		std::cerr << "MAX_EVENTS limit reached." << std::endl;
+		close(connectSd);
+		return;
+	}
+
 	if (fcntl(connectSd, F_SETFL, O_NONBLOCK) == -1) 
 		errProc("fcntl");
 
 	fds[i].fd = connectSd;
 	fds[i].events = POLLIN;
-
-	int newConnect;
-	for (newConnect=0; newConnect<MAX_EVENTS; newConnect++)
-	{
-		if (fds[newConnect].fd == -1)
-            break;
-	}
-
-	if (newConnect == MAX_EVENTS)
-	{
-		std::cerr << "MAX_EVENTS limit reached." << std::endl;
-        close(connectSd);
-        return;
-	}
-
-	fds[newConnect].fd = listenSd;
-	fds[newConnect].events = POLLIN;
 	connectClientNum++;
+	openNewListenSd();
 }
 
 void Server::readClient(int i)
@@ -133,26 +125,41 @@ void Server::readClient(int i)
 	}
 }
 
+void Server::openNewListenSd()
+{
+	int flag = 1;
+	for (int i=0; i<MAX_EVENTS; i++)
+	{
+		if (fds[i].fd == -1)
+		{
+			fds[i].fd = listenSd;
+			fds[i].events = POLLIN;
+			flag = 0;
+			break;
+		}
+	}
+}
+
 void Server::sendMessage(int i, std::string str)
 {
-    std::string numericMessage = str + "\n";
+	std::string numericMessage = str + "\n";
 	std::cout << "메세지내용 : " << numericMessage << std::endl;
-    write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
+	write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
 }
 
 const std::string Server::getGenernalPass()
 {
-    return this->generalPass;
+	return this->generalPass;
 }
 
 Client *Server::getClients()
 {
-    return this->clients;
+	return this->clients;
 }
 
 struct pollfd* Server::getFds()
 {
-    return fds;
+	return fds;
 }
 
 void Server::disconnectClient(int i, int readfd)
@@ -164,6 +171,7 @@ void Server::disconnectClient(int i, int readfd)
 	clients[i].setLoginName("");
 	clients[i].setRealName("");
 	clients[i].setPassFlag(false);
+	connectClientNum--;
 
 	std::list<Channel*> channels = clients[i].getChannels();
 	while (channels.size() > 0)
@@ -172,6 +180,16 @@ void Server::disconnectClient(int i, int readfd)
 		channel->getClientStatus()[i] = UNCONNECTED;
 		channels.pop_front();
 	}
+
+	int listenFlag = 1;
+	for (int i=0; i<MAX_EVENTS; i++)
+		if (fds[i].fd == listenSd)
+		{
+			listenFlag = 0;
+			break;
+		}
+	if (listenFlag)
+		openNewListenSd();
 }
 
 void Server::monitoring()
@@ -286,12 +304,12 @@ int Server::checkCommand(std::string command)
 
 int Server::getNickNameId(std::string kickUserName)
 {
-    for (int i = 0; i < MAX_EVENTS; i++)
-    {
-        if (clients[i].getNickName() == kickUserName)
-            return i;
-    }
-    return -1;
+	for (int i = 0; i < MAX_EVENTS; i++)
+	{
+		if (clients[i].getNickName() == kickUserName)
+			return i;
+	}
+	return -1;
 }
 
 void Server::executeCommand(int commandNum, std::string optionString, int i)
@@ -331,7 +349,25 @@ void Server::sendChannelMessage(Channel *channel, std::string message, int fd)
 	}
 }
 
-std::map<std::string, Channel*>& Server::getChannelMap()
+void Server::sendChannelUser(int fd, std::string message)
 {
-        return channelMap;
+	std::vector<int> alreadySent;
+	alreadySent.push_back(fd);
+
+	for (std::map<std::string, Channel*>::const_iterator it = channelMap.begin(); it != channelMap.end(); it++)
+	{
+		Channel* channel = it->second;
+		int *clientstatus = channel->getClientStatus();
+		if (clientstatus[fd] == CONNECTED)
+		{
+			for (int i = 0; i < MAX_EVENTS; i++)
+			{
+				if (clientstatus[i] == CONNECTED && std::find(alreadySent.begin(), alreadySent.end(), i) == alreadySent.end())
+				{
+					sendMessage(i, message);
+					alreadySent.push_back(i);
+				}
+			}
+		}
+	}
 }
