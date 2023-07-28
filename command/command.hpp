@@ -71,5 +71,6 @@ int modeNoChannel(int fd, std::string channelName);
 void modeFlagI(int fd, std::string channelName, std::string optionFlag);
 void modeFlagT(int fd, std::string channelName, std::string optionFlag);
 void modeFlagK(int fd, std::string channelName, std::string optionFlag, std::string textString);
+void modeFlagO(int fd, std::string channelName, std::string optionFlag, std::string targetName);
 
 #endif

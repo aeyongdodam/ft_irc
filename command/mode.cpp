@@ -26,6 +26,8 @@ void MODE(int fd, std::string str)
 		modeFlagT(fd, channelName, optionFlag);
 	if (optionFlag[1] == 'k')
 		modeFlagK(fd, channelName, optionFlag, textString);
+	if (optionFlag[1] == 'o')
+		modeFlagO(fd, channelName, optionFlag, textString);
 }
 
 int modeNoChannel(int fd, std::string channelName)
@@ -166,4 +168,66 @@ void modeFlagK(int fd, std::string channelName, std::string optionFlag, std::str
 	else
 		return ;
 	server.sendMessage(fd, message);
+}
+
+void 
+modeFlagO(int fd, std::string channelName, std::string optionFlag, std::string targetName)
+{
+	std::string message;
+
+	Server& server = Server::getInstance();
+	Channel *channel = server.findChannel(channelName);
+	Client* clients = server.getClients();
+
+	if (channel->isAdmin(fd) == false)
+	{
+		message = std::to_string(ERR_CHANOPRIVSNEEDED);
+		message += " ";
+		message += clients[fd].getNickName();
+		message += " ";
+		message += channelName;
+		message += " :You must have channel op access";
+		server.sendChannelMessge(channel, message, fd);
+		return;
+	}
+
+	if (targetName == "")
+		return ;
+
+	int targetId = server.getNickNameId(targetName);
+	if (targetId == - 1 || channel->getClientStatus()[targetId] != CONNECTED)
+	{
+		message = targetName;
+		message += " ";
+		message += channelName; 
+		message += " :They aren't on that channel";
+		server.sendChannelMessge(channel, message, fd);
+		return;
+	}
+
+	bool istargetAdmin = channel->isAdmin(targetId);
+
+	if (istargetAdmin == false && optionFlag[0] == '+')
+		channel->addAdmin(fd, targetId);
+	else if (istargetAdmin == true && optionFlag[0] == '-')
+		channel->getAdminIdList().remove(targetId);
+
+	std::string channelClientListStr = channel->getClientList();
+
+	for (int i = 0; i < MAX_EVENTS; i++)
+	{
+		if (channel->getClientStatus()[i] == CONNECTED)
+		{
+			message = "353 ";
+    		message += clients[i].getNickName();
+    		message += " = " + channel->getName();
+    		message += " :" + channelClientListStr;
+
+	    	message += "\r\n366 ";
+    		message += clients[i].getNickName();
+    		message += " " + channel->getName();
+    		message += " :End of /Names list";
+			server.sendChannelMessge(channel, message, i);
+		}
+	}
 }
