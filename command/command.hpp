@@ -50,6 +50,7 @@
 #include <list>
 
 #include "../Server.hpp"
+#include "../Channel.hpp"
 
 class Server;
 class Channel;
@@ -72,4 +73,5 @@ void modeFlagI(int fd, std::string channelName, std::string optionFlag);
 void modeFlagT(int fd, std::string channelName, std::string optionFlag);
 void modeFlagK(int fd, std::string channelName, std::string optionFlag, std::string textString);
 
+void QUIT(int fd);
 #endif

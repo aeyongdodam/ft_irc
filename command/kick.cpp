@@ -1,6 +1,4 @@
 #include "command.hpp"
-#include "../Server.hpp"
-#include "../Channel.hpp"
 
 std::string KICK(std::string input, int clientId) //clientId가 쫓아내는입장, nickNameId가 쫓겨나는 입장
 {
