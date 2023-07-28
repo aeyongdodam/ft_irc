@@ -1,7 +1,7 @@
 #include "Client.hpp"
 
 
-Client::Client() : nickName(""), loginName(""), realName(""), passFlag(false), adminFlag(false) {}
+Client::Client() : nickName(""), loginName(""), realName(""), passFlag(false) {}
 
 Client::Client(const Client &copy)
 {
@@ -31,14 +31,14 @@ std::string Client::getRealName() const
 	return realName;
 }
 
+std::list<Channel*> Client::getChannels()
+{
+	return this->channels;
+}
+
 bool Client::getPassFlag() const
 {
 	return passFlag;
-}
-
-bool Client::getAdminFlag() const
-{
-	return adminFlag;
 }
 
 void Client::setNickName(std::string nickName_)
@@ -61,7 +61,7 @@ void Client::setPassFlag(bool passFlag_)
 	passFlag = passFlag_;
 }
 
-void Client::setAdminFlag(bool adminFlag_)
+void Client::addChannel(Channel* new_channel)
 {
-	adminFlag = adminFlag_;
+	this->channels.push_back(new_channel);
 }

@@ -25,6 +25,7 @@
 #define ERR_NICKCOLLISION 436
 #define ERR_USERNOTINCHANNEL 441
 #define ERR_NOTONCHANNEL 442
+#define ERR_USERONCHANNEL 443
 #define ERR_NEEDMOREPARAMS 461
 #define ERR_ALREADYREGISTERED 462
 #define ERR_PASSWDMISMATCH 464
@@ -59,8 +60,6 @@ std::string USER(int fd, std::string str);
 void JOIN(int clientId, std::string optionString);
 void PRIVMSG(int fd, std::string str);
 std::string KICK(std::string input, int clientId);
-
-int getNickNameId(Client *clients, std::string kickUserName);
 
 std::string	PART(std::string channelName, int clientId);
 std::string makePartResponse(int responseCode, std::string channelName);

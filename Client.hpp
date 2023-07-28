@@ -13,6 +13,9 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <vector>
+#include <list>
+
+class Channel;
 
 class Client
 {
@@ -21,7 +24,8 @@ class Client
 		std::string loginName;
 		std::string realName;
 		bool passFlag;
-		bool adminFlag;
+
+		std::list<Channel*> channels;
 
 	public:
 		Client();
@@ -33,13 +37,14 @@ class Client
 		std::string getNickName() const;
 		std::string getLoginName() const;
 		std::string getRealName() const;
+		std::list<Channel*> getChannels();
 		bool getPassFlag() const;
-		bool getAdminFlag() const;
 		void setNickName(std::string nickName_);
 		void setLoginName(std::string loginName_);
 		void setRealName(std::string setRealName_);
 		void setPassFlag(bool passFlag_);
-		void setAdminFlag(bool adminFlag_);
+
+		void addChannel(Channel *new_channel);
 };
 
 #endif

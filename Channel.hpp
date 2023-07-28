@@ -13,7 +13,7 @@
 class Channel 
 {
 	private:
-		int					adminId;
+		std::list<int>		adminIdList;
 		const std::string	name;
 		std::string			*topic;
 		std::string			key;
@@ -43,16 +43,18 @@ class Channel
 		int changeInviteOnly(int adminId, bool inviteOnly);
 		int changeTopic(int adminId, std::string& topic);
 		int changeKey(int adminId, std::string key);
-		int changeAdmin(int oldAdminId, int newAdminId);
-		int changeTopicSetting(int oldAdminId, bool topicSetting);
+		int changeTopicSetting(int adminId, bool topicSetting);
 
 		int* getClientStatus();
 		const std::string getName();
 		std::string* getTopic();
 		std::string getKey();
-		int getAdminId();
 		bool gettopicSetting();
 		std::string getClientList();
+		std::list<int> getAdminIdList();
+
+		bool isAdmin(int id);
+		int addAdmin(int oldAdminId, int newAdminId);
 		
 };
 
