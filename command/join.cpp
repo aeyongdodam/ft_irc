@@ -1,17 +1,5 @@
 #include "command.hpp"
 
-std::list<std::string> split(std::string input, char delimiter)
-{
-    std::list<std::string> channels;
-    std::stringstream ss(input);
-    std::string temp;
-
-    while (getline(ss, temp, delimiter))
-        channels.push_back(temp);
-
-    return channels;
-}
-
 void splitChannelKey(std::string optionString, std::list<std::string>& channelNameList, std::list<std::string>& keyList)
 {
     std::list<std::string> channel_key = split(optionString, ' ');
