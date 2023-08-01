@@ -179,8 +179,13 @@ void Server::disconnectClient(int i, int readfd)
 		Channel *channel = channels.front();
 		channel->getClientStatus()[i] = UNCONNECTED;
 
-		if (channel->isAdmin(i) && channel->getAdminIdList().size() == 1)
-            deleteChannel(channel->getName(), i);
+		if (channel->isAdmin(i))
+		{
+			if (channel->getAdminIdList().size() == 1)
+				deleteChannel(channel->getName(), i);
+			else
+				channel->getAdminIdList().remove(i);
+		}
 
 		channels.pop_front();
 	}
