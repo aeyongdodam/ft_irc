@@ -5,13 +5,6 @@ std::string	PART(std::string channelName, int clientId)
     Server& server = Server::getInstance();
     Channel* channel = server.findChannel(channelName);
 
-    if (channel->isAdmin(clientId))
-    {
-        // channel->getAdminIdList().remove(clientId);
-        if (channel->getAdminIdList().size() - 1 == 0)
-            server.deleteChannel(channelName, clientId);
-    }
-
     int	responseCode = channel->partClient(clientId);
 
     if (responseCode == 1)
@@ -21,11 +14,18 @@ std::string	PART(std::string channelName, int clientId)
         channelMsg += clients[clientId].getNickName();
         channelMsg += " PART :";
         channelMsg += channelName;
-        server.sendChannelMessage(channel, channelMsg, clientId);
-
-        std::string resMsg = "PART ";
-        resMsg += channelName;
-        return resMsg;
+        if (channel->isAdmin(clientId) && channel->getAdminIdList().size() - 1 == 0)
+        {
+            server.deleteChannel(channelName, clientId);
+            return "";
+        }
+        else
+        {
+            server.sendChannelMessage(channel, channelMsg, clientId);
+            std::string resMsg = "PART ";
+            resMsg += channelName;
+            return resMsg;
+        }
     }
 
 	return makePartResponse(responseCode, channelName);
