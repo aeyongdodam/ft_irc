@@ -55,8 +55,6 @@
 class Server;
 class Channel;
 
-std::list<std::string> split(std::string input, char delimiter);
-
 void PASS(std::string pass, int clientId);
 std::string NICK(int fd, std::string nickname);
 std::string USER(int fd, std::string str);
@@ -64,10 +62,10 @@ void JOIN(int clientId, std::string optionString);
 void PRIVMSG(int fd, std::string str);
 void KICK(std::string input, int clientId);
 void PART(std::string channelName, int clientId);
-std::string makePartResponse(int responseCode, std::string channelName);
 
 std::string TOPIC(std::string input, int clientId);
 
+// mode.cpp
 void MODE(int fd, std::string str);
 int modeNoChannel(int fd, std::string channelName);
 void modeFlagI(int fd, std::string channelName, std::string optionFlag);
@@ -77,4 +75,9 @@ void modeFlagO(int fd, std::string channelName, std::string optionFlag, std::str
 void modeFlagL(int fd, std::string channelName, std::string optionFlag, std::string targetCapacity);
 
 void QUIT(int fd);
+
+// util.c
+std::pair<std::string, std::string> splitByFirstSpace(const std::string& input);
+std::list<std::string> split(std::string input, char delimiter);
+
 #endif
