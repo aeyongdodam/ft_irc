@@ -100,6 +100,7 @@ int Channel::partClient(int clientId)
 	if (clientStatus[clientId] != CONNECTED)
 		return ERR_NOTONCHANNEL;
 
+	adminIdList.remove(clientId);
 	clientStatus[clientId] = UNCONNECTED;
 	capacity -= 1;
 
