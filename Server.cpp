@@ -178,6 +178,10 @@ void Server::disconnectClient(int i, int readfd)
 	{
 		Channel *channel = channels.front();
 		channel->getClientStatus()[i] = UNCONNECTED;
+
+		if (channel->isAdmin(i) && channel->getAdminIdList().size() == 1)
+            deleteChannel(channel->getName(), i);
+
 		channels.pop_front();
 	}
 
@@ -236,7 +240,7 @@ Channel* Server::findChannel(std::string &name)
 		return NULL;
 }
 
-bool Server::deleteChannel(std::string &name, int adminId)
+bool Server::deleteChannel(const std::string &name, int adminId)
 {
 	std::map<std::string, Channel*>::iterator it = channelMap.find(name);
 
