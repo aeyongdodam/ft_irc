@@ -6,14 +6,8 @@ void PART(std::string channelName, int clientId)
     Channel* channel = server.findChannel(channelName);
     Client* clients = server.getClients();
 
-    if (channel->isAdmin(clientId))
-    {
-        channel->getAdminIdList().remove(clientId);
-        if (channel->getAdminIdList().size() == 0)
-            server.deleteChannel(channelName);
-    }
+    int	responseCode = channel->partClient(clientId);
 
-	int	responseCode = channel->partClient(clientId);
     if (responseCode == 1)
     {
         // std::string resMsg = ":";
@@ -29,16 +23,24 @@ void PART(std::string channelName, int clientId)
         channelMsg += " PART ";
         channelMsg += channelName;
         server.sendChannelMessage(channel, channelMsg, clientId);
-    }
-    else
-    {
-        std::string resMsg = std::to_string(responseCode);
-        resMsg += " ";
+
+        std::string resMsg = "PART ";
         resMsg += channelName;
-        if (responseCode == ERR_NOTONCHANNEL)
-            resMsg += " :You're not on that channel";
-        if (responseCode == ERR_NOTONCHANNEL)
-            resMsg += " :No such channel";
-        server.sendMessage(clientId, resMsg);
+        return resMsg;
     }
+
+	return makePartResponse(responseCode, channelName);
+}
+
+std::string makePartResponse(int responseCode, std::string channelName)
+{
+    std::string resMsg = std::to_string(responseCode);
+    resMsg += " ";
+    resMsg += channelName;
+    if (responseCode == ERR_NOTONCHANNEL)
+        resMsg += " :You're not on that channel";
+    if (responseCode == ERR_NOTONCHANNEL)
+        resMsg += " :No such channel";
+        
+    return resMsg;
 }
