@@ -327,7 +327,7 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 	if (commandNum == 5) //KICK
 		KICK(optionString, i);
 	if (commandNum == 6) //PART
-		PART(optionString, i);
+		sendMessage(i, PART(optionString, i));
 	if (commandNum == 7) // TOPIC
 		sendMessage(i, TOPIC(optionString, i));
 	if (commandNum == 8) //MODE
