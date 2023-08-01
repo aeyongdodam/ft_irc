@@ -14,14 +14,13 @@ void PART(std::string channelName, int clientId)
     }
 
 	int	responseCode = channel->partClient(clientId);
+
     if (responseCode == 1)
     {
-        // std::string resMsg = ":";
-        // resMsg += clients[clientId].getNickName();
-        // resMsg += " PART ";
-        // resMsg += channelName;
-        std::string resMsg = "PART ";
-        resMsg += channel->getName();
+        std::string resMsg = ":";
+        resMsg += clients[clientId].getNickName();
+        resMsg += " PART :";
+        resMsg += channelName;
         server.sendMessage(clientId, resMsg);
         
         std::string channelMsg = ":";
