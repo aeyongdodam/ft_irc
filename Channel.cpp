@@ -230,7 +230,7 @@ std::string Channel::getClientList()
 	return listStr;
 }
 
-std::list<int> Channel::getAdminIdList()
+std::list<int>& Channel::getAdminIdList()
 {
     return adminIdList;
 }

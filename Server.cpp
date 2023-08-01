@@ -236,7 +236,7 @@ Channel* Server::findChannel(std::string &name)
 		return NULL;
 }
 
-bool Server::deleteChannel(std::string &name)
+bool Server::deleteChannel(std::string &name, int adminId)
 {
 	std::map<std::string, Channel*>::iterator it = channelMap.find(name);
 
@@ -249,11 +249,14 @@ bool Server::deleteChannel(std::string &name)
 		if (channel->getClientStatus()[i] == CONNECTED)
 		{
 			std::string kickParameter = channel->getName();
+			kickParameter += " ";
 			kickParameter += server.getClients()[i].getNickName();
-			server.sendMessage(i, KICK(kickParameter, i));
+			kickParameter += " ";
+			if (adminId != i)
+				channel->kickClient(adminId, i);
 		}
 	}
-
+	channel->kickClient(adminId, adminId);
 	if (it != channelMap.end())
 	{
 		delete it->second;
@@ -322,7 +325,7 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 	if (commandNum == 4) //PRIVMSG
 		PRIVMSG(i, optionString);
 	if (commandNum == 5) //KICK
-		sendMessage(i, KICK(optionString, i));
+		KICK(optionString, i);
 	if (commandNum == 6) //PART
 		PART(optionString, i);
 	if (commandNum == 7) // TOPIC
