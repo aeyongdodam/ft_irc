@@ -244,12 +244,14 @@ void modeFlagL(int fd, std::string channelName, std::string optionFlag, std::str
 	Channel *channel = server.findChannel(channelName);
 	Client* clients = server.getClients();
 
-	if (targetCapacity == "")
-		return;
 	int newCapacity = std::atoi(targetCapacity.c_str()); 
 
 	if (optionFlag[0] == '+')
+	{
+		if (targetCapacity == "")
+			return;
 		numeric = channel->changeMaxCapacity(fd, newCapacity);
+	}
 	else
 		numeric = channel->changeMaxCapacity(fd, -1);
 

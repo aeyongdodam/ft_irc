@@ -1,45 +1,48 @@
 #include "command.hpp"
 
-std::string	PART(std::string channelName, int clientId)
+void PART(std::string optionString, int clientId)
 {
+    std::pair<std::string, std::string> stringPair = splitByFirstSpace(optionString);
+
+    std::string channelName = stringPair.first;
+    std::string partMessage = stringPair.second;
+
     Server& server = Server::getInstance();
     Channel* channel = server.findChannel(channelName);
 
-    int	responseCode = channel->partClient(clientId);
+    if (channel == NULL)
+    {
+        std::string resMsg = std::to_string(ERR_NOSUCHCHANNEL) + " ";
+        resMsg += channelName;
+        resMsg += " :No such channel";
+        server.sendMessage(clientId, resMsg);
+        return ;
+    }
+
+	int	responseCode = channel->partClient(clientId);
 
     if (responseCode == 1)
     {
         Client* clients = server.getClients();
         std::string channelMsg = ":";
         channelMsg += clients[clientId].getNickName();
-        channelMsg += " PART :";
+        channelMsg += " PART ";
         channelMsg += channelName;
+        channelMsg += " ";
+        channelMsg += partMessage;
+        server.sendMessage(clientId, channelMsg);
+        server.sendChannelMessage(channel, channelMsg, clientId);
+
         if (channel->isAdmin(clientId) && channel->getAdminIdList().size() - 1 == 0)
-        {
             server.deleteChannel(channelName, clientId);
-            return "";
-        }
-        else
-        {
-            server.sendChannelMessage(channel, channelMsg, clientId);
-            std::string resMsg = "PART ";
-            resMsg += channelName;
-            return resMsg;
-        }
     }
-
-	return makePartResponse(responseCode, channelName);
-}
-
-std::string makePartResponse(int responseCode, std::string channelName)
-{
-    std::string resMsg = std::to_string(responseCode);
-    resMsg += " ";
-    resMsg += channelName;
-    if (responseCode == ERR_NOTONCHANNEL)
-        resMsg += " :You're not on that channel";
-    if (responseCode == ERR_NOTONCHANNEL)
-        resMsg += " :No such channel";
-        
-    return resMsg;
+    else
+    {
+        std::string resMsg = std::to_string(responseCode);
+        resMsg += " ";
+        resMsg += channelName;
+        if (responseCode == ERR_NOTONCHANNEL)
+            resMsg += " :You're not on that channel";
+        server.sendMessage(clientId, resMsg);
+    }
 }
