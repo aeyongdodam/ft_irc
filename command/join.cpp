@@ -22,7 +22,14 @@ std::string makeJoinResponse(int responseCode, Channel *channel, int clientId)
 
     std::string resMsg;
 
-    resMsg += std::to_string(responseCode);
+    if (responseCode == 1)
+    {
+        resMsg += ":";
+        resMsg += client->getNickName();
+        resMsg += server.prefix(clientId);
+    }
+    else
+        resMsg += std::to_string(responseCode);
     resMsg += " JOIN ";
     resMsg += channel->getName();
 
