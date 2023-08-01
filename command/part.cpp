@@ -36,13 +36,13 @@ void PART(std::string optionString, int clientId)
 
     if (responseCode == 1)
     {
-        Client* clients = server.getClients();
         std::string channelMsg = ":";
         channelMsg += clients[clientId].getNickName();
         channelMsg += " PART :";
         channelMsg += channelName;
-        channelMsg += " :";
+        channelMsg += " ";
         channelMsg += partMessage;
+        server.sendMessage(clientId, channelMsg);
         server.sendChannelMessage(channel, channelMsg, clientId);
 
         if (channel->isAdmin(clientId) && channel->getAdminIdList().size() - 1 == 0)
