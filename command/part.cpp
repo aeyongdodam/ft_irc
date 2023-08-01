@@ -1,10 +1,22 @@
 #include "command.hpp"
 
-void PART(std::string channelName, int clientId)
+void PART(std::string optionString, int clientId)
 {
+    
+
     Server& server = Server::getInstance();
     Channel* channel = server.findChannel(channelName);
     Client* clients = server.getClients();
+
+    if (channel == NULL)
+    {
+        std::cout << "==========DEBUG==========" << std::endl;
+        std::string resMsg = "403 ";
+        resMsg += channelName;
+        resMsg += " :No such channel";
+        server.sendMessage(clientId, resMsg);
+        return ;
+    }
 
     if (channel->isAdmin(clientId))
     {
@@ -36,8 +48,6 @@ void PART(std::string channelName, int clientId)
         resMsg += channelName;
         if (responseCode == ERR_NOTONCHANNEL)
             resMsg += " :You're not on that channel";
-        if (responseCode == ERR_NOTONCHANNEL)
-            resMsg += " :No such channel";
         server.sendMessage(clientId, resMsg);
     }
 }
