@@ -44,6 +44,7 @@ class Channel
 		int changeTopic(int adminId, std::string& topic);
 		int changeKey(int adminId, std::string key);
 		int changeTopicSetting(int adminId, bool topicSetting);
+		int changeMaxCapacity(int adminId, int maxCapacity);
 
 		int* getClientStatus();
 		const std::string getName();

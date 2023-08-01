@@ -27,7 +27,7 @@ int Channel::joinChannel(int clientId)
 {
 	if (key != "")
 		return ERR_BADCHANNELKEY;
-	if (capacity == maxCapacity)
+	if (maxCapacity != -1 && capacity >= maxCapacity)
 		return ERR_CHANNELISFULL;
 
 	int	cStatus = clientStatus[clientId];
@@ -56,7 +56,7 @@ int Channel::joinChannel(int clientId, std::string key)
 {
 	if (this->key.compare(key) != 0)
 		return ERR_BADCHANNELKEY;
-	if (capacity == maxCapacity)
+	if (maxCapacity != -1 && capacity >= maxCapacity)
 		return ERR_CHANNELISFULL;
 
 	int	cStatus = clientStatus[clientId];
@@ -162,6 +162,15 @@ int Channel::changeKey(int adminId, std::string key)
 
 	this->key = key;
 	return 1; // SUCCESS
+}
+
+int Channel::changeMaxCapacity(int adminId, int maxCapacity)
+{
+	if (isAdmin(adminId) == false)
+		return ERR_CHANOPRIVSNEEDED;
+
+	this->maxCapacity = maxCapacity;
+	return SUCCESS;
 }
 
 int Channel::addAdmin(int oldAdminId, int newAdminId)
