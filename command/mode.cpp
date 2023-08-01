@@ -28,6 +28,8 @@ void MODE(int fd, std::string str)
 		modeFlagK(fd, channelName, optionFlag, textString);
 	if (optionFlag[1] == 'o')
 		modeFlagO(fd, channelName, optionFlag, textString);
+	if (optionFlag[1] == 'l')
+		modeFlagL(fd, channelName, optionFlag, textString);
 }
 
 int modeNoChannel(int fd, std::string channelName)
@@ -81,7 +83,7 @@ void modeFlagI(int fd, std::string channelName, std::string optionFlag)
 		message += clients[fd].getNickName();
 		message += " ";
 		message += channelName;
-		message += " :You must have channel op access or above to set channel mode i";
+		message += " :You must have channel op access";
 	}
 	else
 		return ;
@@ -119,7 +121,7 @@ void modeFlagT(int fd, std::string channelName, std::string optionFlag)
 		message += clients[fd].getNickName();
 		message += " ";
 		message += channelName;
-		message += " :You must have channel op access or above to set channel mode i";
+		message += " :You must have channel op access";
 	}
 	else
 		return ;
@@ -163,10 +165,9 @@ void modeFlagK(int fd, std::string channelName, std::string optionFlag, std::str
 		message += clients[fd].getNickName();
 		message += " ";
 		message += channelName;
-		message += " :You must have channel op access or above to set channel mode i";
+		message += " :You must have channel op access";
 	}
-	else
-		return ;
+
 	server.sendMessage(fd, message);
 }
 
@@ -186,7 +187,7 @@ void modeFlagO(int fd, std::string channelName, std::string optionFlag, std::str
 		message += " ";
 		message += channelName;
 		message += " :You must have channel op access";
-		server.sendChannelMessage(channel, message, fd);
+		server.sendMessage(fd, message);
 		return;
 	}
 
@@ -194,39 +195,84 @@ void modeFlagO(int fd, std::string channelName, std::string optionFlag, std::str
 		return ;
 
 	int targetId = server.getNickNameId(targetName);
-	if (targetId == - 1 || channel->getClientStatus()[targetId] != CONNECTED)
+	if (targetId == - 1) // 없는 닉네임일때
 	{
-		message = targetName;
+		message = std::to_string(ERR_NOSUCHNICK);
 		message += " ";
-		message += channelName; 
-		message += " :They aren't on that channel";
-		server.sendChannelMessage(channel, message, fd);
-		return;
+		message += clients[fd].getNickName();
+		message += " ";
+		message += targetName;
+		message += " :No such nick";
+		server.sendMessage(fd, message);
+		return ;
 	}
+	if (channel->getClientStatus()[targetId] != CONNECTED) // 있는 닉네임이나 서버에 없을때
+		return;
 
 	bool istargetAdmin = channel->isAdmin(targetId);
 
 	if (istargetAdmin == false && optionFlag[0] == '+')
 		channel->addAdmin(fd, targetId);
 	else if (istargetAdmin == true && optionFlag[0] == '-')
-		channel->getAdminIdList().remove(targetId);
-
-	std::string channelClientListStr = channel->getClientList();
-
-	for (int i = 0; i < MAX_EVENTS; i++)
 	{
-		if (channel->getClientStatus()[i] == CONNECTED)
+		if (channel->getAdminIdList().size() - 1 == 0)
 		{
-			message = "353 ";
-    		message += clients[i].getNickName();
-    		message += " = " + channel->getName();
-    		message += " :" + channelClientListStr;
-
-	    	message += "\r\n366 ";
-    		message += clients[i].getNickName();
-    		message += " " + channel->getName();
-    		message += " :End of /Names list";
-			server.sendChannelMessage(channel, message, i);
+			server.deleteChannel(channelName, targetId);
+			return ;
 		}
+		channel->getAdminIdList().remove(targetId);
 	}
+
+	message = ":";
+	message += clients[fd].getNickName();
+	message += " MODE ";
+	message += channelName;
+	message += " ";
+	message += optionFlag;
+	message += " :";
+	message += targetName;
+	server.sendChannelMessage(channel, message, fd);
+	server.sendMessage(fd, message);
+}
+
+void modeFlagL(int fd, std::string channelName, std::string optionFlag, std::string targetCapacity)
+{
+	int numeric;
+	std::string message;
+
+	Server& server = Server::getInstance();
+	Channel *channel = server.findChannel(channelName);
+	Client* clients = server.getClients();
+
+	if (targetCapacity == "")
+		return;
+	int newCapacity = std::atoi(targetCapacity.c_str()); 
+
+	if (optionFlag[0] == '+')
+		numeric = channel->changeMaxCapacity(fd, newCapacity);
+	else
+		numeric = channel->changeMaxCapacity(fd, -1);
+
+	if (numeric == 1)
+	{
+		message = ":";
+		message += clients[fd].getNickName();
+		message += " MODE ";
+		message += channelName;
+		message += " ";
+		message += optionFlag;
+		message += " :";
+		message += std::to_string(newCapacity);
+		server.sendChannelMessage(channel, message, fd);
+	}
+	else if (numeric == ERR_CHANOPRIVSNEEDED)
+	{
+		message = std::to_string(numeric);
+		message += " ";
+		message += clients[fd].getNickName();
+		message += " ";
+		message += channelName;
+		message += " :You must have channel op access";
+	}
+	server.sendMessage(fd, message);
 }

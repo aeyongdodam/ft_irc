@@ -21,7 +21,6 @@ void PART(std::string optionString, int clientId)
 
     Server& server = Server::getInstance();
     Channel* channel = server.findChannel(channelName);
-    Client* clients = server.getClients();
 
     if (channel == NULL)
     {
@@ -36,9 +35,10 @@ void PART(std::string optionString, int clientId)
 
     if (responseCode == 1)
     {
+        Client* clients = server.getClients();
         std::string channelMsg = ":";
         channelMsg += clients[clientId].getNickName();
-        channelMsg += " PART :";
+        channelMsg += " PART ";
         channelMsg += channelName;
         channelMsg += " ";
         channelMsg += partMessage;

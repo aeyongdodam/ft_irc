@@ -63,8 +63,8 @@ std::string USER(int fd, std::string str);
 void JOIN(int clientId, std::string optionString);
 void PRIVMSG(int fd, std::string str);
 void KICK(std::string input, int clientId);
-
 void PART(std::string channelName, int clientId);
+std::string makePartResponse(int responseCode, std::string channelName);
 
 std::string TOPIC(std::string input, int clientId);
 
@@ -74,6 +74,7 @@ void modeFlagI(int fd, std::string channelName, std::string optionFlag);
 void modeFlagT(int fd, std::string channelName, std::string optionFlag);
 void modeFlagK(int fd, std::string channelName, std::string optionFlag, std::string textString);
 void modeFlagO(int fd, std::string channelName, std::string optionFlag, std::string targetName);
+void modeFlagL(int fd, std::string channelName, std::string optionFlag, std::string targetCapacity);
 
 void QUIT(int fd);
 #endif
