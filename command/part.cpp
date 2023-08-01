@@ -1,32 +1,31 @@
 #include "command.hpp"
 
-void PART(std::string channelName, int clientId)
+std::string	PART(std::string channelName, int clientId)
 {
     Server& server = Server::getInstance();
     Channel* channel = server.findChannel(channelName);
-    Client* clients = server.getClients();
 
     int	responseCode = channel->partClient(clientId);
 
     if (responseCode == 1)
     {
-        // std::string resMsg = ":";
-        // resMsg += clients[clientId].getNickName();
-        // resMsg += " PART ";
-        // resMsg += channelName;
-        std::string resMsg = "PART ";
-        resMsg += channel->getName();
-        server.sendMessage(clientId, resMsg);
-        
+        Client* clients = server.getClients();
         std::string channelMsg = ":";
         channelMsg += clients[clientId].getNickName();
-        channelMsg += " PART ";
+        channelMsg += " PART :";
         channelMsg += channelName;
-        server.sendChannelMessage(channel, channelMsg, clientId);
-
-        std::string resMsg = "PART ";
-        resMsg += channelName;
-        return resMsg;
+        if (channel->isAdmin(clientId) && channel->getAdminIdList().size() - 1 == 0)
+        {
+            server.deleteChannel(channelName, clientId);
+            return "";
+        }
+        else
+        {
+            server.sendChannelMessage(channel, channelMsg, clientId);
+            std::string resMsg = "PART ";
+            resMsg += channelName;
+            return resMsg;
+        }
     }
 
 	return makePartResponse(responseCode, channelName);
