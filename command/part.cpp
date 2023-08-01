@@ -24,7 +24,7 @@ void PART(std::string optionString, int clientId)
 
     if (channel == NULL)
     {
-        std::string resMsg = "403 ";
+        std::string resMsg = std::to_string(ERR_NOSUCHCHANNEL) + " ";
         resMsg += channelName;
         resMsg += " :No such channel";
         server.sendMessage(clientId, resMsg);
