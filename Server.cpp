@@ -371,3 +371,27 @@ void Server::sendChannelUser(int fd, std::string message)
 		}
 	}
 }
+
+std::string Server::prefix(int fd)
+{
+	std::string message;
+
+	message = "!";
+	message += clients[fd].getRealName();
+	message += "@";
+
+	// host ip 
+	char myaddr[256];
+	struct hostent *myent;
+	struct in_addr myen;
+	long int *add;
+
+	gethostname(myaddr, sizeof(myaddr));
+	myent = gethostbyname(myaddr);
+	add = (long int *)*myent->h_addr_list;
+	myen.s_addr = *add;
+	char* hostIp = inet_ntoa(myen);
+	message += hostIp;
+	
+	return message;
+}

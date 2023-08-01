@@ -20,6 +20,10 @@
 #include <map>
 #include <sstream>
 
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+
 #include "Client.hpp"
 #include "command/command.hpp"
 
@@ -73,6 +77,8 @@ class Server
 		void executeCommand(int commandNum, std::string optionString, int i);
 		void sendChannelMessage(Channel *channel, std::string message, int fd);
 		void sendChannelUser(int fd, std::string message);
+
+		std::string prefix(int fd);
 };
 
 void errProc(const char*);
