@@ -37,8 +37,8 @@ void KICK(std::string input, int clientId) //clientId가 쫓아내는입장, nic
     int nickNameId = server.getNickNameId(kickUserName); //nickNameId가 쫓겨나는 입장
     if (nickNameId == -1) //쫓겨나야하는 유저가 채널에 없을 때
     {
-        numeric = ERR_USERNOTINCHANNEL;
-        message = " " + kickUserName + " " + channelName + " :They aren't on that channel";
+        numeric = ERR_NOSUCHNICK;
+        message = " " + clients[clientId].getNickName() + " " + kickUserName + " :No such nick";
         server.sendMessage(clientId, std::to_string(numeric) + message);
         return ;
     }
