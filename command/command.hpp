@@ -72,6 +72,7 @@ void modeFlagI(int fd, std::string channelName, std::string optionFlag);
 void modeFlagT(int fd, std::string channelName, std::string optionFlag);
 void modeFlagK(int fd, std::string channelName, std::string optionFlag, std::string textString);
 void modeFlagO(int fd, std::string channelName, std::string optionFlag, std::string targetName);
+void modeFlagL(int fd, std::string channelName, std::string optionFlag, std::string targetCapacity);
 
 void QUIT(int fd);
 #endif

@@ -44,6 +44,7 @@ class Channel
 		int changeTopic(int adminId, std::string& topic);
 		int changeKey(int adminId, std::string key);
 		int changeTopicSetting(int adminId, bool topicSetting);
+		int changeMaxCapacity(int adminId, int maxCapacity);
 
 		int* getClientStatus();
 		const std::string getName();
@@ -51,7 +52,7 @@ class Channel
 		std::string getKey();
 		bool gettopicSetting();
 		std::string getClientList();
-		std::list<int> getAdminIdList();
+		std::list<int>& getAdminIdList();
 
 		bool isAdmin(int id);
 		int addAdmin(int oldAdminId, int newAdminId);
