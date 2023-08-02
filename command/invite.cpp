@@ -10,27 +10,26 @@ void INVITE(std::string input, int clientId)
     std::string channelName = stringPair.second;
     int nickNameId = server.getNickNameId(invitedNickName);
     std::string message;
-    if (message = checkParameter(nickName, channelName))
+    if ((message = checkParameter(nickName, channelName)) != "")
     {
         server.sendMessage(clientId, message);
         return;
     }
-    if (message = checkChannel(channel))
+    if ((message = checkChannel(channel)) != "")
     {
         server.sendMessage(clientId, message);
         return;
     }
-    if (checkUser(nickNameId))
+    if ((message = checkUser(nickNameId)) != "")
     {
         server.sendMessage(clientId, message);
         return;
     }
-    if (checkAdminConnected(clientStatus, clientId, invitedNickName))
+    if ((message = checkAdminConnected(clientStatus, clientId, invitedNickName)) != "")
     {
         server.sendMessage(clientId, message);
         return;
     }
-
     if (channel->isAdmin(clientId))
     {
         inviteClient(clientId, nickNameId);
