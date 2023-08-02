@@ -153,7 +153,7 @@ const std::string Server::getGenernalPass()
 	return this->generalPass;
 }
 
-Client *Server::getClients()
+Client* Server::getClients()
 {
 	return this->clients;
 }
@@ -174,13 +174,23 @@ void Server::disconnectClient(int i, int readfd)
 	clients[i].setPassFlag(false);
 	connectClientNum--;
 
-	std::list<Channel*> channels = clients[i].getChannels();
+	std::list<Channel*>& channels = clients[i].getChannels();
 	while (channels.size() > 0)
 	{
 		Channel *channel = channels.front();
 		channel->getClientStatus()[i] = UNCONNECTED;
+
+		if (channel->isAdmin(i))
+		{
+			if (channel->getAdminIdList().size() == 1)
+				deleteChannel(channel->getName(), i);
+			else
+				channel->getAdminIdList().remove(i);
+		}
+
 		channels.pop_front();
 	}
+	channels.clear();
 
 	int listenFlag = 1;
 	for (int i=0; i<MAX_EVENTS; i++)
@@ -237,7 +247,7 @@ Channel* Server::findChannel(std::string &name)
 		return NULL;
 }
 
-bool Server::deleteChannel(std::string &name, int adminId)
+bool Server::deleteChannel(const std::string &name, int adminId)
 {
 	std::map<std::string, Channel*>::iterator it = channelMap.find(name);
 
@@ -261,7 +271,9 @@ bool Server::deleteChannel(std::string &name, int adminId)
 	if (it != channelMap.end())
 	{
 		delete it->second;
+		it->second = NULL;
 		channelMap.erase(it);
+
 		return true;
 	}
 	return false;

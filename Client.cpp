@@ -16,22 +16,22 @@ Client &Client::operator=(const Client &copy)
 
 Client::~Client() {}
 
-std::string Client::getNickName() const
+std::string& Client::getNickName()
 {
 	return nickName;
 }
 
-std::string Client::getLoginName() const
+std::string& Client::getLoginName()
 {
 	return loginName;
 }
 
-std::string Client::getRealName() const
+std::string& Client::getRealName()
 {
 	return realName;
 }
 
-std::list<Channel*> Client::getChannels()
+std::list<Channel*>& Client::getChannels()
 {
 	return this->channels;
 }
