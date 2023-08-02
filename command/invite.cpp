@@ -2,39 +2,46 @@
 void INVITE(std::string input, int clientId)
 {
     Server& server = Server::getInstance();
-    Channel *channel = server.findChannel(channelName);
-    Client *clients = server.getClients();
-    int *clientStatus = channel->getClientStatus();
     std::pair<std::string, std::string> stringPair = splitTwoWords(input);
     std::string invitedNickName = stringPair.first;
     std::string channelName = stringPair.second;
+    Channel *channel = server.findChannel(channelName);
+    Client *clients = server.getClients();
+    int *clientStatus = channel->getClientStatus();
+
     int nickNameId = server.getNickNameId(invitedNickName);
+    int numeric;
     std::string message;
-    if ((message = checkParameter(nickName, channelName)) != "")
+    if ((message = checkParameter(invitedNickName, channelName)) != "")
     {
         server.sendMessage(clientId, message);
         return;
     }
-    if ((message = checkChannel(channel)) != "")
+    if ((message = checkChannel(channel, channelName)) != "")
     {
         server.sendMessage(clientId, message);
         return;
     }
-    if ((message = checkUser(nickNameId)) != "")
+    if ((message = checkUser(clients, nickNameId)) != "")
     {
         server.sendMessage(clientId, message);
         return;
     }
-    if ((message = checkAdminConnected(clientStatus, clientId, invitedNickName)) != "")
+    if ((message = checkAdminConnected(clientStatus, clientId, channelName)) != "")
+    {
+        server.sendMessage(clientId, message);
+        return;
+    }
+    if ((message = checkAlreadyInChannel(clientStatus, nickNameId, invitedNickName)) != "")
     {
         server.sendMessage(clientId, message);
         return;
     }
     if (channel->isAdmin(clientId))
     {
-        inviteClient(clientId, nickNameId);
+        channel->inviteClient(clientId, nickNameId);
         numeric = RPL_INVITING;
-        message = " " + chanelName + " " + invitedNickName;
+        message = " " + channelName + " " + invitedNickName;
         server.sendMessage(nickNameId, std::to_string(numeric) + message);
         return ;
     }
@@ -47,11 +54,11 @@ void INVITE(std::string input, int clientId)
     }
 }
 
-std::string checkParmeter(std::string nickName, std::string channelName)
+std::string checkParameter(std::string nickName, std::string channelName)
 {
     int numeric;
     std::string message;
-    if (nickName == "" || channleName == "")
+    if (nickName == "" || channelName == "")
     {
         numeric = ERR_NEEDMOREPARAMS;
         message = " INVITE :Not enough parameters";
@@ -60,7 +67,7 @@ std::string checkParmeter(std::string nickName, std::string channelName)
     return "";
 }
 
-std::string checkChannel(Channel *channel)
+std::string checkChannel(Channel *channel, std::string channelName)
 {
     int numeric;
     std::string message;
@@ -73,21 +80,23 @@ std::string checkChannel(Channel *channel)
     return "";
 }
 
-std::string checkUser(int nickNameId)
+std::string checkUser(Client* clients,int nickNameId)
 {
     int numeric;
     std::string message;
     if (nickNameId == -1) //초대하려는 유저가 존재하지 않을때
     {
         numeric = ERR_NOSUCHNICK;
-        message = " " + clients[clientId].getNickName() + " " + kickUserName + " :No such nick";
+        message = " " + clients[nickNameId].getNickName() + " :No such nick";
         return (std::to_string(numeric) + message);
     }
     return "";
 }
 
-std::string checkAdminConnected(int *clientStatus, int clientId)
+std::string checkAdminConnected(int *clientStatus, int clientId, std::string channelName)
 {
+    int numeric;
+    std::string message;
     if (clientStatus[clientId] != CONNECTED) // 명령 사용자가 채널에 참여하지 않은 경우
     {
         numeric = ERR_NOTONCHANNEL;
@@ -97,7 +106,7 @@ std::string checkAdminConnected(int *clientStatus, int clientId)
     return "";
 }
 
-std::string checkAlreadyInChannel(int *clientStatus, int nickNameId, int invitedNickName)
+std::string checkAlreadyInChannel(int *clientStatus, int nickNameId, std::string invitedNickName)
 {
     int numeric;
     std::string message;
