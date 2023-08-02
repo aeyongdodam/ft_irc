@@ -34,9 +34,9 @@ class Client
 		~Client();
 		
 
-		std::string getNickName() const;
-		std::string getLoginName() const;
-		std::string getRealName() const;
+		std::string& getNickName();
+		std::string& getLoginName();
+		std::string& getRealName();
 		std::list<Channel*>& getChannels();
 		bool getPassFlag() const;
 		void setNickName(std::string nickName_);
