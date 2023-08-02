@@ -24,8 +24,8 @@ std::string TOPIC(std::string input, int clientId)
         message = " " + clients[clientId].getNickName() + " " + channelName + " :No such channel";
         return (std::to_string(numeric) + message);
     }
-    size_t secondWord =  input.find(' ', firstWord + 1);
-    if (secondWord == std::string::npos) // 첫 번째 파라미터만 있는 경우
+    std::string topicString = input.substr(firstWord + 2);
+    if (topicString == "") // 첫 번째 파라미터만 있는 경우
     {
         if (channel->getTopic() == NULL)
         {
@@ -36,7 +36,6 @@ std::string TOPIC(std::string input, int clientId)
         else
             return (*channel->getTopic());
     }
-    std::string topicString = input.substr(firstWord + 2, secondWord - firstWord - 2);
     int *clientStatus = channel->getClientStatus();
     if (clientStatus[clientId] != CONNECTED) // 명령 사용자가 채널에 참여하지 않은 경우
     {
@@ -45,7 +44,7 @@ std::string TOPIC(std::string input, int clientId)
         return (std::to_string(numeric) + message);
     }
 
-    if (channel->isAdmin(clientId) && channel->gettopicSetting() == 0) //방장 여러 명 배열로 바뀌면 고쳐야함
+    if (channel->isAdmin(clientId) == 0 && channel->gettopicSetting() == 0) //방장 여러 명 배열로 바뀌면 고쳐야함
     {
         numeric = ERR_CHANOPRIVSNEEDED;
         message = " " + channelName + " :You're not channel operator";

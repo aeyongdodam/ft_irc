@@ -2,11 +2,11 @@
 
 void KICK(std::string input, int clientId) //clientId가 쫓아내는입장, nickNameId가 쫓겨나는 입장
 {
-    std::cout << "input 값 : " <<input << std::endl;
     int numeric;
     std::string message;
     std::string channelMessage;
     Server& server = Server::getInstance();
+
     size_t firstWord = input.find(' ');
     if (firstWord == std::string::npos)
     {
@@ -27,6 +27,7 @@ void KICK(std::string input, int clientId) //clientId가 쫓아내는입장, nic
     std::string kickUserName = input.substr(firstWord + 1, secondWord - firstWord - 1);
     Channel *channel = server.findChannel(channelName);
     Client *clients = server.getClients();
+
     if (channel == NULL)
     {
         numeric = ERR_NOSUCHCHANNEL;
@@ -34,15 +35,15 @@ void KICK(std::string input, int clientId) //clientId가 쫓아내는입장, nic
         server.sendMessage(clientId, std::to_string(numeric) + message);
         return ;
     }
+    int *clientStatus = channel->getClientStatus();
     int nickNameId = server.getNickNameId(kickUserName); //nickNameId가 쫓겨나는 입장
-    if (nickNameId == -1) //쫓겨나야하는 유저가 채널에 없을 때
+    if (nickNameId == -1 || clientStatus[nickNameId] != CONNECTED) //쫓겨나야하는 유저가 채널에 없을 때
     {
         numeric = ERR_NOSUCHNICK;
         message = " " + clients[clientId].getNickName() + " " + kickUserName + " :No such nick";
         server.sendMessage(clientId, std::to_string(numeric) + message);
         return ;
     }
-    int *clientStatus = channel->getClientStatus();
     if (clientStatus[clientId] != CONNECTED) // 명령 사용자가 채널에 참여하지 않은 경우
     {
         numeric = ERR_NOTONCHANNEL;

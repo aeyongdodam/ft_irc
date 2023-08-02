@@ -2,7 +2,7 @@
 #define SERVER_HPP
 
 #define MAX_EVENTS 10
-#define CMD_COUNT 10
+#define CMD_COUNT 11
 
 #include <iostream>
 #include <cstdlib>
