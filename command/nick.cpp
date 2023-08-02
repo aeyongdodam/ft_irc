@@ -33,8 +33,6 @@ std::string NICK(int fd, std::string nickname)
 		}
 		if (flag)
 		{
-			if (clients[fd].getNickName() == "")
-				return "";
 			message = ":";
 			message += clients[fd].getNickName() + server.prefix(fd);
 			message += " NICK ";
