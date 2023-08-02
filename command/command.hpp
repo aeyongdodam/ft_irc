@@ -79,5 +79,5 @@ void QUIT(int fd);
 // util.c
 std::pair<std::string, std::string> splitByFirstSpace(const std::string& input);
 std::list<std::string> split(std::string input, char delimiter);
-
+std::pair<std::string, std::string> splitTwoWords(const std::string& input);
 #endif
