@@ -173,7 +173,7 @@ void Server::disconnectClient(int i, int readfd)
 	clients[i].setPassFlag(false);
 	connectClientNum--;
 
-	std::list<Channel*> channels = clients[i].getChannels();
+	std::list<Channel*>& channels = clients[i].getChannels();
 	while (channels.size() > 0)
 	{
 		Channel *channel = channels.front();
@@ -189,6 +189,7 @@ void Server::disconnectClient(int i, int readfd)
 
 		channels.pop_front();
 	}
+	channels.clear();
 
 	int listenFlag = 1;
 	for (int i=0; i<MAX_EVENTS; i++)
@@ -269,7 +270,9 @@ bool Server::deleteChannel(const std::string &name, int adminId)
 	if (it != channelMap.end())
 	{
 		delete it->second;
+		it->second = NULL;
 		channelMap.erase(it);
+
 		return true;
 	}
 	return false;
