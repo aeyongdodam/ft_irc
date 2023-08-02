@@ -25,8 +25,9 @@ std::list<std::string> split(std::string input, char delimiter)
     return channels;
 }
 
-std::pair<std::string, std::string> splitTwoWords(const std::string& input)
+std::pair<std::string, std::string> splitTwoWords(std::string input)
 {
+    std::cout << "input : " << input << std::endl;
     size_t firstWord = input.find(' ');
     size_t secondWord =  input.find(' ', firstWord + 1);
     if (firstWord == std::string::npos || secondWord == std::string::npos)

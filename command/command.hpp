@@ -85,5 +85,5 @@ std::string checkAlreadyInChannel(int *clientStatus, int nickNameId, std::string
 // util.c
 std::pair<std::string, std::string> splitByFirstSpace(const std::string& input);
 std::list<std::string> split(std::string input, char delimiter);
-std::pair<std::string, std::string> splitTwoWords(const std::string& input);
+std::pair<std::string, std::string> splitTwoWords(std::string input);
 #endif

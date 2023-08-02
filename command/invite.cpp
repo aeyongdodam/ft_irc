@@ -5,6 +5,7 @@ void INVITE(std::string input, int clientId)
     std::pair<std::string, std::string> stringPair = splitTwoWords(input);
     std::string invitedNickName = stringPair.first;
     std::string channelName = stringPair.second;
+    std::cout << "inviteNickName : " << invitedNickName << "channelName : " << channelName;
     Channel *channel = server.findChannel(channelName);
     Client *clients = server.getClients();
     int *clientStatus = channel->getClientStatus();
