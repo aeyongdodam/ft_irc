@@ -24,3 +24,15 @@ std::list<std::string> split(std::string input, char delimiter)
 
     return channels;
 }
+
+std::pair<std::string, std::string> splitTwoWords(std::string input)
+{
+    std::cout << "input : " << input << std::endl;
+    size_t firstWord = input.find(' ');
+    size_t secondWord =  input.find(' ', firstWord + 1);
+    if (firstWord == std::string::npos || secondWord == std::string::npos)
+        return std::make_pair("", "");
+    std::string first = input.substr(0, firstWord);
+    std::string second = input.substr(firstWord + 1, secondWord - firstWord - 1);
+    return std::make_pair(first, second);
+}

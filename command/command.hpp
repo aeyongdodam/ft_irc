@@ -75,9 +75,15 @@ void modeFlagO(int fd, std::string channelName, std::string optionFlag, std::str
 void modeFlagL(int fd, std::string channelName, std::string optionFlag, std::string targetCapacity);
 
 void QUIT(int fd);
+void INVITE(std::string input, int clientId);
+std::string checkParameter(std::string nickName, std::string channelName);
+std::string checkChannel(Channel *channel, std::string channelName);
+std::string checkUser(Client* clients,int nickNameId);
+std::string checkAdminConnected(int *clientStatus, int clientId, std::string channelName);
+std::string checkAlreadyInChannel(int *clientStatus, int nickNameId, std::string invitedNickName);
 
 // util.c
 std::pair<std::string, std::string> splitByFirstSpace(const std::string& input);
 std::list<std::string> split(std::string input, char delimiter);
-
+std::pair<std::string, std::string> splitTwoWords(std::string input);
 #endif

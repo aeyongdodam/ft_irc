@@ -13,6 +13,7 @@ Server::Server()
 	commandList[7] = "TOPIC";
 	commandList[8] = "MODE";
 	commandList[9] = "QUIT";
+	commandList[10] = "INVITE";
 	connectClientNum = 0;
 }
 
@@ -346,6 +347,8 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 		MODE(i, optionString);
 	if (commandNum == 9) //QUIT
 		QUIT(i);
+	if (commandNum == 10) // INVITE
+		INVITE(optionString, i);
 }
 
 void Server::sendChannelMessage(Channel *channel, std::string message, int fd)
