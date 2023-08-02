@@ -152,7 +152,7 @@ const std::string Server::getGenernalPass()
 	return this->generalPass;
 }
 
-Client *Server::getClients()
+Client* Server::getClients()
 {
 	return this->clients;
 }

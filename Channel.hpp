@@ -51,7 +51,7 @@ class Channel
 		std::string* getTopic();
 		std::string getKey();
 		bool gettopicSetting();
-		std::string& getClientList();
+		std::string getClientList();
 		std::list<int>& getAdminIdList();
 
 		bool isAdmin(int id);

@@ -231,7 +231,7 @@ bool Channel::gettopicSetting()
 	return topicSetting;
 }
 
-std::string& Channel::getClientList()
+std::string Channel::getClientList()
 {
 	Server& server = Server::getInstance();
 
