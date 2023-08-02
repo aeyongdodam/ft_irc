@@ -25,7 +25,7 @@ void PART(std::string optionString, int clientId)
     {
         Client* clients = server.getClients();
         std::string channelMsg = ":";
-        channelMsg += clients[clientId].getNickName();
+        channelMsg += clients[clientId].getNickName() + server.prefix(clientId);
         channelMsg += " PART ";
         channelMsg += channelName;
         channelMsg += " ";

@@ -31,7 +31,7 @@ void sendUser(int fd, std::string str)
 
 	numeric = RPL_AWAY;
 	message += ":";
-	message += clients[fd].getNickName();
+	message += clients[fd].getNickName() + server.prefix(fd);
 	message += " PRIVMSG ";
 	message += userNick;
 	message += " ";
@@ -83,7 +83,7 @@ void sendChannel(int fd, std::string str, size_t chennelPoint)
 
 	numeric = RPL_AWAY;
 	message += ":";
-	message += clients[fd].getNickName();
+	message += clients[fd].getNickName() + server.prefix(fd);
 	message += " PRIVMSG ";
 	message += channelName;
 	message += " ";
