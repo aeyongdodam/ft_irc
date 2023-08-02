@@ -25,9 +25,8 @@ std::string USER(int fd, std::string str)
 		clients[fd].setRealName(realname);
 		message = "001 ";
 		message += clients[fd].getNickName();
-		message +=  " :Welcome to the IRC Network !! [";
-		message += server.prefix(fd);
-		message += "]";
+		message +=  " :Welcome to the IRC Network ";
+		message += clients[fd].getNickName() + server.prefix(fd);
 		return (message);
 	}
 	return (std::to_string(numeric) + message);
