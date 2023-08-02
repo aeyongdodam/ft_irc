@@ -25,7 +25,7 @@ void PART(std::string optionString, int clientId)
         server.deleteChannel(channelName, clientId);
         std::string channelMsg = ":";
         channelMsg += clients[clientId].getNickName();
-        channelMsg += "! PART :";
+        channelMsg += " PART ";
         channelMsg += channelName;
         channelMsg += " ";
         channelMsg += partMessage;
