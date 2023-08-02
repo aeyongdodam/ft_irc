@@ -388,24 +388,21 @@ void Server::sendChannelUser(int fd, std::string message)
 
 std::string Server::prefix(int fd)
 {
-	std::string message;
+    std::string message;
 
-	message = "!";
-	message += clients[fd].getRealName();
-	message += "@";
+    message = "!";
+    message += clients[fd].getRealName();
+    message += "@";
 
-	// host ip 
-	char myaddr[256];
-	struct hostent *myent;
-	struct in_addr myen;
-	long int *add;
+    char myaddr[256];
+    gethostname(myaddr, sizeof(myaddr));
+    struct hostent *myent = gethostbyname(myaddr);
+    struct in_addr myen;
+    memcpy(&myen, myent->h_addr_list[0], sizeof(struct in_addr));
+    char hostIp[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &myen, hostIp, INET_ADDRSTRLEN);
 
-	gethostname(myaddr, sizeof(myaddr));
-	myent = gethostbyname(myaddr);
-	add = (long int *)*myent->h_addr_list;
-	myen.s_addr = *add;
-	char* hostIp = inet_ntoa(myen);
-	message += hostIp;
-	
-	return message;
+    message += hostIp;
+
+    return message;
 }
