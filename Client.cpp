@@ -31,7 +31,7 @@ std::string Client::getRealName() const
 	return realName;
 }
 
-std::list<Channel*> Client::getChannels()
+std::list<Channel*>& Client::getChannels()
 {
 	return this->channels;
 }
