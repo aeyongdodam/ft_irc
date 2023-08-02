@@ -20,10 +20,13 @@ std::string USER(int fd, std::string str)
 	}
 	else
 	{
-		message = "001 " + clients[fd].getNickName() + " :Welcome to the IRC Network !!";
 		size_t point = str.rfind(' ');
-		std::string realname = str.substr(point+1);
+		std::string realname = str.substr(point+2);
 		clients[fd].setRealName(realname);
+		message = "001 ";
+		message += clients[fd].getNickName();
+		message +=  " :Welcome to the IRC Network ";
+		message += clients[fd].getNickName() + server.prefix(fd);
 		return (message);
 	}
 	return (std::to_string(numeric) + message);

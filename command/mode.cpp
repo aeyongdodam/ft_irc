@@ -4,6 +4,9 @@
 void MODE(int fd, std::string str)
 {
 	size_t spacePoint = str.find(' ');
+	// optionFlag가 없는 경우
+	if (spacePoint == std::string::npos)
+		return ;
 	std::string channelName = str.substr(0, spacePoint);
 	std::string optionFlag = str.substr(spacePoint+1, 2);
 	size_t spacePoint2 = str.rfind(' ');
@@ -107,7 +110,7 @@ void modeFlagT(int fd, std::string channelName, std::string optionFlag)
 	if (numeric == 1)
 	{
 		message = ":";
-		message += clients[fd].getNickName();
+		message += clients[fd].getNickName() + server.prefix(fd);
 		message += " MODE ";
 		message += channelName;
 		message += " :";
@@ -150,7 +153,7 @@ void modeFlagK(int fd, std::string channelName, std::string optionFlag, std::str
 	if (numeric == 1)
 	{
 		message = ":";
-		message += clients[fd].getNickName();
+		message += clients[fd].getNickName() + server.prefix(fd);
 		message += " MODE ";
 		message += channelName;
 		message += " :";
@@ -224,7 +227,7 @@ void modeFlagO(int fd, std::string channelName, std::string optionFlag, std::str
 	}
 
 	message = ":";
-	message += clients[fd].getNickName();
+	message += clients[fd].getNickName() + server.prefix(fd);
 	message += " MODE ";
 	message += channelName;
 	message += " ";
@@ -258,7 +261,7 @@ void modeFlagL(int fd, std::string channelName, std::string optionFlag, std::str
 	if (numeric == 1)
 	{
 		message = ":";
-		message += clients[fd].getNickName();
+		message += clients[fd].getNickName() + server.prefix(fd);
 		message += " MODE ";
 		message += channelName;
 		message += " ";

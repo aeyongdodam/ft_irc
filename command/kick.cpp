@@ -63,11 +63,15 @@ void KICK(std::string input, int clientId) //clientId가 쫓아내는입장, nic
             }
             return ;
         }
+        // 여기는 올바른 메세지 형식
+        message = ":";
+        message += clients[clientId].getNickName() + server.prefix(clientId);
+        message += " KICK ";
+        message += channelName;
+        message += " ";
+        message += kickUserName;
+        server.sendMessage(clientId, message);server.sendChannelMessage(channel, message, clientId);
         channel->kickClient(clientId, nickNameId);
-        message = "KICK " + channelName + " " + kickUserName + " " + clients[clientId].getNickName();
-        server.sendMessage(clientId, message);
-        channelMessage = ":" + clients[clientId].getNickName() + "!user@10.14.2.7 KICK " + channel->getName() + " " + kickUserName + " : ";
-        server.sendChannelMessage(channel, channelMessage, clientId);
     }
     else //채널 운영자가 아닐 경우
     {

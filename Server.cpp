@@ -329,6 +329,8 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 {
 	if (commandNum == 0)
 		PASS(optionString, i);
+	if (clients[i].getPassFlag() == false)
+		return ;
 	if (commandNum == 1) // NICK
 		sendMessage(i, NICK(i, optionString));
 	if (commandNum == 2) // USER
@@ -385,4 +387,25 @@ void Server::sendChannelUser(int fd, std::string message)
 			}
 		}
 	}
+}
+
+std::string Server::prefix(int fd)
+{
+    std::string message;
+
+    message = "!";
+    message += clients[fd].getRealName();
+    message += "@";
+
+    char myaddr[256];
+    gethostname(myaddr, sizeof(myaddr));
+    struct hostent *myent = gethostbyname(myaddr);
+    struct in_addr myen;
+    memcpy(&myen, myent->h_addr_list[0], sizeof(struct in_addr));
+    char hostIp[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &myen, hostIp, INET_ADDRSTRLEN);
+
+    message += hostIp;
+
+    return message;
 }
