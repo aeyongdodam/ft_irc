@@ -83,6 +83,9 @@ int Channel::joinChannel(int clientId, std::string key)
 
 int Channel::kickClient(int adminId, int targetId)
 {
+	Server& server = Server::getInstance();
+	Client *clients = server.getClients();
+
 	if (isAdmin(adminId) == false)
 		return ERR_CHANOPRIVSNEEDED;
 
@@ -92,16 +95,24 @@ int Channel::kickClient(int adminId, int targetId)
 	clientStatus[targetId] = UNCONNECTED;
 	capacity -= 1;
 
+	clients[targetId].getChannels().remove(this);
+
 	return SUCCESS;
 }
 
 int Channel::partClient(int clientId)
 {
+	Server& server = Server::getInstance();
+	Client *clients = server.getClients();
+
 	if (clientStatus[clientId] != CONNECTED)
 		return ERR_NOTONCHANNEL;
 
+	adminIdList.remove(clientId);
 	clientStatus[clientId] = UNCONNECTED;
 	capacity -= 1;
+
+	clients[clientId].getChannels().remove(this);
 
 	return SUCCESS;
 }
