@@ -2,10 +2,9 @@
 void INVITE(std::string input, int clientId)
 {
     Server& server = Server::getInstance();
-    std::pair<std::string, std::string> stringPair = splitTwoWords(input);
+    std::pair<std::string, std::string> stringPair = splitByFirstSpace(input);
     std::string invitedNickName = stringPair.first;
     std::string channelName = stringPair.second;
-    std::cout << "inviteNickName : " << invitedNickName << "channelName : " << channelName;
     Channel *channel = server.findChannel(channelName);
     Client *clients = server.getClients();
     int *clientStatus = channel->getClientStatus();
@@ -29,11 +28,6 @@ void INVITE(std::string input, int clientId)
         return;
     }
     if ((message = checkAdminConnected(clientStatus, clientId, channelName)) != "")
-    {
-        server.sendMessage(clientId, message);
-        return;
-    }
-    if ((message = checkAlreadyInChannel(clientStatus, nickNameId, invitedNickName)) != "")
     {
         server.sendMessage(clientId, message);
         return;
