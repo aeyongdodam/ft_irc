@@ -2,7 +2,6 @@
 
 void KICK(std::string input, int clientId) //clientId가 쫓아내는입장, nickNameId가 쫓겨나는 입장
 {
-    std::cout << "input 값 : " <<input << std::endl;
     int numeric;
     std::string message;
     std::string channelMessage;
