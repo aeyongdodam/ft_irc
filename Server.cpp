@@ -316,6 +316,8 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 {
 	if (commandNum == 0)
 		PASS(optionString, i);
+	if (clients[i].getPassFlag() == false)
+		return ;
 	if (commandNum == 1) // NICK
 		sendMessage(i, NICK(i, optionString));
 	if (commandNum == 2) // USER
