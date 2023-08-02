@@ -63,7 +63,7 @@ class Server
 
 		Channel*	createChannel(int adminId, std::string& name);
         Channel*	findChannel(std::string &name);
-       	bool 		deleteChannel(std::string &name, int adminId);
+       	bool 		deleteChannel(const std::string &name, int adminId);
 
 		int commandParsing(std::string input);
 		int checkCommand(std::string command);
