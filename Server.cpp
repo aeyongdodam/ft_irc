@@ -115,11 +115,28 @@ void Server::readClient(int i)
 		rBuff[readLen] = '\0';
 		std::istringstream iss(rBuff);
 		std::string line;
+		std::string tmp_line = "";
 		while (std::getline(iss, line))
 		{
-			std::cout << "rBuff Message : " << line << std::endl;
+			if (tmp_line.size() != 0)
+			{
+				std::cerr << "tmp_line is not empty\n";
+				line = tmp_line + line;
+				// tmp_line = "";
+			}
+
+			std::cout << "rBuff Message : " << line << std::endl;			
+
+			const char* spaceLocation = std::strchr(line.c_str(), ' ');
+			if (spaceLocation == NULL)
+			{
+				std::cerr << "NULL\n";
+				tmp_line += line;
+				continue;
+			}
+			std::string optionString =  spaceLocation + 1;
+
 			int commandNum = commandParsing(line);
-			std::string optionString =  std::strchr(line.c_str(), ' ') + 1;
 			optionString.erase(optionString.size() - 1, optionString.size() - 1);
 			executeCommand(commandNum, optionString, i);
 		}
