@@ -256,19 +256,32 @@ bool Server::deleteChannel(const std::string &name, int adminId)
 	// 아직 채널에 남아있는 클라이언트들 킥
 	Channel* channel = it->second;
 	Server& server = Server::getInstance();
-	
+	std::string message;
+	std::string channelName = channel->getName();
 	for(int i = 0; i < MAX_EVENTS; i++)
 	{
 		if (channel->getClientStatus()[i] == CONNECTED)
 		{
-			std::string kickParameter = channel->getName();
-			kickParameter += " ";
-			kickParameter += server.getClients()[i].getNickName();
-			kickParameter += " ";
 			if (adminId != i)
+			{
+				message = ":";
+				message += clients[adminId].getNickName() + server.prefix(adminId);
+				message += " KICK ";
+				message += channelName;
+				message += " ";
+				message += clients[i].getNickName();
+        		server.sendMessage(i, message);
 				channel->kickClient(adminId, i);
+			}
 		}
 	}
+	message = ":";
+	message += clients[adminId].getNickName() + server.prefix(adminId);
+	message += " KICK ";
+	message += channelName;
+	message += " ";
+	message += clients[adminId].getNickName();
+	server.sendMessage(adminId, message);
 	channel->kickClient(adminId, adminId);
 	if (it != channelMap.end())
 	{

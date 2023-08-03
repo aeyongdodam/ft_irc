@@ -51,7 +51,6 @@ std::string TOPIC(std::string input, int clientId)
         return (std::to_string(numeric) + message);
     }
     channel->changeTopic(clientId, topicString);
-    std::cout << "channelName " << channelName + " topiccstring : " << topicString << std::endl;
     message = ":";
     message += clients[clientId].getNickName() + server.prefix(clientId);
     message += " TOPIC ";
