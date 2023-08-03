@@ -262,10 +262,6 @@ bool Server::deleteChannel(const std::string &name, int adminId)
 	{
 		if (channel->getClientStatus()[i] == CONNECTED)
 		{
-			std::string kickParameter = channelName;
-			kickParameter += " ";
-			kickParameter += server.getClients()[i].getNickName();
-			kickParameter += " ";
 			if (adminId != i)
 			{
 				message = ":";
