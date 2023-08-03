@@ -14,6 +14,7 @@ Server::Server()
 	commandList[8] = "MODE";
 	commandList[9] = "QUIT";
 	commandList[10] = "INVITE";
+	commandList[11] = "PING";
 	connectClientNum = 0;
 }
 
@@ -69,6 +70,7 @@ void Server::init(unsigned short portNum, std::string generalPassword)
 	fds[0].events = POLLIN;
 
 	clntAddrLen = sizeof(clntAddr);
+	initPrefix();
 }
 
 void Server::connectClient(int i)
@@ -351,6 +353,8 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 		QUIT(i);
 	if (commandNum == 10) // INVITE
 		INVITE(optionString, i);
+	if (commandNum == 11) // PING
+		sendMessage(i, PING(optionString));
 }
 
 void Server::sendChannelMessage(Channel *channel, std::string message, int fd)
@@ -396,16 +400,17 @@ std::string Server::prefix(int fd)
     message = "!";
     message += clients[fd].getRealName();
     message += "@";
+	message += hostIp;
 
-    char myaddr[256];
+    return message;
+}
+
+void Server::initPrefix()
+{
+	char myaddr[256];
     gethostname(myaddr, sizeof(myaddr));
     struct hostent *myent = gethostbyname(myaddr);
     struct in_addr myen;
     memcpy(&myen, myent->h_addr_list[0], sizeof(struct in_addr));
-    char hostIp[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &myen, hostIp, INET_ADDRSTRLEN);
-
-    message += hostIp;
-
-    return message;
 }
