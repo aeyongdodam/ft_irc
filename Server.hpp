@@ -45,6 +45,7 @@ class Server
 		Client clients[MAX_EVENTS  + 1];
 		std::map<std::string, Channel*> channelMap;
 		std::string commandList[CMD_COUNT];
+		char hostIp[INET_ADDRSTRLEN];
 
 		int connectClientNum;
 		std::string generalPass;
@@ -79,6 +80,7 @@ class Server
 		void sendChannelUser(int fd, std::string message);
 
 		std::string prefix(int fd);
+		void initPrefix();
 };
 
 void errProc(const char*);

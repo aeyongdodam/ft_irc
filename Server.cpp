@@ -70,6 +70,7 @@ void Server::init(unsigned short portNum, std::string generalPassword)
 	fds[0].events = POLLIN;
 
 	clntAddrLen = sizeof(clntAddr);
+	initPrefix();
 }
 
 void Server::connectClient(int i)
@@ -399,16 +400,17 @@ std::string Server::prefix(int fd)
     message = "!";
     message += clients[fd].getRealName();
     message += "@";
+	message += hostIp;
 
-    char myaddr[256];
+    return message;
+}
+
+void Server::initPrefix()
+{
+	char myaddr[256];
     gethostname(myaddr, sizeof(myaddr));
     struct hostent *myent = gethostbyname(myaddr);
     struct in_addr myen;
     memcpy(&myen, myent->h_addr_list[0], sizeof(struct in_addr));
-    char hostIp[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &myen, hostIp, INET_ADDRSTRLEN);
-
-    message += hostIp;
-
-    return message;
 }
