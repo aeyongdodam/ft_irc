@@ -42,10 +42,10 @@ std::string makeJoinResponse(int responseCode, Channel *channel, int clientId)
             resMsg += " :Cannot join channel (banned from channel)";
             break;
         case ERR_BADCHANNELKEY:
-            resMsg += ": Cannot join channel (bad channel key)";
+            resMsg += " :Cannot join channel (bad channel key)";
             break;
         case ERR_CHANNELISFULL:
-            resMsg += ": Cannot join channel (channel is full)";
+            resMsg += " :Cannot join channel (channel is full)";
             break;
         default:
             // :nick!nick@servername JOIN #channel

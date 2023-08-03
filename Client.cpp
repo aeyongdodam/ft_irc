@@ -1,11 +1,15 @@
 #include "Client.hpp"
 
 
-Client::Client() : nickName(""), loginName(""), realName(""), passFlag(false) {}
+Client::Client() : nickName(""), loginName(""), realName(""), passFlag(false)
+{
+	initBuff();
+}
 
 Client::Client(const Client &copy)
 {
 	(void)copy;
+	initBuff();
 }
 
 Client &Client::operator=(const Client &copy)
@@ -29,6 +33,11 @@ std::string& Client::getLoginName()
 std::string& Client::getRealName()
 {
 	return realName;
+}
+
+char* Client::getFdBuff()
+{
+    return fdBuff;
 }
 
 std::list<Channel*>& Client::getChannels()
@@ -64,4 +73,9 @@ void Client::setPassFlag(bool passFlag_)
 void Client::addChannel(Channel* new_channel)
 {
 	this->channels.push_back(new_channel);
+}
+
+void Client::initBuff()
+{
+	std::memset(fdBuff, 0, BUFSIZ);
 }
