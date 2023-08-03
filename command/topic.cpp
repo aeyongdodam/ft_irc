@@ -60,5 +60,4 @@ void TOPIC(std::string input, int clientId)
     message += channelName + " :" + topicString;
     server.sendMessage(clientId, message);
     server.sendChannelMessage(channel, message, clientId);
-    return ;
 }
