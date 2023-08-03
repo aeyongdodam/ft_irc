@@ -14,7 +14,6 @@ Server::Server()
 	commandList[8] = "MODE";
 	commandList[9] = "QUIT";
 	commandList[10] = "INVITE";
-	commandList[11] = "PING";
 	connectClientNum = 0;
 }
 
@@ -70,7 +69,6 @@ void Server::init(unsigned short portNum, std::string generalPassword)
 	fds[0].events = POLLIN;
 
 	clntAddrLen = sizeof(clntAddr);
-	initPrefix();
 }
 
 void Server::connectClient(int i)
@@ -115,31 +113,34 @@ void Server::readClient(int i)
 	else if (readLen > 0)
 	{
 		rBuff[readLen] = '\0';
-		std::istringstream iss(rBuff);
 		std::string line;
 		std::string tmp_line = "";
+
+		char* fdBuff = clients[i].getFdBuff();
+		std::strcat(fdBuff, rBuff);
+
+		char* newLineLocation = std::find(fdBuff, fdBuff + BUFSIZ, '\n');
+		if (newLineLocation == fdBuff + BUFSIZ)
+			return;
+
+		std::istringstream iss(fdBuff);
+		std::memset(fdBuff, '\0', BUFSIZ);
+
 		while (std::getline(iss, line))
 		{
-			if (tmp_line.size() != 0)
-			{
-				std::cerr << "tmp_line is not empty\n";
-				line = tmp_line + line;
-				// tmp_line = "";
-			}
+			std::cerr << "rBuff Message : " << line << std::endl;
+			
+			const char* spcaeLocation = std::strchr(line.c_str(), ' ');
+			if (spcaeLocation == NULL)
+				return;
 
-			std::cout << "rBuff Message : " << line << std::endl;			
-
-			const char* spaceLocation = std::strchr(line.c_str(), ' ');
-			if (spaceLocation == NULL)
-			{
-				std::cerr << "NULL\n";
-				tmp_line += line;
-				continue;
-			}
-			std::string optionString =  spaceLocation + 1;
-
+			std::string optionString =  spcaeLocation + 1;
+			if (optionString.back() == '\n')
+				optionString.erase(optionString.size() - 1, optionString.size() - 1);
+			if (optionString.back() == '\r')
+				optionString.erase(optionString.size() - 1, optionString.size() - 1);
+			
 			int commandNum = commandParsing(line);
-			optionString.erase(optionString.size() - 1, optionString.size() - 1);
 			executeCommand(commandNum, optionString, i);
 		}
 	}
@@ -187,6 +188,7 @@ void Server::disconnectClient(int i, int readfd)
 	close(readfd);
 	fds[i].fd = -1;
 	fds[i].events = 0;
+	clients[i].initBuff();
 	clients[i].setNickName("");
 	clients[i].setLoginName("");
 	clients[i].setRealName("");
@@ -273,32 +275,19 @@ bool Server::deleteChannel(const std::string &name, int adminId)
 	// 아직 채널에 남아있는 클라이언트들 킥
 	Channel* channel = it->second;
 	Server& server = Server::getInstance();
-	std::string message;
-	std::string channelName = channel->getName();
+	
 	for(int i = 0; i < MAX_EVENTS; i++)
 	{
 		if (channel->getClientStatus()[i] == CONNECTED)
 		{
+			std::string kickParameter = channel->getName();
+			kickParameter += " ";
+			kickParameter += server.getClients()[i].getNickName();
+			kickParameter += " ";
 			if (adminId != i)
-			{
-				message = ":";
-				message += clients[adminId].getNickName() + server.prefix(adminId);
-				message += " KICK ";
-				message += channelName;
-				message += " ";
-				message += clients[i].getNickName();
-        		server.sendMessage(i, message);
 				channel->kickClient(adminId, i);
-			}
 		}
 	}
-	message = ":";
-	message += clients[adminId].getNickName() + server.prefix(adminId);
-	message += " KICK ";
-	message += channelName;
-	message += " ";
-	message += clients[adminId].getNickName();
-	server.sendMessage(adminId, message);
 	channel->kickClient(adminId, adminId);
 	if (it != channelMap.end())
 	{
@@ -383,8 +372,6 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 		QUIT(i);
 	if (commandNum == 10) // INVITE
 		INVITE(optionString, i);
-	if (commandNum == 11) // PING
-		sendMessage(i, PING(optionString));
 }
 
 void Server::sendChannelMessage(Channel *channel, std::string message, int fd)
@@ -430,17 +417,16 @@ std::string Server::prefix(int fd)
     message = "!";
     message += clients[fd].getRealName();
     message += "@";
-	message += hostIp;
 
-    return message;
-}
-
-void Server::initPrefix()
-{
-	char myaddr[256];
+    char myaddr[256];
     gethostname(myaddr, sizeof(myaddr));
     struct hostent *myent = gethostbyname(myaddr);
     struct in_addr myen;
     memcpy(&myen, myent->h_addr_list[0], sizeof(struct in_addr));
+    char hostIp[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &myen, hostIp, INET_ADDRSTRLEN);
+
+    message += hostIp;
+
+    return message;
 }
