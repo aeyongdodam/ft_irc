@@ -63,7 +63,7 @@ void PRIVMSG(int fd, std::string str);
 void KICK(std::string input, int clientId);
 void PART(std::string channelName, int clientId);
 
-std::string TOPIC(std::string input, int clientId);
+void TOPIC(std::string input, int clientId);
 std::string PING(std::string str);
 
 // mode.cpp

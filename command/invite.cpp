@@ -34,10 +34,13 @@ void INVITE(std::string input, int clientId)
     }
     if (channel->isAdmin(clientId))
     {
-        channel->inviteClient(clientId, nickNameId);
         numeric = RPL_INVITING;
-        message = " " + channelName + " " + invitedNickName;
-        server.sendMessage(nickNameId, std::to_string(numeric) + message);
+        message = " " + clients[clientId].getNickName() + " " + channelName + " " + invitedNickName;
+        // std::cout << "메세지 내용 : " << message << std::endl;
+        server.sendMessage(clientId, std::to_string(numeric) + message);
+        message = ":" + clients[clientId].getNickName() + " INVITE " + invitedNickName + ":" + channelName;
+        server.sendMessage(nickNameId, message);
+        channel->inviteClient(clientId, nickNameId);
         return ;
     }
     else //채널 운영자가 아닐 경우

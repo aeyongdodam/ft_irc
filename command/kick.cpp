@@ -70,7 +70,8 @@ void KICK(std::string input, int clientId) //clientId가 쫓아내는입장, nic
         message += channelName;
         message += " ";
         message += kickUserName;
-        server.sendMessage(clientId, message);server.sendChannelMessage(channel, message, clientId);
+        server.sendMessage(clientId, message);
+        server.sendChannelMessage(channel, message, clientId);
         channel->kickClient(clientId, nickNameId);
     }
     else //채널 운영자가 아닐 경우
