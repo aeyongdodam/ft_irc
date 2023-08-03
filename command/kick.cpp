@@ -59,7 +59,7 @@ void KICK(std::string input, int clientId) //clientId가 쫓아내는입장, nic
             // channel->getAdminIdList().remove(nickNameId);
             if (channel->getAdminIdList().size() - 1 == 0)
             {
-                server.deleteChannel(channelName, nickNameId);
+                server.deleteChannel(channelName, nickNameId, "");
             }
             return ;
         }

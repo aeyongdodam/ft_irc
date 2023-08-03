@@ -22,13 +22,13 @@ void PART(std::string optionString, int clientId)
 
     if (channel->isAdmin(clientId) && channel->getAdminIdList().size() - 1 == 0)
     {
-        server.deleteChannel(channelName, clientId);
         std::string channelMsg = ":";
         channelMsg += clients[clientId].getNickName();
         channelMsg += " PART ";
         channelMsg += channelName;
         channelMsg += " ";
         channelMsg += partMessage;
+        server.deleteChannel(channelName, clientId, channelMsg);
         server.sendMessage(clientId, channelMsg);
         return;
     }

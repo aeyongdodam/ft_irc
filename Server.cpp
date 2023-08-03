@@ -185,7 +185,7 @@ void Server::disconnectClient(int i, int readfd)
 		if (channel->isAdmin(i))
 		{
 			if (channel->getAdminIdList().size() == 1)
-				deleteChannel(channel->getName(), i);
+				deleteChannel(channel->getName(), i, "");
 			else
 				channel->getAdminIdList().remove(i);
 		}
@@ -249,7 +249,7 @@ Channel* Server::findChannel(std::string &name)
 		return NULL;
 }
 
-bool Server::deleteChannel(const std::string &name, int adminId)
+bool Server::deleteChannel(const std::string &name, int adminId, std::string msg)
 {
 	std::map<std::string, Channel*>::iterator it = channelMap.find(name);
 
@@ -275,14 +275,21 @@ bool Server::deleteChannel(const std::string &name, int adminId)
 			}
 		}
 	}
-	message = ":";
-	message += clients[adminId].getNickName() + server.prefix(adminId);
-	message += " KICK ";
-	message += channelName;
-	message += " ";
-	message += clients[adminId].getNickName();
-	server.sendMessage(adminId, message);
-	channel->kickClient(adminId, adminId);
+	if (msg != "")
+	{
+        server.sendMessage(adminId, msg);
+	}
+	else
+	{
+		message = ":";
+		message += clients[adminId].getNickName() + server.prefix(adminId);
+		message += " KICK ";
+		message += channelName;
+		message += " ";
+		message += clients[adminId].getNickName();
+		server.sendMessage(adminId, message);
+		channel->kickClient(adminId, adminId);
+	}
 	if (it != channelMap.end())
 	{
 		delete it->second;
