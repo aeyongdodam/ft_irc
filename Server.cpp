@@ -14,6 +14,7 @@ Server::Server()
 	commandList[8] = "MODE";
 	commandList[9] = "QUIT";
 	commandList[10] = "INVITE";
+	commandList[11] = "PING";
 	connectClientNum = 0;
 }
 
@@ -69,6 +70,7 @@ void Server::init(unsigned short portNum, std::string generalPassword)
 	fds[0].events = POLLIN;
 
 	clntAddrLen = sizeof(clntAddr);
+	initPrefix();
 }
 
 void Server::connectClient(int i)
@@ -271,19 +273,32 @@ bool Server::deleteChannel(const std::string &name, int adminId)
 	// 아직 채널에 남아있는 클라이언트들 킥
 	Channel* channel = it->second;
 	Server& server = Server::getInstance();
-	
+	std::string message;
+	std::string channelName = channel->getName();
 	for(int i = 0; i < MAX_EVENTS; i++)
 	{
 		if (channel->getClientStatus()[i] == CONNECTED)
 		{
-			std::string kickParameter = channel->getName();
-			kickParameter += " ";
-			kickParameter += server.getClients()[i].getNickName();
-			kickParameter += " ";
 			if (adminId != i)
+			{
+				message = ":";
+				message += clients[adminId].getNickName() + server.prefix(adminId);
+				message += " KICK ";
+				message += channelName;
+				message += " ";
+				message += clients[i].getNickName();
+        		server.sendMessage(i, message);
 				channel->kickClient(adminId, i);
+			}
 		}
 	}
+	message = ":";
+	message += clients[adminId].getNickName() + server.prefix(adminId);
+	message += " KICK ";
+	message += channelName;
+	message += " ";
+	message += clients[adminId].getNickName();
+	server.sendMessage(adminId, message);
 	channel->kickClient(adminId, adminId);
 	if (it != channelMap.end())
 	{
@@ -368,6 +383,8 @@ void Server::executeCommand(int commandNum, std::string optionString, int i)
 		QUIT(i);
 	if (commandNum == 10) // INVITE
 		INVITE(optionString, i);
+	if (commandNum == 11) // PING
+		sendMessage(i, PING(optionString));
 }
 
 void Server::sendChannelMessage(Channel *channel, std::string message, int fd)
@@ -413,16 +430,17 @@ std::string Server::prefix(int fd)
     message = "!";
     message += clients[fd].getRealName();
     message += "@";
+	message += hostIp;
 
-    char myaddr[256];
+    return message;
+}
+
+void Server::initPrefix()
+{
+	char myaddr[256];
     gethostname(myaddr, sizeof(myaddr));
     struct hostent *myent = gethostbyname(myaddr);
     struct in_addr myen;
     memcpy(&myen, myent->h_addr_list[0], sizeof(struct in_addr));
-    char hostIp[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &myen, hostIp, INET_ADDRSTRLEN);
-
-    message += hostIp;
-
-    return message;
 }
