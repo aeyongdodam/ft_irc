@@ -74,8 +74,11 @@ void Client::addChannel(Channel* new_channel)
 {
 	this->channels.push_back(new_channel);
 }
+<<<<<<< HEAD
 
 void Client::initBuff()
 {
 	std::memset(fdBuff, 0, BUFSIZ);
 }
+=======
+>>>>>>> 5a8580866692d042c4f87400701d4d79e90be788
