@@ -20,6 +20,7 @@ class Channel;
 class Client
 {
 	private:
+		char fdBuff[BUFSIZ];
 		std::string nickName;
 		std::string loginName;
 		std::string realName;
@@ -37,6 +38,7 @@ class Client
 		std::string& getNickName();
 		std::string& getLoginName();
 		std::string& getRealName();
+		char* getFdBuff();
 		std::list<Channel*>& getChannels();
 		bool getPassFlag() const;
 		void setNickName(std::string nickName_);
@@ -45,6 +47,7 @@ class Client
 		void setPassFlag(bool passFlag_);
 
 		void addChannel(Channel *new_channel);
+		void initBuff();
 };
 
 #endif
