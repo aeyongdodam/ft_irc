@@ -210,7 +210,6 @@ void Server::disconnectClient(int i, int readfd)
 				channel->getAdminIdList().remove(i);
 		}
 
-		channels.pop_front();
 	}
 	channels.clear();
 

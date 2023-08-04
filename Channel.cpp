@@ -17,9 +17,7 @@ Channel& Channel::operator=(const Channel& source)
 	return (*this);
 }
 
-Channel::~Channel()
-{
-}
+Channel::~Channel() {}
 
 int Channel::joinChannel(int clientId)
 {

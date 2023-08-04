@@ -1,6 +1,6 @@
 #include "command.hpp"
 
-void sendUser(int fd, std::string str)
+void sendUser(int fd, std::string target, std::string messageStr)
 {
 	int numeric;
 	std::string message;
@@ -8,61 +8,46 @@ void sendUser(int fd, std::string str)
 	Server& server = Server::getInstance();
 	Client* clients = server.getClients();
 
-	// , 단위로 split
-	// clients돌면서 PRIV보내기
-	size_t spacePoint = str.find(' ');
-	std::string userNick = str.substr(0, spacePoint);
-
-	int nickNameId = server.getNickNameId(userNick);
+	int nickNameId = server.getNickNameId(target);
 	if (nickNameId == -1)
 	{
 		numeric = ERR_NOSUCHNICK;
 		message += " ";
 		message += clients[fd].getNickName();
 		message += " ";
-		message += userNick;
+		message += target;
         message += " :No such nick";
 		server.sendMessage(fd, (std::to_string(numeric) + message));
         return ;
 	}
-
-	size_t messagePoint = str.find(':');
-	if (messagePoint == std::string::npos)
-		return ;
-	std::string chatMessage = str.substr(messagePoint);
 
 	numeric = RPL_AWAY;
 	message += ":";
 	message += clients[fd].getNickName();
 	message += server.prefix(fd);
 	message += " PRIVMSG ";
-	message += userNick;
+	message += target;
 	message += " ";
-	message += chatMessage;
+	message += messageStr;
 	
 	server.sendMessage(nickNameId, message);
 }
 
-void sendChannel(int fd, std::string str, size_t chennelPoint)
+void sendChannel(int fd, std::string target, std::string messageStr)
 {
 	int numeric;
 	std::string message;
 
 	Server& server = Server::getInstance();
 	Client* clients = server.getClients();
-
-	size_t spacePoint = str.find(' ');
-	std::string channelName = str.substr(chennelPoint, spacePoint);
-	// #포함되어있음. # 빼서 저장된다면 수정해야함
-
-	Channel *channel = server.findChannel(channelName);
+	Channel *channel = server.findChannel(target);
 	if (channel == NULL)
     {
 		numeric = ERR_NOSUCHCHANNEL;
 		message += " ";
 		message += clients[fd].getNickName();
 		message += " ";
-		message += channelName;
+		message += target;
         message += " :No such channel";
 		server.sendMessage(fd, (std::to_string(numeric) + message));
         return ;
@@ -75,29 +60,38 @@ void sendChannel(int fd, std::string str, size_t chennelPoint)
 		message += " ";
 		message += clients[fd].getNickName();
 		message += " ";
-		message += channelName;
+		message += target;
         message += " :Cannot send to channel";
 		server.sendMessage(fd, (std::to_string(numeric) + message));
         return ;
 	}
 
-	size_t messagePoint = str.find(':');
-	std::string chatMessage = str.substr(messagePoint);
-
 	message += ":";
 	message += clients[fd].getNickName() + server.prefix(fd);
 	message += " PRIVMSG ";
-	message += channelName;
+	message += target;
 	message += " ";
-	message += chatMessage;
+	message += messageStr;
 	server.sendChannelMessage(channel, message, fd);
 }
 
 void PRIVMSG(int fd, std::string str)
 {
-	size_t chennelPoint = str.find('#');
-	if (chennelPoint == std::string::npos)
-		sendUser(fd, str);
-	else
-		sendChannel(fd, str, chennelPoint);
+	size_t messagePoint = str.find(' ');
+	std::string targetsStr = str.substr(0, messagePoint);
+	std::list<std::string> targets = split(targetsStr, ',');
+	std::string messageStr = str.substr(messagePoint+1);
+
+	while (targets.size() > 0)
+    {
+        std::string target = targets.front();
+        targets.pop_front();
+		
+		size_t chennelPoint = target.find('#');
+		if (chennelPoint == std::string::npos)
+			sendUser(fd, target, messageStr);
+		else
+			sendChannel(fd, target, messageStr);
+    }
+
 }
