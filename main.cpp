@@ -1,5 +1,10 @@
 #include "Server.hpp"
 
+void f()
+{
+	system("leaks a.out");
+}
+
 int main(int argc, char** argv)
 {
 	if (argc != 3)
@@ -13,5 +18,7 @@ int main(int argc, char** argv)
 	server.monitoring();
 	server.destroy();
 	
+
+	f();
 	return 0;
 }
