@@ -140,15 +140,13 @@ void modeFlagK(int fd, std::string channelName, std::string optionFlag, std::str
 	Channel *channel = server.findChannel(channelName);
 	Client* clients = server.getClients();
 
-	if (textString == "")
+	if (textString == "") //param 에러 696
 		return ;
 
-	if (optionFlag[0] == '+' && textString != "")
+	if (optionFlag[0] == '+')
 		numeric = channel->changeKey(fd, textString);
-	else if (optionFlag[0] == '-')
-		numeric = channel->changeKey(fd, "");
 	else
-		return ;
+		numeric = channel->changeKey(fd, "");
 
 	if (numeric == 1)
 	{
@@ -156,8 +154,9 @@ void modeFlagK(int fd, std::string channelName, std::string optionFlag, std::str
 		message += clients[fd].getNickName() + server.prefix(fd);
 		message += " MODE ";
 		message += channelName;
-		message += " :";
+		message += " ";
 		message += optionFlag;
+		message += " :";
 		message += textString;
 		server.sendChannelMessage(channel, message, fd);
 	}
@@ -170,6 +169,8 @@ void modeFlagK(int fd, std::string channelName, std::string optionFlag, std::str
 		message += channelName;
 		message += " :You must have channel op access";
 	}
+	else if (numeric == 0)
+		return ;
 
 	server.sendMessage(fd, message);
 }

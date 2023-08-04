@@ -171,8 +171,13 @@ int Channel::changeKey(int adminId, std::string key)
 	if (isAdmin(adminId) == false)
 		return ERR_CHANOPRIVSNEEDED;
 
-	this->key = key;
-	return 1; // SUCCESS
+	if (this->key == "" && key != "") // 새로운 키 등록
+		this->key = key;
+	else if (this->key != "" && key == "") // 키 삭제
+		this->key = key;
+	else
+		return 0; // 이미 키가 있는데 등록, 키가 없는데 키 삭제
+	return SUCCESS;
 }
 
 int Channel::changeMaxCapacity(int adminId, int maxCapacity)
