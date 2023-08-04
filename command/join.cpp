@@ -49,7 +49,7 @@ std::string makeJoinResponse(int responseCode, Channel *channel, int clientId)
             break;
         default:
             // :nick!nick@servername JOIN #channel
-            std::string channelMessage = ":" + clientName + " JOIN " + channel->getName();
+            std::string channelMessage = ":" + clientName + server.prefix(clientId) + " JOIN " + channel->getName();
             server.sendChannelMessage(channel, channelMessage, clientId);
         
             client->addChannel(channel);
