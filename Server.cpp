@@ -300,6 +300,7 @@ bool Server::deleteChannel(const std::string &name, int adminId)
 	Channel* channel = it->second;
 	// 아직 채널에 남아있는 클라이언트들 킥
 	kickUserFirst(channel, adminId);
+	clients[adminId].getChannels().remove(channel);
 
 	if (it != channelMap.end())
 	{
