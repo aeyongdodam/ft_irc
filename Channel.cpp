@@ -269,3 +269,5 @@ bool Channel::isAdmin(int id)
 	}
 	return false;
 }
+
+//test
