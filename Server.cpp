@@ -115,14 +115,33 @@ void Server::readClient(int i)
 	else if (readLen > 0)
 	{
 		rBuff[readLen] = '\0';
-		std::istringstream iss(rBuff);
 		std::string line;
+		
+		char* fdBuff = clients[i].getFdBuff();
+		std::strcat(fdBuff, rBuff);
+
+		char* newLineLocation = std::find(fdBuff, fdBuff + BUFSIZ, '\n');
+		if (newLineLocation == fdBuff + BUFSIZ)
+			return;
+
+		std::istringstream iss(fdBuff);
+		std::memset(fdBuff, '\0', BUFSIZ);
+
 		while (std::getline(iss, line))
 		{
-			std::cout << "rBuff Message : " << line << std::endl;
+			std::cerr << "rBuff Message : " << line << std::endl;
+
+			const char* spcaeLocation = std::strchr(line.c_str(), ' ');
+			if (spcaeLocation == NULL)
+				return;
+
+			std::string optionString =  spcaeLocation + 1;
+			if (optionString.back() == '\n')
+				optionString.erase(optionString.size() - 1, optionString.size() - 1);
+			if (optionString.back() == '\r')
+				optionString.erase(optionString.size() - 1, optionString.size() - 1);
+
 			int commandNum = commandParsing(line);
-			std::string optionString =  std::strchr(line.c_str(), ' ') + 1;
-			optionString.erase(optionString.size() - 1, optionString.size() - 1);
 			executeCommand(commandNum, optionString, i);
 		}
 	}
@@ -174,6 +193,7 @@ void Server::disconnectClient(int i, int readfd)
 	clients[i].setLoginName("");
 	clients[i].setRealName("");
 	clients[i].setPassFlag(false);
+	clients[i].initBuff();
 	connectClientNum--;
 
 	std::list<Channel*>& channels = clients[i].getChannels();
