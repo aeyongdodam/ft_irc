@@ -59,17 +59,14 @@ void KICK(std::string input, int clientId) //clientId가 쫓아내는입장, nic
     message += kickUserName;
     if (channel->isAdmin(clientId))
     {
-        if (channel->isAdmin(nickNameId))
+        if (clientId == nickNameId && channel->getAdminIdList().size() - 1 == 0)
         {
-            // channel->getAdminIdList().remove(nickNameId);
-            if (channel->getAdminIdList().size() - 1 == 0)
-            {
                 server.deleteChannel(channelName, nickNameId);
                 server.sendMessage(clientId, message);
                 return ;
-            }
         }
-        // 여기는 올바른 메세지 형식
+        channel->getAdminIdList().remove(nickNameId);
+        
         server.sendMessage(clientId, message);
         server.sendChannelMessage(channel, message, clientId);
         channel->kickClient(clientId, nickNameId);
