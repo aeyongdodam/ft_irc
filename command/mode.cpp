@@ -220,7 +220,7 @@ void modeFlagO(int fd, std::string channelName, std::string optionFlag, std::str
 	{
 		if (channel->getAdminIdList().size() - 1 == 0)
 		{
-			server.deleteChannel(channelName, targetId);
+			server.deleteChannel(channelName, targetId, "");
 			return ;
 		}
 		channel->getAdminIdList().remove(targetId);
