@@ -3,24 +3,26 @@
 
 void MODE(int fd, std::string str)
 {
-	size_t spacePoint = str.find(' ');
-	// optionFlag가 없는 경우
-	if (spacePoint == std::string::npos)
+	std::list<std::string> strList = split(str, ' ');
+	if (strList.size() > 3 || strList.size() < 2)
 		return ;
-	std::string channelName = str.substr(0, spacePoint);
-	std::string optionFlag = str.substr(spacePoint+1, 2);
-	size_t spacePoint2 = str.rfind(' ');
-	std::string textString = "";
-	if (spacePoint != spacePoint2)
-		textString = str.substr(spacePoint+4);
 
-	// #channel이 아닐때 무시
-	size_t channelPoint = str.find('#');
-	if (channelPoint == std::string::npos)
+	std::string channelName = strList.front();
+	strList.pop_front();
+	size_t channelPoint = channelName.find('#'); 
+	if (channelPoint == std::string::npos) // 첫번쩨 인자가 채널이 아닐때
+		return ;
+
+	std::string optionFlag = strList.front();
+	strList.pop_front();
+	if (optionFlag.size() > 2) // 이상한 flag 일때
 		return ;
 	
-	// 채널 없을때 403
-	if (modeNoChannel(fd, channelName))
+	std::string textString = "";
+	if (strList.size() != 0)
+		textString = strList.front();
+	
+	if (modeNoChannel(fd, channelName)) // 채널 없을때 403
 		return ;
 	
 	if (optionFlag[1] == 'i')
