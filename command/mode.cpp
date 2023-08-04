@@ -74,7 +74,7 @@ void modeFlagI(int fd, std::string channelName, std::string optionFlag)
 	if (numeric == 1)
 	{
 		message = ":";
-		message += clients[fd].getNickName();
+		message += clients[fd].getNickName() + server.prefix(fd);
 		message += " MODE ";
 		message += channelName;
 		message += " :";

@@ -31,7 +31,7 @@ void INVITE(std::string input, int clientId)
         message += invitedNickName;
         // std::cout << "메세지 내용 : " << message << std::endl;
         server.sendMessage(clientId, std::to_string(numeric) + message);
-        message = ":" + clients[clientId].getNickName() + " INVITE " + invitedNickName + ":" + channelName;
+        message = ":" + clients[clientId].getNickName() + server.prefix(clientId) + " INVITE " + invitedNickName + ":" + channelName;
         server.sendMessage(nickNameId, message);
         channel->inviteClient(clientId, nickNameId);
         return ;
