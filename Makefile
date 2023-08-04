@@ -7,7 +7,7 @@ HEADER	=	Server.hpp Client.hpp Channel.hpp
 HEADER	+=	command/command.hpp
 
 CXX		=	c++
-CXXFLAGS	=	-pedantic -Wall -Werror -Wextra -std=c++98 -fsanitize=address
+CXXFLAGS	=	-pedantic -Wall -Werror -Wextra -std=c++98
 
 all		:	$(NAME)
 
