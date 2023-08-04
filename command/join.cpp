@@ -55,12 +55,16 @@ std::string makeJoinResponse(int responseCode, Channel *channel, int clientId)
             client->addChannel(channel);
             
             std::string* topic = channel->getTopic();
-            if (topic)
+            if (topic != NULL)
             {
                 resMsg += "\r\n332 ";
                 resMsg += clientName;
                 resMsg += " " + channel->getName();
                 resMsg += " :" + *topic;
+            }
+            else
+            {
+                std::cerr << "topic NULL\n";
             }
             resMsg += "\r\n353 ";
             resMsg += clientName;

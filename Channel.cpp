@@ -17,11 +17,7 @@ Channel& Channel::operator=(const Channel& source)
 	return (*this);
 }
 
-Channel::~Channel()
-{
-	if (topic)
-		delete topic;
-}
+Channel::~Channel() {}
 
 int Channel::joinChannel(int clientId)
 {
