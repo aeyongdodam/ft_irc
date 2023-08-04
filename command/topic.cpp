@@ -34,8 +34,10 @@ void TOPIC(std::string input, int clientId)
             return ;
         }
         else
+        {
             server.sendMessage(clientId, *channel->getTopic());
             return ;
+        }
     }
     int *clientStatus = channel->getClientStatus();
     if (clientStatus[clientId] != CONNECTED) // 명령 사용자가 채널에 참여하지 않은 경우

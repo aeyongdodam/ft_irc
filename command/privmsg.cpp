@@ -33,7 +33,8 @@ void sendUser(int fd, std::string str)
 
 	numeric = RPL_AWAY;
 	message += ":";
-	message += clients[fd].getNickName() + server.prefix(fd);
+	message += clients[fd].getNickName();
+	message += server.prefix(fd);
 	message += " PRIVMSG ";
 	message += userNick;
 	message += " ";
