@@ -51,7 +51,12 @@ void KICK(std::string input, int clientId) //clientId가 쫓아내는입장, nic
         server.sendMessage(clientId, std::to_string(numeric) + message);
         return ;
     }
-
+    message = ":";
+    message += clients[clientId].getNickName() + server.prefix(clientId);
+    message += " KICK ";
+    message += channelName;
+    message += " ";
+    message += kickUserName;
     if (channel->isAdmin(clientId))
     {
         if (channel->isAdmin(nickNameId))
@@ -59,17 +64,12 @@ void KICK(std::string input, int clientId) //clientId가 쫓아내는입장, nic
             // channel->getAdminIdList().remove(nickNameId);
             if (channel->getAdminIdList().size() - 1 == 0)
             {
-                server.deleteChannel(channelName, nickNameId, "");
+                server.deleteChannel(channelName, nickNameId);
+                server.sendMessage(clientId, message);
                 return ;
             }
         }
         // 여기는 올바른 메세지 형식
-        message = ":";
-        message += clients[clientId].getNickName() + server.prefix(clientId);
-        message += " KICK ";
-        message += channelName;
-        message += " ";
-        message += kickUserName;
         server.sendMessage(clientId, message);
         server.sendChannelMessage(channel, message, clientId);
         channel->kickClient(clientId, nickNameId);

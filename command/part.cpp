@@ -19,16 +19,15 @@ void PART(std::string optionString, int clientId)
         server.sendMessage(clientId, resMsg);
         return ;
     }
-
+    std::string channelMsg = ":";
+    channelMsg += clients[clientId].getNickName() + server.prefix(clientId);
+    channelMsg += " PART ";
+    channelMsg += channelName;
+    channelMsg += " ";
+    channelMsg += partMessage;
     if (channel->isAdmin(clientId) && channel->getAdminIdList().size() - 1 == 0)
     {
-        std::string channelMsg = ":";
-        channelMsg += clients[clientId].getNickName();
-        channelMsg += " PART ";
-        channelMsg += channelName;
-        channelMsg += " ";
-        channelMsg += partMessage;
-        server.deleteChannel(channelName, clientId, channelMsg);
+        server.deleteChannel(channelName, clientId);
         server.sendMessage(clientId, channelMsg);
         return;
     }
@@ -37,12 +36,6 @@ void PART(std::string optionString, int clientId)
 
     if (responseCode == 1)
     {
-        std::string channelMsg = ":";
-        channelMsg += clients[clientId].getNickName() + server.prefix(clientId);
-        channelMsg += " PART ";
-        channelMsg += channelName;
-        channelMsg += " ";
-        channelMsg += partMessage;
         server.sendMessage(clientId, channelMsg);
         server.sendChannelMessage(channel, channelMsg, clientId);
     }
