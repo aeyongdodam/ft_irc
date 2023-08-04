@@ -72,10 +72,6 @@ std::string makeJoinResponse(int responseCode, Channel *channel, int clientId)
                 stream << channel->getLastTopicSetTime();
                 resMsg += stream.str();  
             }
-            else
-            {
-                std::cerr << "topic NULL\n";
-            }
             resMsg += "\r\n353 ";
             resMsg += clientName;
             resMsg += " = " + channel->getName();
