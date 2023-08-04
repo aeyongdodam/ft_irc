@@ -40,7 +40,7 @@ void sendUser(int fd, std::string str)
 	message += " ";
 	message += chatMessage;
 	
-	server.sendMessage(nickNameId, (std::to_string(numeric) + message));
+	server.sendMessage(nickNameId, message);
 }
 
 void sendChannel(int fd, std::string str, size_t chennelPoint)
@@ -84,7 +84,6 @@ void sendChannel(int fd, std::string str, size_t chennelPoint)
 	size_t messagePoint = str.find(':');
 	std::string chatMessage = str.substr(messagePoint);
 
-	numeric = RPL_AWAY;
 	message += ":";
 	message += clients[fd].getNickName() + server.prefix(fd);
 	message += " PRIVMSG ";
