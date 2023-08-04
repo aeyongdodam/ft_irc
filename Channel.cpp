@@ -54,7 +54,7 @@ int Channel::joinChannel(int clientId)
 
 int Channel::joinChannel(int clientId, std::string key)
 {
-	if (!this->key.empty() && this->key.compare(key) != 0)
+	if (this->key.compare(key) != 0)
 		return ERR_BADCHANNELKEY;
 	if (maxCapacity != -1 && capacity >= maxCapacity)
 		return ERR_CHANNELISFULL;
