@@ -71,13 +71,6 @@ std::string makeJoinResponse(int responseCode, Channel *channel, int clientId)
             resMsg += clientName;
             resMsg += " " + channel->getName();
             resMsg += " :End of /Names list";
-
-            resMsg += "\r\n332 ";
-            resMsg += clientName;
-            resMsg += " " + channel->getName();
-            resMsg += " :";
-            if (channel->getTopic() != NULL)
-                resMsg += *(channel->getTopic());
     }
 
     return resMsg;
