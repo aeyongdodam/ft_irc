@@ -26,7 +26,7 @@ void TOPIC(std::string input, int clientId)
     std::string topicString = input.substr(firstWord + 2);
     if (topicString == "") // 첫 번째 파라미터만 있는 경우
     {
-        if (channel->getTopic() == NULL)
+        if (channel->getTopic() == "")
         {
             numeric = RPL_NOTOPIC;
             message = " " + channelName + " :No topic is set";
@@ -34,7 +34,7 @@ void TOPIC(std::string input, int clientId)
             return ;
         }
         else
-            server.sendMessage(clientId, *channel->getTopic());
+            server.sendMessage(clientId, channel->getTopic());
             return ;
     }
     int *clientStatus = channel->getClientStatus();

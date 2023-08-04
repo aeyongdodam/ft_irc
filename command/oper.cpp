@@ -47,8 +47,8 @@ std::string makeOPERResponse(int responseCode, Channel* channel)
             resMsg += "Cannot join channel (+l)";
             break;
         default:
-            std::string* topic = channel->getTopic();
-            if (topic)
+            std::string topic = channel->getTopic();
+            if (topic != "")
                 resMsg += *topic;
             else
                 resMsg += "No topic is set";

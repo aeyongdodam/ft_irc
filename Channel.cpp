@@ -2,7 +2,7 @@
 
 Channel::Channel() : name("default") {}
 
-Channel::Channel(int adminId, std::string& name) : name(name), topic(NULL), key(""), inviteOnly(false), topicSetting(false), capacity(1), maxCapacity(-1), lastTopicSetId(-1), lastTopicSetTime(-1)
+Channel::Channel(int adminId, std::string& name) : name(name), topic(""), key(""), inviteOnly(false), topicSetting(false), capacity(1), maxCapacity(-1), lastTopicSetId(-1), lastTopicSetTime(-1)
 {
 	for (int i = 0; i < MAX_EVENTS; i++)
 		clientStatus[i] = 0;
@@ -19,8 +19,6 @@ Channel& Channel::operator=(const Channel& source)
 
 Channel::~Channel()
 {
-	if (topic)
-		delete topic;
 }
 
 int Channel::joinChannel(int clientId)
@@ -155,10 +153,9 @@ int Channel::changeInviteOnly(int adminId, bool inviteOnly)
 	return 1; // SUCCESS
 }
 
-int Channel::changeTopic(int adminId, std::string& topic)
+int Channel::changeTopic(int adminId, std::string topic)
 {
-	if (this->topic != NULL)
-		*(this->topic) = topic;
+	this->topic = topic;
 	this->lastTopicSetId = adminId; //마지막으로 바꾼 사람 id 저장
 
 	std::time_t timestamp = std::time(0);
@@ -216,7 +213,7 @@ const std::string Channel::getName()
     return this->name;
 }
 
-std::string* Channel::getTopic()
+std::string Channel::getTopic()
 {
     return this->topic;
 }
