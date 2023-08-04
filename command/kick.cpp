@@ -60,8 +60,8 @@ void KICK(std::string input, int clientId) //clientId가 쫓아내는입장, nic
             if (channel->getAdminIdList().size() - 1 == 0)
             {
                 server.deleteChannel(channelName, nickNameId, "");
+                return ;
             }
-            return ;
         }
         // 여기는 올바른 메세지 형식
         message = ":";
