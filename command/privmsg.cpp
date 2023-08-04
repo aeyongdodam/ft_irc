@@ -27,6 +27,8 @@ void sendUser(int fd, std::string str)
 	}
 
 	size_t messagePoint = str.find(':');
+	if (messagePoint == std::string::npos)
+		return ;
 	std::string chatMessage = str.substr(messagePoint);
 
 	numeric = RPL_AWAY;
