@@ -54,13 +54,23 @@ std::string makeJoinResponse(int responseCode, Channel *channel, int clientId)
         
             client->addChannel(channel);
             
-            std::string* topic = channel->getTopic();
-            if (topic != NULL)
+            std::string topic = channel->getTopic();
+            if (topic != "")
             {
                 resMsg += "\r\n332 ";
                 resMsg += clientName;
                 resMsg += " " + channel->getName();
-                resMsg += " :" + *topic;
+                resMsg += " :" + topic;
+
+                resMsg += "\r\n333 ";
+                resMsg += clientName;
+                resMsg += " " + channel->getName();
+                resMsg += " " + channel->getLastTopicSetName() + server.prefix(clientId);
+                resMsg += " :";
+
+                std::stringstream stream; 
+                stream << channel->getLastTopicSetTime();
+                resMsg += stream.str();  
             }
             else
             {
