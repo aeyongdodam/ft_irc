@@ -165,7 +165,7 @@ void Server::openNewListenSd()
 void Server::sendMessage(int i, std::string str)
 {
 	std::string numericMessage = str + "\n";
-	std::cout << "메세지내용 : " << numericMessage << std::endl;
+	std::cout << "받는사람 :" << clients[i].getNickName() << " 메세지내용 : " << numericMessage << std::endl;
 	write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
 }
 
@@ -269,12 +269,8 @@ Channel* Server::findChannel(std::string &name)
 		return NULL;
 }
 
-bool Server::deleteChannel(const std::string &name, int adminId)
+void Server::kickUserFirst(Channel *channel, int adminId)
 {
-	std::map<std::string, Channel*>::iterator it = channelMap.find(name);
-
-	// 아직 채널에 남아있는 클라이언트들 킥
-	Channel* channel = it->second;
 	Server& server = Server::getInstance();
 	std::string message;
 	std::string channelName = channel->getName();
@@ -294,15 +290,17 @@ bool Server::deleteChannel(const std::string &name, int adminId)
 				channel->kickClient(adminId, i);
 			}
 		}
-	}
-	message = ":";
-	message += clients[adminId].getNickName() + server.prefix(adminId);
-	message += " KICK ";
-	message += channelName;
-	message += " ";
-	message += clients[adminId].getNickName();
-	server.sendMessage(adminId, message);
-	channel->kickClient(adminId, adminId);
+	}	
+}
+
+bool Server::deleteChannel(const std::string &name, int adminId)
+{
+	std::map<std::string, Channel*>::iterator it = channelMap.find(name);
+
+	Channel* channel = it->second;
+	// 아직 채널에 남아있는 클라이언트들 킥
+	kickUserFirst(channel, adminId);
+
 	if (it != channelMap.end())
 	{
 		delete it->second;
@@ -406,9 +404,20 @@ void Server::sendChannelMessage(Channel *channel, std::string message, int fd)
 void Server::sendChannelUser(int fd, std::string message)
 {
 	std::vector<int> alreadySent;
-	alreadySent.push_back(fd);
+	std::map<std::string, Channel*> existChannel;
+	// std::map<std::string, Channel*> channelsToDelete;
 
+	alreadySent.push_back(fd);
 	for (std::map<std::string, Channel*>::const_iterator it = channelMap.begin(); it != channelMap.end(); it++)
+	{
+		Channel* channel = it->second;
+		if (channel->isAdmin(fd) && channel->getAdminIdList().size() - 1 == 0)
+			kickUserFirst(channel, fd);
+		else
+			existChannel[it->first] = channel;
+	}
+
+	for (std::map<std::string, Channel*>::const_iterator it = existChannel.begin(); it != existChannel.end(); it++)
 	{
 		Channel* channel = it->second;
 		int *clientstatus = channel->getClientStatus();

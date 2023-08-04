@@ -8,6 +8,5 @@ void QUIT(int fd)
     std::string message = ":";
     message += clients[fd].getNickName() + server.prefix(fd);
     message += " QUIT :leaving";
-
     server.sendChannelUser(fd, message);
 }

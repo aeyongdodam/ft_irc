@@ -94,6 +94,8 @@ const std::string joinWithKey(std::string &channelName, int clientId, std::strin
 {
     Server &server = Server::getInstance();
     Channel *channel = server.findChannel(channelName);
+    if (channel == NULL)
+        channel = server.createChannel(clientId, channelName);
 
     std::cout << "joinWithKey(): " << key << std::endl;
 

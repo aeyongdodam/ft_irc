@@ -53,7 +53,7 @@ class Server
 	public:
 		Server& operator=(const Server& copy);
 		static Server& getInstance();
-
+		void kickUserFirst(Channel *channel, int adminId);
 		void init(unsigned short portNum, std::string generalPassword);
 		void monitoring();
 		void connectClient(int i);
