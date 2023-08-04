@@ -15,14 +15,14 @@ class Channel
 	private:
 		std::list<int>		adminIdList;
 		const std::string	name;
-		std::string			*topic;
+		std::string			topic;
 		std::string			key;
 		bool				inviteOnly;
 		bool				topicSetting; // 0이면 방장만, 1이면 모두 가능
 		int					clientStatus[MAX_EVENTS + 1];
 		int					capacity;
 		int					maxCapacity;
-		int					lastTopicSetId;
+		std::string			lastTopicSetName;
 		long				lastTopicSetTime;
 
 		Channel();
@@ -41,14 +41,16 @@ class Channel
 		int banClient(int adminId, int targetId);
 
 		int changeInviteOnly(int adminId, bool inviteOnly);
-		int changeTopic(int adminId, std::string& topic);
+		int changeTopic(std::string name, std::string topic);
 		int changeKey(int adminId, std::string key);
 		int changeTopicSetting(int adminId, bool topicSetting);
 		int changeMaxCapacity(int adminId, int maxCapacity);
 
 		int* getClientStatus();
 		const std::string getName();
-		std::string* getTopic();
+		std::string getTopic();
+		std::string getLastTopicSetName();
+		long getLastTopicSetTime();
 		std::string getKey();
 		bool gettopicSetting();
 		std::string getClientList();
