@@ -13,26 +13,14 @@ void INVITE(std::string input, int clientId)
     int numeric;
     std::string message;
     if ((message = checkParameter(invitedNickName, channelName)) != "")
-    {
         server.sendMessage(clientId, message);
-        return;
-    }
-    if ((message = checkChannel(channel, channelName)) != "")
-    {
+    else if ((message = checkChannel(channel, channelName)) != "")
         server.sendMessage(clientId, message);
-        return;
-    }
-    if ((message = checkUser(clients, nickNameId)) != "")
-    {
+    else if ((message = checkUser(clients, nickNameId)) != "")
         server.sendMessage(clientId, message);
-        return;
-    }
-    if ((message = checkAdminConnected(clientStatus, clientId, channelName)) != "")
-    {
+    else if ((message = checkAdminConnected(clientStatus, clientId, channelName)) != "")
         server.sendMessage(clientId, message);
-        return;
-    }
-    if (channel->isAdmin(clientId))
+    else if (channel->isAdmin(clientId))
     {
         numeric = RPL_INVITING;
         message = " ";
