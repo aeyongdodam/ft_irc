@@ -297,29 +297,10 @@ bool Server::deleteChannel(const std::string &name, int adminId)
 {
 	std::map<std::string, Channel*>::iterator it = channelMap.find(name);
 
-	// // 아직 채널에 남아있는 클라이언트들 킥
 	Channel* channel = it->second;
+	// 아직 채널에 남아있는 클라이언트들 킥
 	kickUserFirst(channel, adminId);
-	// Server& server = Server::getInstance();
-	// std::string message;
-	// std::string channelName = channel->getName();
-	// for(int i = 0; i < MAX_EVENTS; i++)
-	// {
-	// 	if (channel->getClientStatus()[i] == CONNECTED)
-	// 	{
-	// 		if (adminId != i)
-	// 		{
-	// 			message = ":";
-	// 			message += clients[adminId].getNickName() + server.prefix(adminId);
-	// 			message += " KICK ";
-	// 			message += channelName;
-	// 			message += " ";
-	// 			message += clients[i].getNickName();
-    //     		server.sendMessage(i, message);
-	// 			channel->kickClient(adminId, i);
-	// 		}
-	// 	}
-	// }
+
 	if (it != channelMap.end())
 	{
 		delete it->second;
