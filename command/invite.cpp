@@ -13,29 +13,22 @@ void INVITE(std::string input, int clientId)
     int numeric;
     std::string message;
     if ((message = checkParameter(invitedNickName, channelName)) != "")
-    {
         server.sendMessage(clientId, message);
-        return;
-    }
-    if ((message = checkChannel(channel, channelName)) != "")
-    {
+    else if ((message = checkChannel(channel, channelName)) != "")
         server.sendMessage(clientId, message);
-        return;
-    }
-    if ((message = checkUser(clients, nickNameId)) != "")
-    {
+    else if ((message = checkUser(clients, nickNameId)) != "")
         server.sendMessage(clientId, message);
-        return;
-    }
-    if ((message = checkAdminConnected(clientStatus, clientId, channelName)) != "")
-    {
+    else if ((message = checkAdminConnected(clientStatus, clientId, channelName)) != "")
         server.sendMessage(clientId, message);
-        return;
-    }
-    if (channel->isAdmin(clientId))
+    else if (channel->isAdmin(clientId))
     {
         numeric = RPL_INVITING;
-        message = " " + clients[clientId].getNickName() + " " + channelName + " " + invitedNickName;
+        message = " ";
+        message += clients[clientId].getNickName();
+        message += " ";
+        message += channelName;
+        message += " ";
+        message += invitedNickName;
         // std::cout << "메세지 내용 : " << message << std::endl;
         server.sendMessage(clientId, std::to_string(numeric) + message);
         message = ":" + clients[clientId].getNickName() + " INVITE " + invitedNickName + ":" + channelName;
@@ -46,7 +39,9 @@ void INVITE(std::string input, int clientId)
     else //채널 운영자가 아닐 경우
     {
         numeric = ERR_CHANOPRIVSNEEDED;
-        message = " " + channelName + " :You're not channel operator";
+        message = " ";
+        message += channelName;
+        message += " :You're not channel operator";
         server.sendMessage(clientId, std::to_string(numeric) + message);
         return ;
     }
@@ -72,7 +67,9 @@ std::string checkChannel(Channel *channel, std::string channelName)
     if (channel == NULL)
     {
         numeric = ERR_NOSUCHCHANNEL;
-        message = " " + channelName + " :NO such channel";
+        message += " ";
+        message += channelName;
+        message += " :NO such channel";
         return (std::to_string(numeric) + message);
     }
     return "";
@@ -85,7 +82,9 @@ std::string checkUser(Client* clients,int nickNameId)
     if (nickNameId == -1) //초대하려는 유저가 존재하지 않을때
     {
         numeric = ERR_NOSUCHNICK;
-        message = " " + clients[nickNameId].getNickName() + " :No such nick";
+        message = " ";
+        message += clients[nickNameId].getNickName(); 
+        message += " :No such nick";
         return (std::to_string(numeric) + message);
     }
     return "";
@@ -98,7 +97,9 @@ std::string checkAdminConnected(int *clientStatus, int clientId, std::string cha
     if (clientStatus[clientId] != CONNECTED) // 명령 사용자가 채널에 참여하지 않은 경우
     {
         numeric = ERR_NOTONCHANNEL;
-        message = " " + channelName + " :You're not on that channel";
+        message = " ";
+        message += channelName;
+        message += " :You're not on that channel";
         return (std::to_string(numeric) + message);
     }
     return "";
@@ -111,7 +112,10 @@ std::string checkAlreadyInChannel(int *clientStatus, int nickNameId, std::string
     if (clientStatus[nickNameId] == CONNECTED)
     {
         numeric = ERR_USERONCHANNEL;
-        message = " " + invitedNickName + " " + + " :is already on channel";
+        message = " ";
+        message += invitedNickName;
+        message += " ";
+        message += " :is already on channel";
         return (std::to_string(numeric) + message);
     }
     return "";
