@@ -10,7 +10,7 @@ void MODE(int fd, std::string str)
 	std::string channelName = strList.front();
 	strList.pop_front();
 	size_t channelPoint = channelName.find('#'); 
-	if (channelPoint == std::string::npos) // 첫번쩨 인자가 채널이 아닐때
+	if (channelPoint == std::string::npos) // 첫번째 인자가 채널이 아닐때
 		return ;
 
 	std::string optionFlag = strList.front();
@@ -142,7 +142,7 @@ void modeFlagK(int fd, std::string channelName, std::string optionFlag, std::str
 	Channel *channel = server.findChannel(channelName);
 	Client* clients = server.getClients();
 
-	if (textString == "") //param 에러 696
+	if (textString == "")
 		return ;
 
 	if (optionFlag[0] == '+')
