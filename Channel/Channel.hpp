@@ -1,8 +1,8 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-#include "Client.hpp"
-#include "Server.hpp"
+#include "../Client/Client.hpp"
+#include "../Server/Server.hpp"
 #include <ctime>
 
 #define UNCONNECTED 0

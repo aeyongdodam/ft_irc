@@ -1,5 +1,5 @@
 #include "command.hpp"
-#include "../Channel.hpp"
+#include "../Channel/Channel.hpp"
 
 void MODE(int fd, std::string str)
 {
