@@ -333,13 +333,9 @@ int Server::commandParsing(std::string input)
 		std::string command = input.substr(0, end);
 		commandNum = checkCommand(command);
 		if (commandNum == -1)
-		{
-			std::cout << "명령어 없음 " << std::endl;
 			return -1;
-		}
 		return commandNum;
 	}
-	std::cout << "명령어 없음 " << std::endl;
 	return -1;
 }
 
@@ -350,7 +346,7 @@ int Server::checkCommand(std::string command)
 		if (commandList[i] == command)
 			return i;
 	}
-	std::cout << "그런 명령어는 없어용~" << std::endl;
+	std::cout << "No such command." << std::endl;
 	return -1;
 }
 
