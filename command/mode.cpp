@@ -224,6 +224,13 @@ void modeFlagO(int fd, std::string channelName, std::string optionFlag, std::str
 		if (channel->getAdminIdList().size() - 1 == 0)
 		{
 			server.deleteChannel(channelName, targetId);
+			message = ":";
+			message += clients[targetId].getNickName() + server.prefix(fd);
+			message += " KICK ";
+			message += channelName;
+			message += " ";
+			message += clients[targetId].getNickName();
+			server.sendMessage(targetId, message);
 			return ;
 		}
 		channel->getAdminIdList().remove(targetId);
