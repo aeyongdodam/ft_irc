@@ -175,6 +175,16 @@ int Channel::changeKey(int adminId, std::string key)
 	return SUCCESS;
 }
 
+int Channel::changeCapacityLimit(int adminId, bool limitFlag)
+{
+	if (isAdmin(adminId) == false)
+		return ERR_CHANOPRIVSNEEDED;
+
+	this->capacityLimit = limitFlag;
+
+	return SUCCESS;
+}
+
 int Channel::changeMaxCapacity(int adminId, int maxCapacity)
 {
 	if (isAdmin(adminId) == false)

@@ -266,7 +266,7 @@ void modeFlagL(int fd, std::string channelName, std::string optionFlag, std::str
 		numeric = channel->changeMaxCapacity(fd, newCapacity);
 	}
 	else
-		numeric = channel->changeMaxCapacity(fd, -1);
+		numeric = channel->changeCapacityLimit(fd, false);
 
 	if (numeric == 1)
 	{
