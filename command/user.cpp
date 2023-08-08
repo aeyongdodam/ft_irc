@@ -25,8 +25,20 @@ std::string USER(int fd, std::string str)
 		clients[fd].setRealName(realname);
 		message = "001 ";
 		message += clients[fd].getNickName();
-		message +=  " :Welcome to the IRC Network ";
+		message +=  " :Welcome to the NyangNyang Chat Service ";
 		message += clients[fd].getNickName() + server.prefix(fd);
+		message += "\r\n";
+		message += "372 " + clients[fd].getNickName() + "\r\n";
+		message += "372 " + clients[fd].getNickName() + "                       /^--^\\     /^--^\\     /^--^\\" + "\r\n";
+		message += "372 " + clients[fd].getNickName() + "                       \\____/     \\____/     \\____/" + "\r\n";
+		message += "372 " + clients[fd].getNickName() + "                      /      \\   /      \\   /      \\" + "\r\n";
+		message += "372 " + clients[fd].getNickName() + "                     |        | |        | |        |" + "\r\n";
+		message += "372 " + clients[fd].getNickName() + "                      \\__  __/   \\__  __/   \\__  __/" + "\r\n";
+		message += "372 " + clients[fd].getNickName() + " |^|^|^|^|^|^|^|^|^|^|^|^\\ \\^|^|^|^/ /^|^|^|^|^\\ \\^|^|^|^|^|^|^|^|^|^|^|^|" + "\r\n";
+		message += "372 " + clients[fd].getNickName() + " | | | | | | | | | | | | |\\ \\| | |/ /| | | | | | \\ \\ | | | | | | | | | | |" + "\r\n";
+		message += "372 " + clients[fd].getNickName() + " ########################/ /######\\ \\###########/ /#######################" + "\r\n";
+		message += "372 " + clients[fd].getNickName() + " | | | | | | | | | | | | \\/| | | | \\/| | | | | |\\/ | | | | | | | | | | | |" + "\r\n";
+		message += "372 " + clients[fd].getNickName() + " |_|_|_|_|_|_|_|_|  <<<   seunghso   sohlee   mkwon   >>>  |_|_|_|_|_|_|_|";
 		return (message);
 	}
 	return (std::to_string(numeric) + message);
