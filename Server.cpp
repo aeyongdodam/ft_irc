@@ -209,15 +209,14 @@ void Server::disconnectClient(int i, int readfd)
 		if (channel->isAdmin(i))
 		{
 			if (channel->getAdminIdList().size() == 1)
-				deleteChannel(channel->getName(), i);
-			else
 			{
-				channel->getAdminIdList().remove(i);
-				channels.pop_front();
+				deleteChannel(channel->getName(), i);
+				continue;
 			}
+			else
+				channel->getAdminIdList().remove(i);
 		}
-		else 
-			channels.pop_front();
+		channels.pop_front();
 	}
 	channels.clear();
 
