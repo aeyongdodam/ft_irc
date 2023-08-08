@@ -276,8 +276,11 @@ void modeFlagL(int fd, std::string channelName, std::string optionFlag, std::str
 		message += channelName;
 		message += " ";
 		message += optionFlag;
-		message += " :";
-		message += std::to_string(newCapacity);
+		if (optionFlag[0] == '+')
+		{
+			message += " :";
+			message += std::to_string(newCapacity);
+		}
 		server.sendChannelMessage(channel, message, fd);
 	}
 	else if (numeric == ERR_CHANOPRIVSNEEDED)

@@ -2,7 +2,7 @@
 
 Channel::Channel() : name("default") {}
 
-Channel::Channel(int adminId, std::string& name) : name(name), topic(""), key(""), inviteOnly(false), topicSetting(false), capacity(1), maxCapacity(-1), lastTopicSetName(""), lastTopicSetTime(-1)
+Channel::Channel(int adminId, std::string& name) : name(name), topic(""), key(""), inviteOnly(false), capacityLimit(false), topicSetting(false), capacity(1), maxCapacity(-1), lastTopicSetName(""), lastTopicSetTime(-1)
 {
 	for (int i = 0; i < MAX_EVENTS; i++)
 		clientStatus[i] = 0;
@@ -23,7 +23,7 @@ int Channel::joinChannel(int clientId)
 {
 	if (key != "")
 		return ERR_BADCHANNELKEY;
-	if (maxCapacity != -1 && capacity >= maxCapacity)
+	if (capacityLimit == true && capacity >= maxCapacity)
 		return ERR_CHANNELISFULL;
 
 	int	cStatus = clientStatus[clientId];
@@ -52,7 +52,7 @@ int Channel::joinChannel(int clientId, std::string key)
 {
 	if (!this->key.empty() && this->key.compare(key) != 0)
 		return ERR_BADCHANNELKEY;
-	if (maxCapacity != -1 && capacity >= maxCapacity)
+	if (capacityLimit == true && capacity >= maxCapacity)
 		return ERR_CHANNELISFULL;
 
 	int	cStatus = clientStatus[clientId];
@@ -190,7 +190,9 @@ int Channel::changeMaxCapacity(int adminId, int maxCapacity)
 	if (isAdmin(adminId) == false)
 		return ERR_CHANOPRIVSNEEDED;
 
+	this->capacityLimit = true;
 	this->maxCapacity = maxCapacity;
+	
 	return SUCCESS;
 }
 

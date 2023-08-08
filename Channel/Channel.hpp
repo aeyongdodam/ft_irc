@@ -18,6 +18,7 @@ class Channel
 		std::string			topic;
 		std::string			key;
 		bool				inviteOnly;
+		bool				capacityLimit;
 		bool				topicSetting; // 0이면 방장만, 1이면 모두 가능
 		int					clientStatus[MAX_EVENTS + 1];
 		int					capacity;
