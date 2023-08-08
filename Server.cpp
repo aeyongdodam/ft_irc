@@ -129,7 +129,7 @@ void Server::readClient(int i)
 
 		while (std::getline(iss, line))
 		{
-			std::cerr << "rBuff Message : " << line << std::endl;
+			std::cout << "\nMessage From Client : " << line;
 
 			const char* spcaeLocation = std::strchr(line.c_str(), ' ');
 			if (spcaeLocation == NULL)
@@ -165,7 +165,11 @@ void Server::openNewListenSd()
 void Server::sendMessage(int i, std::string str)
 {
 	std::string numericMessage = str + "\n";
-	std::cout << "받는사람 :" << clients[i].getNickName() << " 메세지내용 : " << numericMessage << std::endl;
+	std::cout << "\n====== Message To Client(" << clients[i].getNickName() 
+			<< ") Start ======\n " 
+			<< numericMessage 
+			<< "====== Message To Client(" << clients[i].getNickName() 
+			<< ") End   ======\n ";
 	write(fds[i].fd, numericMessage.c_str(), numericMessage.size());
 }
 
@@ -207,9 +211,13 @@ void Server::disconnectClient(int i, int readfd)
 			if (channel->getAdminIdList().size() == 1)
 				deleteChannel(channel->getName(), i);
 			else
+			{
 				channel->getAdminIdList().remove(i);
+				channels.pop_front();
+			}
 		}
-
+		else 
+			channels.pop_front();
 	}
 	channels.clear();
 
