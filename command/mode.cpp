@@ -266,7 +266,7 @@ void modeFlagL(int fd, std::string channelName, std::string optionFlag, std::str
 		numeric = channel->changeMaxCapacity(fd, newCapacity);
 	}
 	else
-		numeric = channel->changeMaxCapacity(fd, -1);
+		numeric = channel->changeCapacityLimit(fd, false);
 
 	if (numeric == 1)
 	{
@@ -276,8 +276,11 @@ void modeFlagL(int fd, std::string channelName, std::string optionFlag, std::str
 		message += channelName;
 		message += " ";
 		message += optionFlag;
-		message += " :";
-		message += std::to_string(newCapacity);
+		if (optionFlag[0] == '+')
+		{
+			message += " :";
+			message += std::to_string(newCapacity);
+		}
 		server.sendChannelMessage(channel, message, fd);
 	}
 	else if (numeric == ERR_CHANOPRIVSNEEDED)

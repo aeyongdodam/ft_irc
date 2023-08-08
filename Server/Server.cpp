@@ -346,7 +346,7 @@ int Server::checkCommand(std::string command)
 		if (commandList[i] == command)
 			return i;
 	}
-	std::cout << "No such command." << std::endl;
+	std::cout << "\nNo such command." << std::endl;
 	return -1;
 }
 
