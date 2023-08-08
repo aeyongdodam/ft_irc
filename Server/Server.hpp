@@ -24,8 +24,8 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-#include "Client.hpp"
-#include "command/command.hpp"
+#include "../Client/Client.hpp"
+#include "../command/command.hpp"
 
 class Channel;
 

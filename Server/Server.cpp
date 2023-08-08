@@ -1,5 +1,5 @@
 #include "Server.hpp"
-#include "Channel.hpp"
+#include "../Channel/Channel.hpp"
 
 Server::Server()
 {

@@ -49,8 +49,8 @@
 #include <fcntl.h>
 #include <list>
 
-#include "../Server.hpp"
-#include "../Channel.hpp"
+#include "../Server/Server.hpp"
+#include "../Channel/Channel.hpp"
 
 class Server;
 class Channel;
