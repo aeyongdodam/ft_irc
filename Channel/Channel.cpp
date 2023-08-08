@@ -2,7 +2,7 @@
 
 Channel::Channel() : name("default") {}
 
-Channel::Channel(int adminId, std::string& name) : name(name), topic(""), key(""), inviteOnly(false), capacityLimit(false), topicSetting(false), capacity(1), maxCapacity(-1), lastTopicSetName(""), lastTopicSetTime(-1)
+Channel::Channel(int adminId, std::string& name) : name(name), topic(""), key(""), inviteOnly(false), capacityLimit(false), topicSetting(false), capacity(0), maxCapacity(-1), lastTopicSetName(""), lastTopicSetTime(-1)
 {
 	for (int i = 0; i < MAX_EVENTS; i++)
 		clientStatus[i] = 0;
