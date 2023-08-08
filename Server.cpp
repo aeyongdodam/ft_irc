@@ -213,8 +213,7 @@ void Server::disconnectClient(int i, int readfd)
 				deleteChannel(channel->getName(), i);
 				continue;
 			}
-			else
-				channel->getAdminIdList().remove(i);
+			channel->getAdminIdList().remove(i);
 		}
 		channels.pop_front();
 	}
